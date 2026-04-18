@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# Data and model artifacts
+data/
+models/
+
+# Streamlit
+.streamlit/
