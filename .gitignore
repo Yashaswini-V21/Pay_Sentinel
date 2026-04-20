@@ -1,12 +1,9 @@
-__pycache__/
-*.pyc
-.venv/
-venv/
-.env
-
-# Data and model artifacts
 data/
 models/
-
-# Streamlit
-.streamlit/
+__pycache__/
+*.pyc
+*.pkl
+*.mp3
+venv/
+.env
+.DS_Store
