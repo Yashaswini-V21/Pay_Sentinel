@@ -1,9 +1,9 @@
 # PaySentinel 🛡️
 
-> AI-powered UPI fraud detection for small merchants.
+> AI-powered UPI fraud detection for small merchants with a **Stark Tech Cinematic UI**.
 > Explains every suspicious transaction in **Kannada** and **English**.
 
-**HackPulse 2026 Submission | 40% Complete (2/5 files)**
+**BluePrint 2026 Hackathon Submission | React UI Frontend: STILL IN PROGRESS 🚧**
 
 ---
 
@@ -13,9 +13,9 @@
 |-----------|--------|---------|
 | ✅ `generate_data.py` | **COMPLETE** | 654 synthetic transactions, 10 fraud patterns injected |
 | ✅ `model.py` | **COMPLETE** | Isolation Forest + SHAP + Merchant Fingerprinting |
-| ⏳ `voice_alerts.py` | **IN PROGRESS** | Kannada + English gTTS (next) |
-| ⏳ `pdf_report.py` | **TO DO** | Bilingual PDF reports |
-| ⏳ `app.py` | **TO DO** | 5-tab Streamlit dashboard |
+| ✅ `voice_alerts.py` | **COMPLETE** | Kannada + English gTTS with base64 embedding |
+| ✅ `pdf_report.py` | **COMPLETE** | Bilingual PDF reports (English + advisory) |
+| ⏳ `app.py` | **IN PROGRESS** | 5-tab Streamlit dashboard (final) |
 
 ---
 

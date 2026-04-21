@@ -1,155 +1,37 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang='en'>
 <head>
     <meta charset='UTF-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>PaySentinel | Next-Gen Fraud Intelligence</title>
-    <link rel='stylesheet' href='css/style.css'>
-    <link href='https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap' rel='stylesheet'>
-    <script src='https://unpkg.com/lucide@latest'></script>
-    <script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+    <meta name='theme-color' content='#0f0f1c'>
+    <meta name='description' content='PaySentinel — UPI fraud detection that speaks Kannada. Protect your merchant business with explainable AI.'>
+    <meta property='og:title' content='PaySentinel — Merchant Fraud Detection'>
+    <meta property='og:description' content='AI-powered UPI fraud detection for small Indian merchants, with Kannada voice alerts.'>
+    <meta property='og:image' content='/og-image.png'>
+    <meta property='twitter:card' content='summary_large_image'>
+    <link rel='preconnect' href='https://fonts.googleapis.com'>
+    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+    <link href='https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Kannada:wght@400;700&display=swap' rel='stylesheet'>
+    <title>PaySentinel — Merchant UPI Fraud Detection</title>
+    <script type='application/ld+json'>
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "PaySentinel",
+      "url": "https://paysentinel.in",
+      "logo": "https://paysentinel.in/logo.svg",
+      "description": "AI-powered UPI fraud detection for small Indian merchants",
+      "sameAs": ["https://twitter.com/paysentinel"],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+91-1930",
+        "contactType": "Customer Service"
+      }
+    }
+    </script>
 </head>
 <body class='dark-theme'>
-    <!-- Splash Screen -->
-    <div id='splash' class='splash-overlay'>
-        <div class='splash-content'>
-            <div class='logo-container'>
-                <svg width='80' height='80' viewBox='0 0 100 100' fill='none' xmlns='http://www.w3.org/2000/svg'>
-                    <rect width='100' height='100' rx='24' fill='url(#grad)'/>
-                    <path d='M30 50L45 65L70 35' stroke='white' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/>
-                    <defs>
-                        <linearGradient id='grad' x1='0' y1='0' x2='100' y2='100' gradientUnits='userSpaceOnUse'>
-                            <stop stop-color='#8B5CF6'/>
-                            <stop offset='1' stop-color='#D946EF'/>
-                        </linearGradient>
-                    </defs>
-                </svg>
-            </div>
-            <h1 class='splash-title'>PAY SENTINEL</h1>
-            <div class='loader-bar'><div class='loader-fill'></div></div>
-        </div>
-    </div>
-
-    <!-- Navigation -->
-    <nav class='glass-nav'>
-        <div class='nav-left'>
-            <svg width='32' height='32' viewBox='0 0 100 100' fill='none'>
-                <rect width='100' height='100' rx='20' fill='url(#grad2)'/>
-                <path d='M35 50L45 60L65 40' stroke='white' stroke-width='10' stroke-linecap='round' stroke-linejoin='round'/>
-                <defs><linearGradient id='grad2' x1='0' y1='0' x2='100' y2='100'><stop stop-color='#8B5CF6'/><stop offset='1' stop-color='#D946EF'/></linearGradient></defs>
-            </svg>
-            <span class='brand-name'>PaySentinel</span>
-        </div>
-        <div class='nav-center'>
-            <a href='#hero' class='nav-item active'>Home</a>
-            <a href='#features' class='nav-item'>Features</a>
-            <a href='#dashboard' class='nav-item' onclick='showDashboard()'>Dashboard</a>
-        </div>
-        <div class='nav-right'>
-            <button class='btn-secondary'>Sign In</button>
-            <button class='btn-primary'>Get Started</button>
-        </div>
-    </nav>
-
-    <main id='main-content'>
-        <!-- Hero Section -->
-        <section id='hero' class='hero'>
-            <div class='hero-bg'>
-                <div class='blob blob-1'></div>
-                <div class='blob blob-2'></div>
-            </div>
-            <div class='hero-content'>
-                <div class='badge'>v2.0 Fraud Engine Live</div>
-                <h1 class='hero-h1'>Real-time <span class='text-gradient'>Payment Intelligence</span> for Modern Apps</h1>
-                <p class='hero-p'>Unsupervised machine learning to detect anomalies, prevent chargebacks, and secure your transactions with millisecond latency.</p>
-                <div class='hero-btns'>
-                    <button class='btn-lg btn-primary'>Start Protecting Now <i data-lucide='arrow-right'></i></button>
-                    <button class='btn-lg btn-outline'>View Documentation</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Features -->
-        <section id='features' class='features'>
-            <h2 class='section-title'>Powered by Advanced ML</h2>
-            <div class='features-grid'>
-                <div class='feat-card'>
-                    <div class='feat-icon'><i data-lucide='shield-check'></i></div>
-                    <h3>Anomaly Detection</h3>
-                    <p>Isolation Forest algorithms identify fraud patterns that rule-based systems miss.</p>
-                </div>
-                <div class='feat-card'>
-                    <div class='feat-icon'><i data-lucide='zap'></i></div>
-                    <h3>Ultra-low Latency</h3>
-                    <p>Sub-10ms inference and automated response through cloud-native microservices.</p>
-                </div>
-                <div class='feat-card'>
-                    <div class='feat-icon'><i data-lucide='bar-chart-3'></i></div>
-                    <h3>Explainable AI</h3>
-                    <p>SHAP integration provides clear reasoning for every risk score generated.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Dashboard Template (Hidden by Default) -->
-        <section id='dashboard' class='dashboard-section' style='display: none;'>
-            <div class='db-header'>
-                <div class='db-title-grp'>
-                    <h2>Transaction Oversight</h2>
-                    <p>Live fraud monitoring stream</p>
-                </div>
-                <div class='db-actions'>
-                    <button class='btn-sm btn-outline' onclick='hideDashboard()'><i data-lucide='chevron-left'></i> Back</button>
-                    <button class='btn-sm btn-primary'><i data-lucide='plus'></i> Export Report</button>
-                </div>
-            </div>
-            <div class='stats-grid'>
-                <div class='stat-card'>
-                    <div class='stat-label'>Risk Level</div>
-                    <div class='stat-value text-safe'>LOW</div>
-                    <div class='stat-meta'>Scanned 14.2k items</div>
-                </div>
-                <div class='stat-card'>
-                    <div class='stat-label'>Blocked Attempts</div>
-                    <div class='stat-value'>342</div>
-                    <div class='stat-meta text-danger'>+12% vs yesterday</div>
-                </div>
-                <div class='stat-card'>
-                    <div class='stat-label'>System Health</div>
-                    <div class='stat-value text-primary'>99.99%</div>
-                    <div class='stat-meta'>Inference: 4ms avg</div>
-                </div>
-            </div>
-            <div class='db-main-grid'>
-                <div class='db-card chart-container'>
-                    <h3>Fraud Trend (24h)</h3>
-                    <canvas id='fraudChart'></canvas>
-                </div>
-                <div class='db-card table-container'>
-                    <h3>Recent Transactions</h3>
-                    <table class='sentinel-table'>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Amount</th>
-                                <th>Origin</th>
-                                <th>Score</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id='tx-body'>
-                            <!-- Injected by JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class='glass-footer'>
-        <p>© 2026 PaySentinel Intelligence Group. Secure. Scalable. AI-Driven.</p>
-    </footer>
-
-    <script src='js/app.js'></script>
+    <div id='root'></div>
+    <script type='module' src='/src/main.tsx'></script>
 </body>
 </html>
