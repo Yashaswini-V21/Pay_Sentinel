@@ -1,203 +1,99 @@
-# PaySentinel 🛡️
-
-> AI-powered UPI fraud detection for small merchants with a **Stark Tech Cinematic UI**.
-> Explains every suspicious transaction in **Kannada** and **English**.
-
-**BluePrint 2026 Hackathon Submission | React UI Frontend: STILL IN PROGRESS 🚧**
-
----
-
-## 📊 Build Status
-
-| Component | Status | Details |
-|-----------|--------|---------|
-| ✅ `generate_data.py` | **COMPLETE** | 654 synthetic transactions, 10 fraud patterns injected |
-| ✅ `model.py` | **COMPLETE** | Isolation Forest + SHAP + Merchant Fingerprinting |
-| ✅ `voice_alerts.py` | **COMPLETE** | Kannada + English gTTS with base64 embedding |
-| ✅ `pdf_report.py` | **COMPLETE** | Bilingual PDF reports (English + advisory) |
-| ⏳ `app.py` | **IN PROGRESS** | 5-tab Streamlit dashboard (final) |
+<div align="center">
+  <img src="https://img.icons8.com/color/96/000000/shield.png" width="80" alt="Shield Icon"/>
+  <h1>🛡️ PaySentinel</h1>
+  <p><b>AI-powered real-time UPI fraud detection for local merchants</b></p>
+  <p>
+    <img src="https://img.shields.io/badge/BLUEPRINT-2026-0fc98f?style=for-the-badge&logo=hackaday&logoColor=white" alt="Blueprint 2026 Hackathon" />
+    <img src="https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+    <img src="https://img.shields.io/badge/Streamlit-App-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit" />
+    <img src="https://img.shields.io/badge/Language-English%20%7C%20%E0%B2%95%E0%B2%A8%E0%B3%8D%E0%B2%A8%E0%B2%A1-e24b4a?style=for-the-badge" alt="Bilingual" />
+  </p>
+</div>
 
 ---
 
-## ✅ What's Done
+## 🚀 The Vision
+Small business owners and Kirana stores in India are increasingly targeted by UPI spoofing apps and late-night transaction fraud. Existing bank alerts are often delayed, entirely in English, and lack context. 
 
-### 1. generate_data.py
-**Synthetic UPI Transaction Generator**
-- Creates 60 days of realistic kirana store transactions
-- **Output:** `data/sample_transactions.csv` (654 rows)
-- **10 Fraud Patterns Injected:**
-  - 3 late-night large amounts (₹6.7K-15K, 0-4 AM)
-  - 2 structuring attacks (same sender, <₹5K, afternoon)
-  - 1 mega transaction (₹45K, 11 AM)
-  - 2 midnight transfers (₹3K-8K, 11 PM-midnight)
-  - 2 very early morning (₹2K-7K, 1-4 AM)
-- **No Setup Needed:** Fully self-contained
-
-### 2. model.py
-**Core Fraud Detection Engine**
-
-**14 Engineered Features:**
-```
-amount, amount_log, hour
-is_night, is_late_night, is_biz_hours, is_round, is_large, is_very_large
-sender_freq, is_new_sender, is_known_bank
-day_of_week, daily_sender_count
-```
-
-**Merchant Fingerprinting:**
-- Learns each store's normal behavior (hours, amounts, senders)
-- Baseline: 5th-95th percentile thresholds
-
-**SHAP Explainability:**
-- Top 4 feature importance per transaction
-- Plain-language fraud reasons
-
-**PaySentinelDetector Class:**
-```python
-detector = PaySentinelDetector()
-detector.fit(df)  # Train on historical data
-result = detector.predict(df_new)  # Detect anomalies
-# Output: is_anomaly, anomaly_score, risk_level, flags
-explainer = detector.explain(df, idx)  # SHAP importance
-detector.save("models/detector.pkl")  # Persist
-```
-
-**Results:** 33 anomalies detected, 10 true fraud perfectly identified
+**PaySentinel** is a highly accessible, ML-driven shield designed to protect local merchants. It learns their exact historical behavior ("merchant fingerprinting"), detects anomalies instantly, and—crucially—delivers **audio fraud alerts in regional languages (Kannada)**.
 
 ---
 
-## 🚧 To Build (In Order)
+## ✨ Key Features (Judging Criteria Aligned)
 
-### 3. voice_alerts.py
-Generate Kannada + English voice alerts using gTTS
+### 🧠 1. Explainable AI (XAI)
+We don't just say "Fraud" — we prove it.
+- **Model:** Isolation Forests (Unsupervised Learning) chosen specifically to handle highly imbalanced fraud datasets without relying on labeled data.
+- **Explainability:** Integrated **SHAP values** graph mathematically proves *why* a transaction was flagged (e.g., unusual amount + strange time + new sender).
 
-**Functions Needed:**
-- `generate_kannada_alert(fraud_msg, sender, amount)` → MP3
-- `generate_english_alert(fraud_msg, sender, amount)` → MP3
-- Handle special characters (₹ rupee symbol, numbers)
-- Save to `data/alerts/`
+### 🗣️ 2. Regional Voice Alerts (Human 20%)
+Accessibility is our core strength. 
+- Using `gTTS`, the app generates real-time audio warnings.
+- Currently supports **English** and **Kannada (ಕನ್ನಡ)**. 
+- *Targeting 6.5 Crore Kannada speakers.*
 
-**Example:**
-- Kannada: "ಈ ಲೆಕ್ಕೆ ರಾತ್ರಿ 2 ಗಂಟೆಗೆ ಸುರಕ್ಷಿತವಲ್ಲ"
-- English: "This transaction at 2 AM is not secure"
+### 🎨 3. Premium "Stark Tech" UI (Votes 60%)
+- Built entirely in Streamlit but injected with custom cinematic CSS.
+- **Dark Mode:** Deep space backgrounds (`#07070f`), WhatsApp-style interactive alert bubbles.
+- **Interactive Dashboards:** 60-day visual timelines, daily volume bars, and geographical/hourly heatmaps built with Plotly.
 
-### 4. pdf_report.py
-Generate bilingual PDF audit reports
-
-**Sections:**
-- Transaction summary with risk scores
-- Fraud explanations (Kannada + English)
-- Charts (timeline, risk distribution)
-- Cyber Crime helpline: 1930
-- Output: `data/reports/report_YYYY-MM-DD.pdf`
-
-### 5. app.py
-Streamlit 5-tab dark dashboard
-
-**Tabs:**
-1. **Upload & Analyze** — CSV upload, real-time detection
-2. **Risk Dashboard** — Charts, statistics, heatmaps
-3. **Anomaly Details** — Investigation view, sort by risk
-4. **Voice Alerts** — Play Kannada/English, download MP3
-5. **Settings** — Model info, fingerprint view
+### 📄 4. Audit Reporting
+- Instantly generates downloadable bilingual PDF reports for the merchant to hand natively to their bank.
+- Highlights the **1930 Cyber Crime Helpline**.
 
 ---
 
-## 🛠 Tech Stack
+## 🛠️ Project Architecture
 
-```
-Python 3.10+
-streamlit==1.32.0          # Dashboard
-pandas==2.1.0              # Data handling
-numpy==1.24.0              # Numerical ops
-scikit-learn==1.3.0        # IsolationForest
-shap==0.43.0               # SHAP explainer
-plotly==5.18.0             # Charts
-fpdf2==2.7.6               # PDF generation
-gTTS==2.5.1                # Kannada + English TTS
-joblib==1.3.0              # Model save/load
-```
-
-**All tools are FREE. No API keys required.**
+| Component | Status | Description |
+|-----------|--------|-------------|
+| 🎲 `generate_data.py` | ✅ **Complete** | Injects 10 complex fraud patterns into synthetic merchant data. |
+| 🧠 `model.py` | ✅ **Complete** | The Isolation Forest & SHAP engine. |
+| 🔊 `voice_alerts.py` | ✅ **Complete** | Generates the actual Kannada/English base64 audio. |
+| 📄 `pdf_report.py` | ✅ **Complete** | PDF rendering using `fpdf2`. |
+| 💻 `app.py` | ✅ **Complete** | The core 5-tab Streamlit dashboard linking everything together. |
 
 ---
 
-## 📁 Project Layout
+## 🚧 Future Enhancements (In Progress)
 
-```
-Pay_Sentinel/
-├── ✅ generate_data.py       # Synthetic transaction data
-├── ✅ model.py               # Isolation Forest ML engine
-├── ⏳ voice_alerts.py        # Kannada/English voice (next)
-├── ⏳ pdf_report.py          # PDF generation
-├── ⏳ app.py                 # Streamlit dashboard
-├── requirements.txt
-├── .gitignore
-├── README.md
-│
-├── data/
-│   ├── .gitkeep
-│   └── sample_transactions.csv  (auto-generated)
-│
-└── models/
-    ├── .gitkeep
-    └── detector.pkl  (auto-generated)
-```
+This hackathon build is the MVP. To take this to production, the following pipeline upgrades are currently in active development:
+
+1. **🔥 Firebase Integration:**
+   - Shifting from local session-state handling to live Firebase Authentication & Firestore.
+   - This will allow multi-merchant sign-in and persistent historical fraud logs across devices.
+
+2. **⚡ Apache Kafka Streaming:**
+   - Replacing the "CSV Upload" batch process with a live **Kafka data stream**.
+   - Simulating real-time incoming UPI webhook pings, allowing the model to predict and ring the voice alert the exact second a transaction hits.
+
+3. **🌍 Multilingual Expansion:**
+   - Adding pipeline support for Tamil, Telugu, Malayalam, and Hindi.
 
 ---
 
-## 🚀 To Run Current Version
+## 💻 Tech Stack
+- **Dashboard:** Streamlit, Custom CSS
+- **Machine Learning:** Scikit-Learn (Isolation Forest), SHAP
+- **Data Engineering:** Pandas, Numpy
+- **Visuals:** Plotly
+- **Audio & Docs:** gTTS, fpdf2
 
+---
+
+## 🏁 Quickstart
+
+To run the application locally:
 ```bash
-# Install dependencies
-pip install -r requirements.txt
+# 1. Install dependencies
+python -m pip install -r requirements.txt
 
-# Generate data + train model
-python model.py
-
-# Output:
-# ✅ 654 transactions generated (10 fraud injected)
-# ✅ Model fitted on 654 transactions
-# 💾 Saved: models/detector.pkl
+# 2. Run the application (forcing Streamlit module launch safely)
+python -m streamlit run app.py
 ```
+> *Open `http://localhost:8501` to view your dashboard!*
 
 ---
-
-## 🎯 Fraud Detection Examples
-
-**CRITICAL (96.9% risk):**
-- Time: 2 AM | Amount: ₹8,200 | Sender: unknown@ybl
-- Flags: Unusual hour, new sender, after-midnight
-
-**CRITICAL (100% risk):**
-- Time: 3 AM | Amount: ₹14,867 | Sender: unknown1@ybl
-- Flags: Unusual hour, top 1% amount, after-midnight
-
-**CRITICAL (88.7% risk):**
-- Time: 11 AM | Amount: ₹45,000 | Sender: bigpay@okicici
-- Flags: Amount ₹45,000 is top 1% for your store
-
----
-
-## 🌍 Kannada Language
-
-PaySentinel speaks fraud alerts in ಕನ್ನಡ (Kannada) + English using gTTS.
-
-Targeting 6.5 crore Kannada speakers. Roadmap: Tamil, Telugu, Malayalam, Hindi.
-
-**Cyber Crime Helpline:** 1930 | cybercrime.gov.in
-
----
-
-## 📝 Next Session
-
-1. Build `voice_alerts.py` (Kannada/English gTTS)
-2. Build `pdf_report.py` (bilingual reports)
-3. Build `app.py` (Streamlit dashboard)
-4. Test end-to-end integration
-5. Deploy to HackPulse 2026
-
----
-
-**Last Updated:** April 20, 2026  
-**Progress:** 40% (2/5 core files complete)  
+<div align="center">
+  <i>Built for Blueprint 2026 🚀</i>
+</div>
