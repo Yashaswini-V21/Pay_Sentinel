@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import shap
 from sklearn.ensemble import IsolationForest
+from sklearn.svm import OneClassSVM
 from sklearn.preprocessing import StandardScaler
 
 warnings.filterwarnings("ignore")
@@ -25,12 +26,18 @@ FEATURES = [
     "is_known_bank",
     "day_of_week",
     "daily_sender_count",
+    "vel_1h",
+    "vel_6h",
+    "amt_dev_median",
+    "amt_ratio_median",
+    "time_gap",
+    "sender_diversity"
 ]
 
 
 def engineer(df):
     """
-    Feature engineering for anomaly detection.
+    Feature engineering for upgraded hybrid anomaly detection.
     
     Parameters:
     -----------
@@ -40,111 +47,81 @@ def engineer(df):
     Returns:
     --------
     pd.DataFrame
-        DataFrame with 14 engineered features added
-    
-    Features Created (14 total):
-    1. amount - numeric conversion
-    2. amount_log - log-transformed amount
-    3. hour - numeric conversion
-    4. is_night - binary flag for night hours (< 6 AM OR > 10 PM)
-    5. is_late_night - binary flag for very late night (< 4 AM)
-    6. is_biz_hours - binary flag for business hours (9 AM - 9 PM)
-    7. is_round - binary flag for round amounts (divisible by 100)
-    8. is_large - binary flag for large transactions (> Rs.5000)
-    9. is_very_large - binary flag for very large transactions (> Rs.15000)
-    10. sender_freq - frequency of sender in dataset
-    11. is_new_sender - binary flag for new/first-time sender
-    12. is_known_bank - binary flag for known bank UPI providers
-    13. day_of_week - day of week (0-6)
-    14. daily_sender_count - count of sender transactions per day
+        DataFrame with 20 engineered features added
     """
     
     d = df.copy()
     
-    # ========================================================================
-    # NUMERIC FEATURES
-    # ========================================================================
-    
-    # Convert amount to numeric and fill nulls
+    # 1. Base Setup & Numeric Conversions
     d["amount"] = pd.to_numeric(d["amount"], errors="coerce").fillna(0)
-    
-    # Log-transformed amount (log1p to handle zeros)
     d["amount_log"] = np.log1p(d["amount"])
-    
-    # Convert hour to numeric and fill nulls with 12 (noon)
     d["hour"] = pd.to_numeric(d["hour"], errors="coerce").fillna(12).astype(int)
     
-    # ========================================================================
-    # TIME-BASED FEATURES
-    # ========================================================================
+    # 2. Reconstruct Timestamp for Temporal Features
+    if "date" in d.columns:
+        # Create a helper timestamp if possible for velocity calc
+        # Note: If hours are provided separately, we combine them
+        d["_ts"] = pd.to_datetime(d["date"]) + pd.to_timedelta(d["hour"], unit='h')
+        d = d.sort_values("_ts")
     
-    # Night hours: < 6 AM OR > 10 PM
+    # 3. Time-Based Logic
     d["is_night"] = ((d["hour"] < 6) | (d["hour"] > 22)).astype(int)
-    
-    # Very late night: < 4 AM
     d["is_late_night"] = (d["hour"] < 4).astype(int)
-    
-    # Business hours: 9 AM to 9 PM
     d["is_biz_hours"] = ((d["hour"] >= 9) & (d["hour"] <= 21)).astype(int)
-    
-    # Round amount (divisible by 100)
     d["is_round"] = (d["amount"] % 100 == 0).astype(int)
-    
-    # Large transaction (> Rs.5000)
     d["is_large"] = (d["amount"] > 5000).astype(int)
-    
-    # Very large transaction (> Rs.15000)
     d["is_very_large"] = (d["amount"] > 15000).astype(int)
     
-    # ========================================================================
-    # SENDER-BASED FEATURES
-    # ========================================================================
-    
+    # 4. Temporal Velocity (Rolling windows)
+    if "_ts" in d.columns:
+        d = d.set_index("_ts")
+        d["vel_1h"] = d["amount"].rolling("1h").count()
+        d["vel_6h"] = d["amount"].rolling("6h").count()
+        # Amount Deviation vs 7-day median
+        rolling_median = d["amount"].rolling("7d").median()
+        d["amt_dev_median"] = (d["amount"] - rolling_median).abs()
+        d["amt_ratio_median"] = d["amount"] / (rolling_median + 1)
+        # Time gap
+        d["time_gap"] = d.index.to_series().diff().dt.total_seconds().fillna(0)
+        # Sender Diversity (Unique in 24h)
+        if "sender" in d.columns:
+            d["unique_24h"] = d["sender"].rolling("24h").apply(lambda x: len(np.unique(x)))
+            d["sender_diversity"] = d["unique_24h"] / (d["vel_6h"] + 1)
+        else:
+            d["sender_diversity"] = 0
+        d = d.reset_index()
+    else:
+        for col in ["vel_1h", "vel_6h", "amt_dev_median", "amt_ratio_median", "time_gap", "sender_diversity"]:
+            d[col] = 0
+
+    # 5. Sender & Date Logic
     if "sender" in d.columns:
-        # Sender frequency in dataset
         sc = d["sender"].value_counts()
         d["sender_freq"] = d["sender"].map(sc)
-        
-        # New sender (first time, freq == 1)
         d["is_new_sender"] = (d["sender_freq"] == 1).astype(int)
-        
-        # Known bank UPI providers
         known_banks = ["oksbi", "okaxis", "okicici", "ybl", "paytm", "okhdfcbank"]
-        d["is_known_bank"] = d["sender"].apply(
-            lambda x: int(any(b in str(x).lower() for b in known_banks))
-        )
+        d["is_known_bank"] = d["sender"].apply(lambda x: int(any(b in str(x).lower() for b in known_banks)))
     else:
-        # If sender column missing, set features to 0
         d["sender_freq"] = 0
         d["is_new_sender"] = 0
         d["is_known_bank"] = 0
     
-    # ========================================================================
-    # DATE-BASED FEATURES
-    # ========================================================================
-    
     if "date" in d.columns:
-        # Convert to datetime
         d["_date_parsed"] = pd.to_datetime(d["date"], errors="coerce")
-        
-        # Day of week (0=Monday, 6=Sunday)
         d["day_of_week"] = d["_date_parsed"].dt.dayofweek
-        
-        # Daily sender count: how many times this sender sent TODAY
         if "sender" in d.columns:
-            d["daily_sender_count"] = (
-                d.groupby([d["_date_parsed"].dt.date, "sender"])["amount"].transform("count")
-            )
+            d["daily_sender_count"] = d.groupby([d["_date_parsed"].dt.date, "sender"])["amount"].transform("count")
         else:
             d["daily_sender_count"] = 0
-        
-        # Drop temporary column
-        d = d.drop(columns=["_date_parsed"])
     else:
-        # If date column missing, set features to 0
         d["day_of_week"] = 0
         d["daily_sender_count"] = 0
-    
+
+    # Clean up and ensure all FEATURES exist
+    for f in FEATURES:
+        if f not in d.columns:
+            d[f] = 0
+            
     return d
 
 
@@ -246,24 +223,24 @@ def get_flags(row, fp):
 
 class PaySentinelDetector:
     """
-    Isolation Forest-based fraud detection model for UPI transactions.
-    Includes SHAP explainability and merchant fingerprinting.
+    Hybrid Isolation Forest + One-Class SVM detector for UPI transactions.
+    Provides normalized risk scores (0-100) and SHAP explainability.
     """
     
     def __init__(self, contamination=0.05):
         """
-        Initialize the detector.
-        
-        Parameters:
-        -----------
-        contamination : float
-            Expected proportion of anomalies (default: 0.05)
+        Initialize the hybrid detector.
         """
-        self.model = IsolationForest(
+        self.iforest = IsolationForest(
             n_estimators=200,
             contamination=contamination,
             random_state=42,
             n_jobs=-1,
+        )
+        self.svm = OneClassSVM(
+            kernel='rbf',
+            gamma='auto',
+            nu=contamination
         )
         self.scaler = StandardScaler()
         self.explainer = None
@@ -273,59 +250,62 @@ class PaySentinelDetector:
 
     def fit(self, df):
         """
-        Train the detector on transaction data.
-        
-        Parameters:
-        -----------
-        df : pd.DataFrame
-            Training transaction data
-        
-        Returns:
-        --------
-        self
+        Train both models on transaction data.
         """
         df_f = engineer(df)
         self.fp = build_fingerprint(df_f)
         X = df_f[FEATURES].fillna(0)
         Xs = self.scaler.fit_transform(X)
-        self.model.fit(Xs)
+        
+        # Fit models
+        self.iforest.fit(Xs)
+        self.svm.fit(Xs)
+        
+        # Setup SHAP on the primary model (Isolation Forest)
         self.bg = shap.sample(pd.DataFrame(Xs, columns=FEATURES), 50)
         self.explainer = shap.KernelExplainer(
-            lambda x: self.model.score_samples(x), self.bg
+            lambda x: self.iforest.score_samples(x), self.bg
         )
         self.fitted = True
-        print(f"✅ Model fitted on {len(df)} transactions")
+        print(f"✅ Hybrid Model fitted on {len(df)} transactions")
         return self
 
     def predict(self, df):
         """
-        Predict anomalies and risk scores.
-        
-        Parameters:
-        -----------
-        df : pd.DataFrame
-            Transaction data to predict on
-        
-        Returns:
-        --------
-        pd.DataFrame
-            Original data with added columns: is_anomaly, anomaly_score, risk_level, flags
+        Predict anomalies using hybrid logic.
+        Risk Score = 0.4*IF + 0.4*SVM + 0.2*Heuristics
         """
         df_f = engineer(df)
         X = df_f[FEATURES].fillna(0)
         Xs = self.scaler.transform(X)
-        preds = self.model.predict(Xs)
-        scores = self.model.score_samples(Xs)
+        
+        # 1. Get Base Model Scores
+        if_scores = self.iforest.score_samples(Xs)
+        svm_scores = self.svm.decision_function(Xs)
+        
+        # 2. Normalize Scores (0 safe, 1 fraud)
+        # IF score_samples: more negative is more anomalous
+        if_norm = 1 - ((if_scores - if_scores.min()) / (if_scores.max() - if_scores.min() + 1e-9))
+        # SVM decision_function: more negative is more anomalous
+        svm_norm = 1 - ((svm_scores - svm_scores.min()) / (svm_scores.max() - svm_scores.min() + 1e-9))
+        
+        # 3. Rule-based Heuristics (0 to 1)
+        rule_score = np.zeros(len(df_f))
+        rule_score += (df_f['vel_1h'] > 8).astype(int) * 0.4
+        rule_score += (df_f['amt_ratio_median'] > 4).astype(int) * 0.4
+        rule_score += (df_f['sender_diversity'] < 0.2).astype(int) * 0.2
+        rule_score = np.clip(rule_score, 0, 1)
 
-        mn, mx = scores.min(), scores.max()
-        risk = 100 * (1 - (scores - mn) / (mx - mn + 1e-9))
+        # 4. Ensemble Logic
+        final_risk = (0.4 * if_norm) + (0.4 * svm_norm) + (0.2 * rule_score)
+        risk_100 = (final_risk * 100).clip(0, 100)
 
         r = df.copy()
-        r["is_anomaly"] = (preds == -1).astype(int)
-        r["anomaly_score"] = np.round(risk, 1)
+        r["is_anomaly"] = (risk_100 > 75).astype(int)
+        r["anomaly_score"] = np.round(risk_100, 1)
         r["risk_level"] = pd.cut(
             r["anomaly_score"],
-            [0, 30, 60, 80, 100],
+            [-1, 30, 60, 85, 101],
             labels=["LOW", "MEDIUM", "HIGH", "CRITICAL"],
             include_lowest=True,
         )

@@ -180,19 +180,30 @@ with tab1:
     if st.session_state["df_raw"] is not None:
         st.markdown("---")
         if st.button("🔍 Run Anomaly Detection", type="primary"):
-            with st.spinner("Training on your merchant data..."):
-                progress = st.progress(0)
-                time.sleep(0.2)
-                progress.progress(20)
-                detector = PaySentinelDetector(contamination=contamination)
-                detector.fit(st.session_state["df_raw"])
-                progress.progress(60)
-                results = detector.predict(st.session_state["df_raw"])
-                progress.progress(100)
-                time.sleep(0.2)
-                progress.empty()
-                st.session_state["detector"] = detector
-                st.session_state["results"] = results
+            progress = st.progress(0)
+            status   = st.empty()
+
+            status.text("⚙️ Loading data...")
+            time.sleep(0.2); progress.progress(15)
+
+            status.text("🔧 Engineering 14 features...")
+            time.sleep(0.3); progress.progress(35)
+
+            status.text("👤 Building merchant fingerprint...")
+            detector = PaySentinelDetector(contamination=contamination)
+            detector.fit(st.session_state["df_raw"])
+            progress.progress(65)
+
+            status.text("🔍 Running anomaly detection...")
+            results = detector.predict(st.session_state["df_raw"])
+            progress.progress(85)
+
+            status.text("🧠 Setting up SHAP explainer...")
+            time.sleep(0.2); progress.progress(100)
+
+            progress.empty(); status.empty()
+            st.session_state["detector"] = detector
+            st.session_state["results"]  = results
             st.success("✅ Analysis complete! Check the Fraud Alerts tab →")
 
     # ── SECTION D — Summary metrics ──
@@ -431,27 +442,20 @@ with tab3:
         if len(fraud) > 0:
             fraud_h = fraud.copy()
             fraud_h["day_name"] = fraud_h["date"].dt.day_name()
-            heat = (
-                fraud_h.groupby(["day_name", "hour"])
-                .size()
-                .reset_index(name="count")
-            )
+            fraud_h["hour_int"] = fraud_h["hour"].astype(int)
+            heat = fraud_h.groupby(["day_name","hour_int"]).size().reset_index(name="count")
             fig3 = px.density_heatmap(
-                heat,
-                x="hour",
-                y="day_name",
-                z="count",
+                heat, x="hour_int", y="day_name", z="count",
                 color_continuous_scale="Reds",
-                title="Fraud Heatmap — Hour × Day of Week",
+                title="Fraud Risk Heatmap — Hour × Day of Week",
+                labels={"hour_int":"Hour of Day","day_name":"Day"}
             )
             fig3.update_layout(
-                paper_bgcolor="#07070f",
-                plot_bgcolor="#0d0d1c",
-                font=dict(color="#f0f0fa"),
-                height=280,
-                margin=dict(t=40, b=30),
+                paper_bgcolor="#07070f", plot_bgcolor="#0d0d1c",
+                font=dict(color="#f0f0fa"), height=280, margin=dict(t=40,b=30)
             )
             st.plotly_chart(fig3, use_container_width=True)
+            st.caption("🔴 Darker red = higher fraud concentration at that hour + day")
         else:
             st.info("No fraud detected — heatmap unavailable.")
 
@@ -599,74 +603,59 @@ with tab4:
             )
 
 with tab5:
-    # ── GUARD CHECK ──
-    if (
-        st.session_state["results"] is None
-        or st.session_state["detector"] is None
-    ):
+    # GUARD CHECK:
+    if st.session_state["results"] is None or st.session_state["detector"] is None:
         st.info("👆 Run detection in the Upload tab first.")
     else:
-        results = st.session_state["results"]
+
+        results  = st.session_state["results"]
         detector = st.session_state["detector"]
         merchant = st.session_state["merchant_name"]
         anomalies = results[results["is_anomaly"] == 1]
-        risk_amt = (
-            anomalies["amount"].sum()
-            if "amount" in anomalies.columns
-            else 0
-        )
+        risk_amt  = anomalies["amount"].sum() if "amount" in anomalies.columns else 0
 
-        # ── STEP 1 — Report preview info (two columns) ──
+        # STEP 1 — Report preview info (two columns):
         col_a, col_b = st.columns(2)
 
         with col_a:
             st.markdown("**This report includes:**")
-            st.markdown(
-                f"- 📊 **{len(results):,}** total transactions analysed"
-            )
-            st.markdown(
-                f"- 🚨 **{len(anomalies)}** suspicious transactions"
-            )
+            st.markdown(f"- 📊 **{len(results):,}** total transactions analysed")
+            st.markdown(f"- 🚨 **{len(anomalies)}** suspicious transactions")
             st.markdown(f"- 💰 **₹{risk_amt:,.0f}** at-risk amount")
             st.markdown("- 🌐 English + ಕನ್ನಡ sections")
             st.markdown("- 📞 Cyber Crime Helpline: **1930**")
 
         with col_b:
             st.markdown("**Kannada section preview:**")
-            st.markdown(
-                """
-                <div style="background:#0d0d1c; border:1px solid
-                    rgba(255,255,255,0.08); border-radius:8px;
-                    padding:12px; margin-top:4px;">
-                <b>ಕನ್ನಡ ಸಲಹೆ (Kannada Advisory):</b><br>
-                ಸಂಶಯಾಸ್ಪದ ವ್ಯವಹಾರ: ತಕ್ಷಣ ಬ್ಯಾಂಕ್‌ಗೆ ತಿಳಿಸಿ<br>
-                ಸೈಬರ್ ಕ್ರೈಮ್ ಸಹಾಯವಾಣಿ: <b>1930</b>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            st.markdown("""
+            
+    
+            ಕನ್ನಡ ಸಲಹೆ (Kannada Advisory):
+    
+            ಸಂಶಯಾಸ್ಪದ ವ್ಯವಹಾರ: ತಕ್ಷಣ ಬ್ಯಾಂಕ್‌ಗೆ ತಿಳಿಸಿ
+    
+            ಸೈಬರ್ ಕ್ರೈಮ್ ಸಹಾಯವಾಣಿ: 1930
+            
+    
+            """, unsafe_allow_html=True)
 
-        # ── STEP 2 — Generate button ──
+        # STEP 2 — Generate button:
         st.markdown("---")
         if st.button("📄 Generate PDF Report", type="primary"):
             with st.spinner("Generating report..."):
                 try:
                     pdf_bytes = make_pdf(merchant, results, detector.fp)
                     st.success("✅ Report generated!")
-                    fname = (
-                        f"paysentinel_{merchant.replace(' ', '_')}.pdf"
-                    )
+                    fname = f"paysentinel_{merchant.replace(' ','_')}.pdf"
                     st.download_button(
                         label="⬇️ Download PDF Report",
                         data=pdf_bytes,
                         file_name=fname,
-                        mime="application/pdf",
+                        mime="application/pdf"
                     )
                 except Exception as e:
                     st.error(f"PDF error: {e}")
 
-        # ── STEP 3 — Info note ──
-        st.caption(
-            "The PDF includes a Kannada advisory section and "
-            "Cyber Crime Helpline 1930. Safe to share with your bank."
-        )
+        # STEP 3 — Info note:
+        st.caption("The PDF includes a Kannada advisory section and Cyber Crime Helpline 1930. Safe to share with your bank.")
+
