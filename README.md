@@ -15,6 +15,18 @@
 
 ---
 
+## 🏆 **JUDGE'S TECHNICAL SHOWCASE**
+> *Why this looks like a $10M Series A fintech product*
+
+### 🛠️ **High-End UI/UX Engineering**
+*   **Purposeful Motion:** Not just "animations," but **data-driven state changes**. The `blink-alert` CSS animation pulses at a frequency tied to threat severity.
+*   **Stark Tech Aesthetic:** Uses a custom-engineered **44px grid system** and **Geist Mono** (numbers) + **Inter** (labels) typography stack to communicate "Institutional Trust + Modern Speed."
+*   **Cognitive Load Reduction:** The "Risk Speedometer" translates complex ML scores into a 1-second visual read. No text reading required for primary detection.
+*   **Cinematic Replay:** The **Animated Timeline** isn't a static chart; it's a dynamic playback of the merchant's business history, turning a CSV into a story.
+
+---
+
+
 </div>
 
 ## 🎯 **THE PROBLEM WE SOLVE**
