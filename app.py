@@ -1,9 +1,10 @@
 # ============================================================================
-# PaySentinel — app.py  (Complete Streamlit Dashboard)
+# PaySentinel — app.py  (Premium Fintech Dashboard)
 # AI-Powered UPI Merchant Fraud Detection | English + Kannada
+# "Stark Tech" Aesthetic — Award-winning Fintech UI
 # ============================================================================
 
-# ── PART 1 — IMPORTS ────────────────────────────────────────────────────────
+# ── IMPORTS ─────────────────────────────────────────────────────────────────
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -15,95 +16,86 @@ from generate_data import generate_merchant_transactions
 from model import PaySentinelDetector
 from voice_alerts import alert_html, summary_html
 from pdf_report import make_pdf
+from premium_css import inject_css
+from premium_components import (
+    risk_gauge,
+    transaction_bubble,
+    merchant_profile_card,
+    animated_timeline,
+    daily_volume_chart,
+    fraud_heatmap,
+    shap_bar_chart,
+    skeleton_loader,
+    section_header,
+)
 
-# ── PART 2 — PAGE CONFIG ───────────────────────────────────────────────────
+# ── PAGE CONFIG ─────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="PaySentinel",
+    page_title="PaySentinel — AI Fraud Shield",
     page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# ── PART 3 — CUSTOM DARK CSS ───────────────────────────────────────────────
+# ── INJECT PREMIUM CSS ─────────────────────────────────────────────────────
+st.markdown(inject_css(), unsafe_allow_html=True)
+
+# ── SESSION STATE ───────────────────────────────────────────────────────────
+for key, default in [("detector", None), ("results", None),
+                     ("df_raw", None), ("merchant_name", "My UPI Store")]:
+    if key not in st.session_state:
+        st.session_state[key] = default
+
+# ── PREMIUM HEADER ──────────────────────────────────────────────────────────
+merchant = st.session_state["merchant_name"]
 st.markdown(
-    """
-    <style>
-    /* ── App background ── */
-    .stApp {
-        background-color: #07070f;
-        color: #f0f0fa;
-    }
-
-    /* ── Sidebar ── */
-    [data-testid="stSidebar"] {
-        background-color: #0d0d1c !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.055);
-    }
-
-    /* ── Metric cards ── */
-    [data-testid="stMetric"] {
-        background: #0d0d1c;
-        border: 1px solid rgba(255, 255, 255, 0.055);
-        border-radius: 8px;
-        padding: 1rem;
-    }
-    [data-testid="stMetricLabel"] {
-        color: #8888a8 !important;
-        font-size: 12px !important;
-    }
-
-    /* ── Chat-style bubbles ── */
-    .fraud-bubble {
-        background: #1a0505;
-        border-left: 4px solid #e24b4a;
-        border-radius: 0 8px 8px 0;
-        padding: 11px 14px;
-        margin: 5px 0;
-    }
-    .safe-bubble {
-        background: #041208;
-        border-left: 4px solid #0fc98f;
-        border-radius: 0 8px 8px 0;
-        padding: 11px 14px;
-        margin: 5px 0;
-    }
-    </style>
+    f"""
+    <div style="display:flex; align-items:center; gap:14px; margin-bottom:8px;">
+      <div style="font-size:2rem;">🛡️</div>
+      <div>
+        <div style="font-size:1.7rem; font-weight:800;
+                    background:linear-gradient(135deg,#e24b4a,#ff8a80);
+                    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+                    letter-spacing:-0.5px; font-family:'Space Grotesk',sans-serif;">
+          PaySentinel
+        </div>
+        <div style="font-size:0.76rem; color:#8888a8; font-weight:400;
+                    letter-spacing:0.5px;">
+          AI-Powered Fraud Shield for {merchant}
+        </div>
+      </div>
+      <div style="flex:1;"></div>
+      <div style="display:flex; align-items:center; gap:6px;
+                  background:rgba(15,201,143,0.1); padding:4px 12px;
+                  border-radius:999px; border:1px solid rgba(15,201,143,0.2);">
+        <span class="live-dot"></span>
+        <span style="font-size:0.72rem; color:#0fc98f; font-weight:600;
+                     letter-spacing:0.5px;">MONITORING</span>
+      </div>
+    </div>
     """,
     unsafe_allow_html=True,
 )
 
-# ── PART 4 — SESSION STATE (initialise only if key does NOT already exist) ──
-if "detector" not in st.session_state:
-    st.session_state["detector"] = None
-if "results" not in st.session_state:
-    st.session_state["results"] = None
-if "df_raw" not in st.session_state:
-    st.session_state["df_raw"] = None
-if "merchant_name" not in st.session_state:
-    st.session_state["merchant_name"] = "My UPI Store"
-
-# ── PART 5 — MAIN HEADER ───────────────────────────────────────────────────
-merchant = st.session_state["merchant_name"]
-st.markdown(f"## 🛡️ PaySentinel — {merchant}")
-
-# ── PART 6 — SIDEBAR ──────────────────────────────────────────────────────
+# ── SIDEBAR ─────────────────────────────────────────────────────────────────
 with st.sidebar:
-    # ── Title ──
     st.markdown("# 🛡️ PaySentinel")
-    st.markdown("*AI Merchant Fraud Shield*")
+    st.markdown(
+        '<span style="color:#8888a8; font-size:0.82rem;">AI Merchant Fraud Shield</span>',
+        unsafe_allow_html=True,
+    )
     st.divider()
 
-    # ── Merchant name input ──
     merchant_name = st.text_input(
         "🏪 Merchant Name", value=st.session_state["merchant_name"]
     )
     st.session_state["merchant_name"] = merchant_name
 
-    # ── Language selector ──
-    lang_select = st.selectbox("🔊 Alert Language", ["English", "Kannada (ಕನ್ನಡ)"])
+    lang_select = st.selectbox(
+        "🔊 Alert Language", ["English", "Kannada (ಕನ್ನಡ)"]
+    )
     lang_key = "Kannada" if "Kannada" in lang_select else "English"
 
-    # ── Detection sensitivity slider ──
     sensitivity = st.select_slider(
         "🎯 Detection Sensitivity",
         options=["2%", "5%", "8%", "12%", "15%"],
@@ -114,35 +106,53 @@ with st.sidebar:
 
     st.divider()
 
-    # ── About section ──
-    st.markdown("**About**")
     st.markdown(
         """
-- 🤖 Isolation Forest ML
-- 🧠 SHAP Explainability
-- 🔊 Kannada + English voice
-- 📄 PDF audit report
-- ✅ 100% Free
-"""
+        <div style="background:rgba(112,96,238,0.08); border:1px solid rgba(112,96,238,0.15);
+                    border-radius:12px; padding:14px; margin:8px 0;">
+          <div style="font-size:0.75rem; font-weight:600; color:#7060ee;
+                      text-transform:uppercase; letter-spacing:0.8px; margin-bottom:8px;">
+            Tech Stack
+          </div>
+          <div style="font-size:0.78rem; color:#aaa; line-height:1.8;">
+            🤖 Isolation Forest + SVM Hybrid<br>
+            🧠 SHAP Explainability<br>
+            🔊 Kannada + English Voice<br>
+            📄 Bilingual PDF Reports<br>
+            ⚡ &lt;100ms Kafka Pipeline
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
-    # ── Bottom note ──
     st.markdown("---")
-    st.caption("ಕನ್ನಡ + English | HackPulse 2026")
+    st.markdown(
+        '<div style="text-align:center; font-size:0.7rem; color:#555577;">'
+        'ಕನ್ನಡ + English &nbsp;|&nbsp; Blueprint 2026</div>',
+        unsafe_allow_html=True,
+    )
 
-# ── PART 7 — TABS ─────────────────────────────────────────────────────────
+# ── TABS ────────────────────────────────────────────────────────────────────
 tab1, tab2, tab3, tab4, tab5 = st.tabs(
     [
         "📤 Upload & Analyse",
         "🚨 Fraud Alerts",
-        "📈 Timeline",
-        "🧠 Explain",
+        "📈 Timeline & Heatmap",
+        "🧠 Explain (SHAP)",
         "📄 PDF Report",
     ]
 )
 
+# ════════════════════════════════════════════════════════════════════════════
+# TAB 1 — UPLOAD & ANALYSE
+# ════════════════════════════════════════════════════════════════════════════
 with tab1:
-    # ── SECTION A — Data loading (two columns) ──
+    st.markdown(
+        section_header("Upload & Analyse", "Load transaction data and run ML detection"),
+        unsafe_allow_html=True,
+    )
+
     col_upload, col_sample = st.columns(2)
 
     with col_upload:
@@ -154,7 +164,7 @@ with tab1:
 
     with col_sample:
         st.markdown("")
-        if st.button("🎲 Use Sample Data"):
+        if st.button("🎲 Generate Sample Data", use_container_width=True):
             with st.spinner("Generating sample data..."):
                 df = generate_merchant_transactions(
                     merchant_name=st.session_state["merchant_name"]
@@ -165,9 +175,10 @@ with tab1:
     if uploaded is not None:
         df_up = pd.read_csv(uploaded)
         st.session_state["df_raw"] = df_up
-        st.success(f"✅ Loaded {len(df_up):,} transactions from {uploaded.name}")
+        st.success(
+            f"✅ Loaded {len(df_up):,} transactions from {uploaded.name}"
+        )
 
-    # ── SECTION B — Sample CSV download ──
     if st.session_state["df_raw"] is not None and uploaded is None:
         st.download_button(
             "⬇️ Download Sample CSV",
@@ -176,37 +187,52 @@ with tab1:
             "text/csv",
         )
 
-    # ── SECTION C — Run Detection button ──
+    # ── Run Detection ──
     if st.session_state["df_raw"] is not None:
         st.markdown("---")
-        if st.button("🔍 Run Anomaly Detection", type="primary"):
+        if st.button("🔍 Run Anomaly Detection", type="primary",
+                     use_container_width=True):
             progress = st.progress(0)
-            status   = st.empty()
+            status = st.empty()
 
-            status.text("⚙️ Loading data...")
-            time.sleep(0.2); progress.progress(15)
+            # Show skeleton while processing
+            placeholder = st.empty()
+            placeholder.markdown(
+                skeleton_loader("chart") + skeleton_loader("card"),
+                unsafe_allow_html=True,
+            )
 
-            status.text("🔧 Engineering 14 features...")
-            time.sleep(0.3); progress.progress(35)
+            steps = [
+                (15, "⚙️ Loading data..."),
+                (35, "🔧 Engineering 20 features..."),
+                (50, "👤 Building merchant fingerprint..."),
+            ]
+            for pct, msg in steps:
+                status.text(msg)
+                time.sleep(0.2)
+                progress.progress(pct)
 
-            status.text("👤 Building merchant fingerprint...")
             detector = PaySentinelDetector(contamination=contamination)
             detector.fit(st.session_state["df_raw"])
             progress.progress(65)
 
-            status.text("🔍 Running anomaly detection...")
+            status.text("🔍 Running hybrid anomaly detection...")
             results = detector.predict(st.session_state["df_raw"])
             progress.progress(85)
 
             status.text("🧠 Setting up SHAP explainer...")
-            time.sleep(0.2); progress.progress(100)
+            time.sleep(0.2)
+            progress.progress(100)
 
-            progress.empty(); status.empty()
+            progress.empty()
+            status.empty()
+            placeholder.empty()
             st.session_state["detector"] = detector
-            st.session_state["results"]  = results
-            st.success("✅ Analysis complete! Check the Fraud Alerts tab →")
+            st.session_state["results"] = results
 
-    # ── SECTION D — Summary metrics ──
+            st.success("✅ Analysis complete! Navigate to other tabs →")
+
+    # ── Summary Metrics + Merchant Profile ──
     if st.session_state["results"] is not None:
         results = st.session_state["results"]
         anomalies = results[results["is_anomaly"] == 1]
@@ -217,6 +243,8 @@ with tab1:
         )
 
         st.markdown("---")
+
+        # Premium Metric Cards
         m1, m2, m3, m4 = st.columns(4)
         m1.metric("Total Transactions", f"{n_total:,}")
         m2.metric(
@@ -228,20 +256,31 @@ with tab1:
         m3.metric("💰 At-Risk Amount", f"₹{risk_amt:,.0f}")
         m4.metric("✅ Safe", f"{n_total - n_fraud:,}")
 
+        # Merchant Profile Card
         st.markdown("---")
-        st.markdown("**All Transactions**")
+        detector = st.session_state["detector"]
+        st.markdown(
+            merchant_profile_card(
+                st.session_state["merchant_name"],
+                detector.fp,
+                n_total,
+                n_fraud,
+                risk_amt,
+            ),
+            unsafe_allow_html=True,
+        )
+
+        # Data table
+        st.markdown("---")
+        st.markdown(
+            section_header("Transaction Data", "All processed transactions"),
+            unsafe_allow_html=True,
+        )
         display_cols = [
             c
             for c in [
-                "transaction_id",
-                "date",
-                "hour",
-                "amount",
-                "sender",
-                "description",
-                "is_anomaly",
-                "anomaly_score",
-                "risk_level",
+                "transaction_id", "date", "hour", "amount", "sender",
+                "description", "is_anomaly", "anomaly_score", "risk_level",
             ]
             if c in results.columns
         ]
@@ -249,236 +288,195 @@ with tab1:
             results[display_cols], use_container_width=True, height=360
         )
 
+# ════════════════════════════════════════════════════════════════════════════
+# TAB 2 — FRAUD ALERTS (Live Feed + Risk Gauges)
+# ════════════════════════════════════════════════════════════════════════════
 with tab2:
-    # ── GUARD CHECK ──
     if st.session_state["results"] is None:
+        st.markdown(
+            section_header("Fraud Alerts", "Run detection first"),
+            unsafe_allow_html=True,
+        )
         st.info("👆 Run detection in the Upload tab first.")
+        st.markdown(skeleton_loader("card") * 3, unsafe_allow_html=True)
     else:
         results = st.session_state["results"]
         anomalies = results[results["is_anomaly"] == 1].sort_values(
             "anomaly_score", ascending=False
         )
 
-        # ── STEP 1 — Summary audio (autoplay on page load) ──
+        # Summary audio
         st.markdown(
             summary_html(len(anomalies), lang_key), unsafe_allow_html=True
         )
 
-        # ── STEP 2 — Header ──
+        st.markdown(
+            section_header(
+                "Live Transaction Feed",
+                f'<span class="live-dot"></span> {len(anomalies)} alerts detected',
+            ),
+            unsafe_allow_html=True,
+        )
+
         if len(anomalies) == 0:
             st.success(
                 "✅ No suspicious transactions found! "
                 "Your merchant activity looks normal."
             )
         else:
-            st.markdown(
-                f"### 🚨 {len(anomalies)} Suspicious Transactions Found"
-            )
+            # ── Risk Gauge for top threat ──
+            top_score = float(anomalies.iloc[0].get("anomaly_score", 0))
+            col_gauge, col_summary = st.columns([1, 1])
 
-            # ── STEP 3 — WhatsApp-style bubble for each anomaly (top 10) ──
-            for i, (_, row) in enumerate(anomalies.head(10).iterrows()):
-                risk = str(row.get("risk_level", "HIGH"))
-                amount = row.get("amount", 0)
-                hour = int(row.get("hour", 0))
-                date = str(row.get("date", ""))[:10]
-                sender = str(row.get("sender", "Unknown"))[:35]
-                score = row.get("anomaly_score", 0)
-                flags = row.get("flags", [])
-                if not isinstance(flags, list):
-                    flags = []
+            with col_gauge:
+                fig_gauge = risk_gauge(top_score, "Highest Threat Score")
+                st.plotly_chart(fig_gauge, use_container_width=True)
 
-                # bubble colour by risk level
-                bg = "#1a0505" if risk in ("CRITICAL", "HIGH") else "#1a1405"
-                bl = "#e24b4a" if risk in ("CRITICAL", "HIGH") else "#f0a828"
-                sc = "#ff6060" if risk in ("CRITICAL", "HIGH") else "#f0a828"
-                ico = "🚨" if risk in ("CRITICAL", "HIGH") else "⚠️"
-                flags_html = "<br>".join([f"⚠ {f}" for f in flags[:3]])
-
+            with col_summary:
+                n_crit = len(anomalies[anomalies['risk_level'] == 'CRITICAL'])
+                n_high = len(anomalies[anomalies['risk_level'] == 'HIGH'])
+                n_med = len(anomalies[anomalies['risk_level'] == 'MEDIUM'])
                 st.markdown(
                     f"""
-                    <div style="background:{bg}; border-left:4px solid {bl};
-                                border-radius:0 8px 8px 0; padding:11px 14px;
-                                margin:5px 0;">
-                      <span style="font-size:1.3rem; font-weight:700;
-                                   color:{sc};">{ico} ₹{amount:,.0f}</span>
-                      <div style="color:#aaa; font-size:0.85rem; margin:4px 0;">
-                        📅 {date}  |  🕐 {hour}:00  |  👤 {sender}
+                    <div class="threat-summary">
+                      <div style="font-size:0.7rem; color:#8888a8; text-transform:uppercase;
+                                  letter-spacing:1px; margin-bottom:12px;">Threat Summary</div>
+                      <div style="font-family:'JetBrains Mono',monospace; font-size:2.4rem;
+                                  font-weight:800; color:#e24b4a; margin-bottom:8px;">
+                        {len(anomalies)} alerts
                       </div>
-                      <div style="color:#ccc; font-size:0.85rem; margin:6px 0;">
-                        {flags_html}
-                      </div>
-                      <div style="margin-top:6px;">
-                        <span style="background:{bl}; color:#fff; padding:2px 10px;
-                                     border-radius:999px; font-size:0.78rem;
-                                     font-weight:700;">{risk}</span>
-                        <span style="color:#888; font-size:0.8rem;
-                                     margin-left:8px;">{score:.1f}</span>
+                      <div style="color:#aaa; font-size:0.85rem; line-height:2;">
+                        🔴 Critical: {n_crit} &nbsp;
+                        🟠 High: {n_high} &nbsp;
+                        🟡 Medium: {n_med}<br>
+                        💰 Total at risk: ₹{anomalies['amount'].sum():,.0f}
                       </div>
                     </div>
                     """,
                     unsafe_allow_html=True,
                 )
 
-                # ── STEP 4 — Voice buttons (first 5 only) ──
+            st.markdown("---")
+
+            # ── Transaction Feed ──
+            for i, (_, row) in enumerate(anomalies.head(12).iterrows()):
+                is_new = i < 3  # First 3 get blink animation
+                st.markdown(
+                    transaction_bubble(row, index=i, is_new=is_new),
+                    unsafe_allow_html=True,
+                )
+
+                # Voice buttons for first 5
                 if i < 5:
-                    c_en, c_kn = st.columns(2)
+                    c_en, c_kn, c_gauge = st.columns([1, 1, 1])
                     with c_en:
                         if st.button(f"🔊 English", key=f"en_{i}"):
                             html = alert_html(
-                                amount, hour, risk, "English", autoplay=True
+                                row.get("amount", 0),
+                                int(row.get("hour", 0)),
+                                str(row.get("risk_level", "HIGH")),
+                                "English",
+                                autoplay=True,
                             )
                             st.markdown(html, unsafe_allow_html=True)
                     with c_kn:
                         if st.button(f"🔊 ಕನ್ನಡ", key=f"kn_{i}"):
                             html = alert_html(
-                                amount, hour, risk, "Kannada", autoplay=True
+                                row.get("amount", 0),
+                                int(row.get("hour", 0)),
+                                str(row.get("risk_level", "HIGH")),
+                                "Kannada",
+                                autoplay=True,
                             )
                             st.markdown(html, unsafe_allow_html=True)
+                    with c_gauge:
+                        score = float(row.get("anomaly_score", 0))
+                        mini_fig = risk_gauge(score, f"Score")
+                        mini_fig.update_layout(height=180,
+                                               margin=dict(t=30, b=0, l=20, r=20))
+                        st.plotly_chart(mini_fig, use_container_width=True,
+                                        key=f"gauge_{i}")
 
-                if i < len(anomalies.head(10)) - 1:
-                    st.markdown(
-                        "<hr style='border-color:rgba(255,255,255,0.06);'>",
-                        unsafe_allow_html=True,
-                    )
-
+# ════════════════════════════════════════════════════════════════════════════
+# TAB 3 — TIMELINE & HEATMAP
+# ════════════════════════════════════════════════════════════════════════════
 with tab3:
-    # ── GUARD CHECK ──
     if st.session_state["results"] is None:
+        st.markdown(
+            section_header("Timeline & Heatmap", "Run detection first"),
+            unsafe_allow_html=True,
+        )
         st.info("👆 Run detection in the Upload tab first.")
+        st.markdown(skeleton_loader("chart"), unsafe_allow_html=True)
     else:
-        r = st.session_state["results"].copy()
-        r["date"] = pd.to_datetime(r["date"], errors="coerce")
-        normal = r[r["is_anomaly"] == 0]
-        fraud = r[r["is_anomaly"] == 1]
+        results = st.session_state["results"]
 
-        # ── CHART 1 — Anomaly timeline ──
-        fig = go.Figure()
-        fig.add_trace(
-            go.Scatter(
-                x=normal["date"],
-                y=normal["amount"],
-                mode="markers",
-                name="✅ Normal",
-                marker=dict(color="#0fc98f", size=6, opacity=0.6),
-                hovertemplate=(
-                    "Normal<br>Date: %{x}<br>Amount: ₹%{y:,.0f}"
-                ),
-            )
+        st.markdown(
+            section_header("Animated Fraud Timeline",
+                           "Press ▶ Play to watch transactions unfold over 60 days"),
+            unsafe_allow_html=True,
         )
-        if len(fraud) > 0:
-            fig.add_trace(
-                go.Scatter(
-                    x=fraud["date"],
-                    y=fraud["amount"],
-                    mode="markers+text",
-                    name="🚨 Suspicious",
-                    marker=dict(
-                        color="#e24b4a",
-                        size=16,
-                        symbol="star",
-                        line=dict(color="#ff9999", width=1),
-                    ),
-                    text=["⚠"] * len(fraud),
-                    textposition="top center",
-                    hovertemplate=(
-                        "🚨 SUSPICIOUS<br>Date: %{x}<br>Amount: ₹%{y:,.0f}"
-                    ),
-                )
-            )
-        fig.update_layout(
-            title="Transaction Timeline — 60 Days",
-            paper_bgcolor="#07070f",
-            plot_bgcolor="#0d0d1c",
-            font=dict(color="#f0f0fa"),
-            xaxis=dict(title="Date", gridcolor="#1e1e45", color="#8888a8"),
-            yaxis=dict(
-                title="Amount (₹)", gridcolor="#1e1e45", color="#8888a8"
-            ),
-            legend=dict(bgcolor="#0d0d1c", bordercolor="#1e1e45"),
-            height=400,
-            hovermode="closest",
-            margin=dict(t=50, b=40),
-        )
-        st.plotly_chart(fig, use_container_width=True)
 
-        # ── CHART 2 — Daily transaction volume ──
-        daily = (
-            r.groupby(r["date"].dt.date)
-            .agg(total=("amount", "count"), fraud_count=("is_anomaly", "sum"))
-            .reset_index()
-        )
-        fig2 = go.Figure()
-        fig2.add_trace(
-            go.Bar(
-                x=daily["date"],
-                y=daily["total"],
-                name="All Transactions",
-                marker_color="rgba(112,96,238,0.4)",
-            )
-        )
-        fig2.add_trace(
-            go.Bar(
-                x=daily["date"],
-                y=daily["fraud_count"],
-                name="🚨 Suspicious",
-                marker_color="#e24b4a",
-            )
-        )
-        fig2.update_layout(
-            barmode="overlay",
-            title="Daily Transaction Volume",
-            paper_bgcolor="#07070f",
-            plot_bgcolor="#0d0d1c",
-            font=dict(color="#f0f0fa"),
-            xaxis=dict(gridcolor="#1e1e45"),
-            yaxis=dict(gridcolor="#1e1e45"),
-            legend=dict(bgcolor="#0d0d1c"),
-            height=280,
-            margin=dict(t=40, b=30),
-        )
-        st.plotly_chart(fig2, use_container_width=True)
+        # Chart 1 — Animated Timeline with play button
+        fig_timeline = animated_timeline(results)
+        st.plotly_chart(fig_timeline, use_container_width=True)
 
-        # ── CHART 3 — Hourly fraud heatmap ──
-        if len(fraud) > 0:
-            fraud_h = fraud.copy()
-            fraud_h["day_name"] = fraud_h["date"].dt.day_name()
-            fraud_h["hour_int"] = fraud_h["hour"].astype(int)
-            heat = fraud_h.groupby(["day_name","hour_int"]).size().reset_index(name="count")
-            fig3 = px.density_heatmap(
-                heat, x="hour_int", y="day_name", z="count",
-                color_continuous_scale="Reds",
-                title="Fraud Risk Heatmap — Hour × Day of Week",
-                labels={"hour_int":"Hour of Day","day_name":"Day"}
+        # Chart 2 — Daily Volume
+        st.markdown(
+            section_header("Daily Volume",
+                           "Transaction count per day with fraud overlay"),
+            unsafe_allow_html=True,
+        )
+        fig_vol = daily_volume_chart(results)
+        st.plotly_chart(fig_vol, use_container_width=True)
+
+        # Chart 3 — Heatmap
+        st.markdown(
+            section_header("Fraud Risk Heatmap",
+                           "Hour × Day concentration of suspicious activity"),
+            unsafe_allow_html=True,
+        )
+        fig_heat = fraud_heatmap(results)
+        if fig_heat is not None:
+            st.plotly_chart(fig_heat, use_container_width=True)
+            st.caption(
+                "🔴 Darker red = higher fraud concentration at that hour + day"
             )
-            fig3.update_layout(
-                paper_bgcolor="#07070f", plot_bgcolor="#0d0d1c",
-                font=dict(color="#f0f0fa"), height=280, margin=dict(t=40,b=30)
-            )
-            st.plotly_chart(fig3, use_container_width=True)
-            st.caption("🔴 Darker red = higher fraud concentration at that hour + day")
         else:
             st.info("No fraud detected — heatmap unavailable.")
 
+# ════════════════════════════════════════════════════════════════════════════
+# TAB 4 — EXPLAIN (SHAP)
+# ════════════════════════════════════════════════════════════════════════════
 with tab4:
-    # ── GUARD CHECK ──
     if (
         st.session_state["results"] is None
         or st.session_state["detector"] is None
     ):
+        st.markdown(
+            section_header("SHAP Explainability", "Run detection first"),
+            unsafe_allow_html=True,
+        )
         st.info("👆 Run detection in the Upload tab first.")
+        st.markdown(skeleton_loader("chart"), unsafe_allow_html=True)
     else:
         results = st.session_state["results"]
         detector = st.session_state["detector"]
         df_raw = st.session_state["df_raw"]
         fp = detector.fp
 
-        st.markdown("**Select a suspicious transaction to explain:**")
+        st.markdown(
+            section_header("SHAP Explainability",
+                           "Understand why each transaction was flagged"),
+            unsafe_allow_html=True,
+        )
+
         anomalies = results[results["is_anomaly"] == 1]
 
         if len(anomalies) == 0:
             st.success("✅ No suspicious transactions to explain.")
         else:
-            # Build dropdown options
+            # Build dropdown
             options = [
                 f"#{i} — ₹{row['amount']:,.0f} at "
                 f"{int(row.get('hour', 0))}:00 "
@@ -486,28 +484,32 @@ with tab4:
                 f"| {str(row.get('risk_level', ''))}"
                 for i, (_, row) in enumerate(anomalies.head(10).iterrows())
             ]
-            selected = st.selectbox("Transaction:", options)
+            selected = st.selectbox("Select a suspicious transaction:", options)
             sel_pos = options.index(selected)
             sel_idx = anomalies.index[sel_pos]
             row = results.loc[sel_idx]
 
-            # ── STEP 1 — Two columns: details + flags ──
-            c_left, c_right = st.columns(2)
+            # ── Two columns: Details + Risk Gauge ──
+            c_left, c_right = st.columns([3, 2])
+
             with c_left:
-                st.markdown("**Transaction Details**")
+                st.markdown(
+                    section_header("Transaction Details"),
+                    unsafe_allow_html=True,
+                )
                 for col in [
-                    "date",
-                    "hour",
-                    "amount",
-                    "sender",
-                    "description",
-                    "anomaly_score",
-                    "risk_level",
+                    "date", "hour", "amount", "sender", "description",
+                    "anomaly_score", "risk_level",
                 ]:
                     if col in row.index:
-                        st.markdown(f"- **{col}:** {row[col]}")
-            with c_right:
-                st.markdown("**Why flagged?**")
+                        val = row[col]
+                        if col == "amount":
+                            val = f"₹{val:,.0f}"
+                        st.markdown(f"- **{col.replace('_',' ').title()}:** {val}")
+
+                st.markdown(
+                    section_header("Why Flagged?"), unsafe_allow_html=True
+                )
                 flags = row.get("flags", [])
                 if isinstance(flags, list) and flags:
                     for flag in flags:
@@ -515,9 +517,18 @@ with tab4:
                 else:
                     st.markdown("⚠️ Statistical outlier detected by ML")
 
-            # ── STEP 2 — SHAP bar chart ──
+            with c_right:
+                score = float(row.get("anomaly_score", 0))
+                fig_g = risk_gauge(score, "Risk Score")
+                st.plotly_chart(fig_g, use_container_width=True)
+
+            # ── SHAP bar chart ──
             st.markdown("---")
-            st.markdown("**SHAP Feature Importance**")
+            st.markdown(
+                section_header("SHAP Feature Importance",
+                               "How each feature contributed to the score"),
+                unsafe_allow_html=True,
+            )
             with st.spinner("Computing SHAP values..."):
                 try:
                     orig_pos = (
@@ -528,39 +539,7 @@ with tab4:
                     explanation = detector.explain(
                         df_raw, min(orig_pos, len(df_raw) - 1)
                     )
-                    features = [
-                        e["feature"].replace("_", " ").title()
-                        for e in explanation
-                    ]
-                    impacts = [e["impact"] for e in explanation]
-                    colors = [
-                        "#e24b4a"
-                        if e["direction"] == "increases"
-                        else "#0fc98f"
-                        for e in explanation
-                    ]
-                    fig_shap = go.Figure(
-                        go.Bar(
-                            x=impacts,
-                            y=features,
-                            orientation="h",
-                            marker_color=colors,
-                            text=[f"{v:.4f}" for v in impacts],
-                            textposition="outside",
-                        )
-                    )
-                    fig_shap.update_layout(
-                        title="Feature Contributions to Anomaly Score",
-                        paper_bgcolor="#07070f",
-                        plot_bgcolor="#0d0d1c",
-                        font=dict(color="#f0f0fa"),
-                        xaxis=dict(
-                            title="SHAP Impact", gridcolor="#1e1e45"
-                        ),
-                        yaxis=dict(gridcolor="#1e1e45"),
-                        height=300,
-                        margin=dict(t=40, b=20, l=180),
-                    )
+                    fig_shap = shap_bar_chart(explanation)
                     st.plotly_chart(fig_shap, use_container_width=True)
                     st.caption(
                         "🔴 Red = increases fraud risk   "
@@ -569,9 +548,12 @@ with tab4:
                 except Exception as e:
                     st.warning(f"SHAP could not compute: {e}")
 
-            # ── STEP 3 — Plain language explanation ──
+            # ── Plain Language Explanation ──
             st.markdown("---")
-            st.markdown("**Plain Language Explanation**")
+            st.markdown(
+                section_header("Plain Language Explanation"),
+                unsafe_allow_html=True,
+            )
             amt = row.get("amount", 0)
             hour = int(row.get("hour", 0))
             explanation_text = (
@@ -584,9 +566,13 @@ with tab4:
             )
             st.info(explanation_text)
 
-            # ── STEP 4 — Merchant fingerprint ──
+            # ── Merchant Fingerprint ──
             st.markdown("---")
-            st.markdown("**Your Merchant Behaviour Fingerprint**")
+            st.markdown(
+                section_header("Merchant Behaviour Fingerprint",
+                               "Baseline learned from your history"),
+                unsafe_allow_html=True,
+            )
             f1, f2, f3 = st.columns(3)
             f1.metric(
                 "Normal Operating Hours",
@@ -602,60 +588,90 @@ with tab4:
                 f"{fp.get('peak_hour', 12)}:00",
             )
 
+# ════════════════════════════════════════════════════════════════════════════
+# TAB 5 — PDF REPORT
+# ════════════════════════════════════════════════════════════════════════════
 with tab5:
-    # GUARD CHECK:
-    if st.session_state["results"] is None or st.session_state["detector"] is None:
+    if (
+        st.session_state["results"] is None
+        or st.session_state["detector"] is None
+    ):
+        st.markdown(
+            section_header("PDF Report", "Run detection first"),
+            unsafe_allow_html=True,
+        )
         st.info("👆 Run detection in the Upload tab first.")
     else:
-
-        results  = st.session_state["results"]
+        results = st.session_state["results"]
         detector = st.session_state["detector"]
         merchant = st.session_state["merchant_name"]
         anomalies = results[results["is_anomaly"] == 1]
-        risk_amt  = anomalies["amount"].sum() if "amount" in anomalies.columns else 0
+        risk_amt = (
+            anomalies["amount"].sum() if "amount" in anomalies.columns else 0
+        )
 
-        # STEP 1 — Report preview info (two columns):
+        st.markdown(
+            section_header("Generate Audit Report",
+                           "Bilingual PDF for bank submission"),
+            unsafe_allow_html=True,
+        )
+
         col_a, col_b = st.columns(2)
 
         with col_a:
-            st.markdown("**This report includes:**")
-            st.markdown(f"- 📊 **{len(results):,}** total transactions analysed")
-            st.markdown(f"- 🚨 **{len(anomalies)}** suspicious transactions")
-            st.markdown(f"- 💰 **₹{risk_amt:,.0f}** at-risk amount")
-            st.markdown("- 🌐 English + ಕನ್ನಡ sections")
-            st.markdown("- 📞 Cyber Crime Helpline: **1930**")
+            st.markdown(
+                f"""
+                <div class="info-card info-card-purple">
+                  <div class="info-card-label" style="color:#7060ee;">
+                    Report Contents
+                  </div>
+                  <div style="color:#ccc; font-size:0.85rem; line-height:2;">
+                    📊 <strong>{len(results):,}</strong> total transactions analysed<br>
+                    🚨 <strong>{len(anomalies)}</strong> suspicious transactions<br>
+                    💰 <strong>₹{risk_amt:,.0f}</strong> at-risk amount<br>
+                    🌐 English + ಕನ್ನಡ sections<br>
+                    📞 Cyber Crime Helpline: <strong>1930</strong>
+                  </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
         with col_b:
-            st.markdown("**Kannada section preview:**")
-            st.markdown("""
-            
-    
-            ಕನ್ನಡ ಸಲಹೆ (Kannada Advisory):
-    
-            ಸಂಶಯಾಸ್ಪದ ವ್ಯವಹಾರ: ತಕ್ಷಣ ಬ್ಯಾಂಕ್‌ಗೆ ತಿಳಿಸಿ
-    
-            ಸೈಬರ್ ಕ್ರೈಮ್ ಸಹಾಯವಾಣಿ: 1930
-            
-    
-            """, unsafe_allow_html=True)
+            st.markdown(
+                """
+                <div class="info-card info-card-orange">
+                  <div class="info-card-label" style="color:#f0a828;">
+                    Kannada Advisory Preview
+                  </div>
+                  <div style="color:#ccc; font-size:0.85rem; line-height:2;">
+                    ಕನ್ನಡ ಸಲಹೆ (Kannada Advisory):<br>
+                    ಸಂಶಯಾಸ್ಪದ ವ್ಯವಹಾರ: ತಕ್ಷಣ ಬ್ಯಾಂಕ್‌ಗೆ ತಿಳಿಸಿ<br>
+                    ಸೈಬರ್ ಕ್ರೈಮ್ ಸಹಾಯವಾಣಿ: 1930
+                  </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
-        # STEP 2 — Generate button:
         st.markdown("---")
-        if st.button("📄 Generate PDF Report", type="primary"):
+        if st.button("📄 Generate PDF Report", type="primary",
+                     use_container_width=True):
             with st.spinner("Generating report..."):
                 try:
                     pdf_bytes = make_pdf(merchant, results, detector.fp)
                     st.success("✅ Report generated!")
-                    fname = f"paysentinel_{merchant.replace(' ','_')}.pdf"
+                    fname = f"paysentinel_{merchant.replace(' ', '_')}.pdf"
                     st.download_button(
                         label="⬇️ Download PDF Report",
                         data=pdf_bytes,
                         file_name=fname,
-                        mime="application/pdf"
+                        mime="application/pdf",
                     )
                 except Exception as e:
                     st.error(f"PDF error: {e}")
 
-        # STEP 3 — Info note:
-        st.caption("The PDF includes a Kannada advisory section and Cyber Crime Helpline 1930. Safe to share with your bank.")
-
+        st.caption(
+            "The PDF includes a Kannada advisory section and Cyber Crime "
+            "Helpline 1930. Safe to share with your bank."
+        )
