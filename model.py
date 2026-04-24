@@ -12,112 +12,120 @@ from sklearn.preprocessing import StandardScaler
 warnings.filterwarnings("ignore")
 
 FEATURES = [
-    "amount",
-    "amount_log",
-    "hour",
-    "is_night",
-    "is_late_night",
-    "is_biz_hours",
-    "is_round",
-    "is_large",
-    "is_very_large",
-    "sender_freq",
-    "is_new_sender",
-    "is_known_bank",
-    "day_of_week",
-    "daily_sender_count",
-    "vel_1h",
-    "vel_6h",
-    "amt_dev_median",
-    "amt_ratio_median",
-    "time_gap",
-    "sender_diversity"
+    "amount", "amount_log", "hour", "is_night", "is_late_night", "is_biz_hours",
+    "is_round", "is_large", "is_very_large", "sender_freq", "is_new_sender",
+    "is_known_bank", "day_of_week", "daily_sender_count", "vel_1h", "vel_6h",
+    "amt_dev_median", "amt_ratio_median", "time_gap", "sender_diversity",
+    # Level 1: Basic
+    "is_weekend", "hour_sin", "hour_cos", "amount_zscore", "is_exact_thousand",
+    "sender_handle_length", "amount_first_digit", "amount_bin",
+    # Level 2: Advanced
+    "vel_15m", "amt_rolling_std_24h", "amt_pct_change", "sender_recency",
+    "hourly_amount_rank", "sender_amt_ratio", "txn_burst_score",
+    "cumulative_daily_amount", "night_amount_ratio", "repeat_amount_count"
 ]
 
 
 def engineer(df):
     """
-    Feature engineering for upgraded hybrid anomaly detection.
-    
-    Parameters:
-    -----------
-    df : pd.DataFrame
-        Transaction data with columns: date, hour, amount, sender, description, etc.
-    
-    Returns:
-    --------
-    pd.DataFrame
-        DataFrame with 20 engineered features added
+    Advanced Feature Engineering for PaySentinel.
+    Implements 35+ features across Basic, Advanced, and Expert categories.
     """
-    
     d = df.copy()
     
-    # 1. Base Setup & Numeric Conversions
+    # --- 1. Base Setup ---
     d["amount"] = pd.to_numeric(d["amount"], errors="coerce").fillna(0)
     d["amount_log"] = np.log1p(d["amount"])
     d["hour"] = pd.to_numeric(d["hour"], errors="coerce").fillna(12).astype(int)
     
-    # 2. Reconstruct Timestamp for Temporal Features
     if "date" in d.columns:
-        # Create a helper timestamp if possible for velocity calc
-        # Note: If hours are provided separately, we combine them
         d["_ts"] = pd.to_datetime(d["date"]) + pd.to_timedelta(d["hour"], unit='h')
+        d["_date_parsed"] = pd.to_datetime(d["date"], errors="coerce")
         d = d.sort_values("_ts")
     
-    # 3. Time-Based Logic
+    # --- 2. Level 1: Basic (Computable from raw columns) ---
     d["is_night"] = ((d["hour"] < 6) | (d["hour"] > 22)).astype(int)
     d["is_late_night"] = (d["hour"] < 4).astype(int)
     d["is_biz_hours"] = ((d["hour"] >= 9) & (d["hour"] <= 21)).astype(int)
     d["is_round"] = (d["amount"] % 100 == 0).astype(int)
+    d["is_exact_thousand"] = ((d["amount"] % 1000 == 0) & (d["amount"] > 0)).astype(int)
     d["is_large"] = (d["amount"] > 5000).astype(int)
     d["is_very_large"] = (d["amount"] > 15000).astype(int)
     
-    # 4. Temporal Velocity (Rolling windows)
+    d["day_of_week"] = d["_date_parsed"].dt.dayofweek if "_date_parsed" in d.columns else 0
+    d["is_weekend"] = (d["day_of_week"] >= 5).astype(int)
+    
+    d["hour_sin"] = np.sin(2 * np.pi * d["hour"] / 24)
+    d["hour_cos"] = np.cos(2 * np.pi * d["hour"] / 24)
+    
+    d["amount_zscore"] = (d["amount"] - d["amount"].mean()) / (d["amount"].std() + 1e-9)
+    d["amount_bin"] = pd.qcut(d["amount"], q=10, labels=False, duplicates="drop").fillna(5)
+    
+    if "sender" in d.columns:
+        d["sender_handle_length"] = d["sender"].astype(str).str.len()
+        d["amount_first_digit"] = d["amount"].apply(lambda x: int(str(abs(int(x)))[0]) if x > 0 else 0)
+        
+        sc = d["sender"].value_counts()
+        d["sender_freq"] = d["sender"].map(sc)
+        d["is_new_sender"] = (d["sender_freq"] == 1).astype(int)
+        
+        known_banks = ["oksbi", "okaxis", "okicici", "ybl", "paytm", "okhdfcbank"]
+        d["is_known_bank"] = d["sender"].apply(lambda x: int(any(b in str(x).lower() for b in known_banks)))
+        d["daily_sender_count"] = d.groupby([d["_date_parsed"].dt.date, "sender"])["amount"].transform("count")
+    else:
+        for c in ["sender_handle_length", "amount_first_digit", "sender_freq", 
+                  "is_new_sender", "is_known_bank", "daily_sender_count"]:
+            d[c] = 0
+
+    # --- 3. Level 2: Advanced (Rolling Windows & Behavior) ---
     if "_ts" in d.columns:
         d = d.set_index("_ts")
         d["vel_1h"] = d["amount"].rolling("1h").count()
         d["vel_6h"] = d["amount"].rolling("6h").count()
-        # Amount Deviation vs 7-day median
+        d["vel_15m"] = d["amount"].rolling("15min").count()
+        
+        d["amt_rolling_std_24h"] = d["amount"].rolling("24h").std().fillna(0)
+        
         rolling_median = d["amount"].rolling("7d").median()
         d["amt_dev_median"] = (d["amount"] - rolling_median).abs()
         d["amt_ratio_median"] = d["amount"] / (rolling_median + 1)
-        # Time gap
+        
         d["time_gap"] = d.index.to_series().diff().dt.total_seconds().fillna(0)
-        # Sender Diversity (Unique in 24h)
+        
         if "sender" in d.columns:
             d["unique_24h"] = d["sender"].rolling("24h").apply(lambda x: len(np.unique(x)))
             d["sender_diversity"] = d["unique_24h"] / (d["vel_6h"] + 1)
+            # Safe sender recency (expanding approach)
+            d["sender_recency"] = d.index.to_series().groupby(d["sender"]).diff().dt.days.fillna(999)
         else:
             d["sender_diversity"] = 0
+            d["sender_recency"] = 999
+            
         d = d.reset_index()
     else:
-        for col in ["vel_1h", "vel_6h", "amt_dev_median", "amt_ratio_median", "time_gap", "sender_diversity"]:
+        for col in ["vel_1h", "vel_6h", "vel_15m", "amt_rolling_std_24h", 
+                    "amt_dev_median", "amt_ratio_median", "time_gap", 
+                    "sender_diversity", "sender_recency"]:
             d[col] = 0
 
-    # 5. Sender & Date Logic
-    if "sender" in d.columns:
-        sc = d["sender"].value_counts()
-        d["sender_freq"] = d["sender"].map(sc)
-        d["is_new_sender"] = (d["sender_freq"] == 1).astype(int)
-        known_banks = ["oksbi", "okaxis", "okicici", "ybl", "paytm", "okhdfcbank"]
-        d["is_known_bank"] = d["sender"].apply(lambda x: int(any(b in str(x).lower() for b in known_banks)))
-    else:
-        d["sender_freq"] = 0
-        d["is_new_sender"] = 0
-        d["is_known_bank"] = 0
+    # Behavioral Ratios
+    d["amt_pct_change"] = d["amount"].pct_change().fillna(0).clip(-100, 100)
+    d["hourly_amount_rank"] = d.groupby("hour")["amount"].rank(pct=True)
     
-    if "date" in d.columns:
-        d["_date_parsed"] = pd.to_datetime(d["date"], errors="coerce")
-        d["day_of_week"] = d["_date_parsed"].dt.dayofweek
-        if "sender" in d.columns:
-            d["daily_sender_count"] = d.groupby([d["_date_parsed"].dt.date, "sender"])["amount"].transform("count")
-        else:
-            d["daily_sender_count"] = 0
+    if "sender" in d.columns:
+        sender_avg = d.groupby("sender")["amount"].transform("mean")
+        d["sender_amt_ratio"] = d["amount"] / (sender_avg + 1)
     else:
-        d["day_of_week"] = 0
-        d["daily_sender_count"] = 0
+        d["sender_amt_ratio"] = 0
+        
+    d["txn_burst_score"] = d["vel_1h"] / (d["vel_1h"].rolling(window=168, min_periods=1).median() + 1)
+    d["cumulative_daily_amount"] = d.groupby(d["_date_parsed"].dt.date)["amount"].cumsum()
+    
+    day_avg = d.loc[d["is_night"] == 0, "amount"].mean() if len(d[d["is_night"]==0]) > 0 else 100
+    d["night_amount_ratio"] = np.where(d["is_night"] == 1, d["amount"] / (day_avg + 1), 0)
+    d["repeat_amount_count"] = d.groupby([d["_date_parsed"].dt.date, "amount"])["amount"].transform("count")
 
-    # Clean up and ensure all FEATURES exist
+    # Clean up
     for f in FEATURES:
         if f not in d.columns:
             d[f] = 0
