@@ -5,6 +5,7 @@
 
 ---
 
+### 🏆 **Recognition**
 [![BLUEPRINT 2026](https://img.shields.io/badge/BLUEPRINT-2026-0fc98f?style=for-the-badge&logo=hackaday&logoColor=white)](https://blueprint.hackaday.io)
 [![Status](https://img.shields.io/badge/Status-Alpha-27ae60?style=for-the-badge)](https://github.com/Yashaswini-V21/Pay_Sentinel)
 [![Language](https://img.shields.io/badge/Kannada-Available-e74c3c?style=for-the-badge)](./README.md)
@@ -204,7 +205,22 @@ UPI Transaction (CSV / Kafka)
 
 ---
 
-## 💻 **TECH STACK**
+## 💻 **PREMIUM TECH STACK**
+
+<div align="center">
+
+| Category | Technology | Why? |
+|----------|-----------|------|
+| 🎨 **Frontend** | Streamlit + Custom CSS | "Stark Tech" dark theme, 100% responsive |
+| 🧠 **ML Core** | Scikit-Learn | Lightweight, production-tested ensemble |
+| 📊 **Explainability** | SHAP KernelExplainer | *Why* each fraud is flagged (provable) |
+| 📈 **Statistics** | SciPy + NumPy | Mahalanobis distance, entropy, signals |
+| ⚡ **Real-Time** | Apache Kafka | <100ms streaming, scales to 1M merchants |
+| 🎙️ **Voice** | Google Text-to-Speech | Kannada support, high quality, free |
+| 📉 **Visualization** | Plotly | Animated gauges, heatmaps, timelines |
+| 📄 **Reports** | fpdf2 | Bilingual PDF audits (Kannada + English) |
+| 🐳 **Deployment** | Docker | One-command setup, full reproducibility |
+| ☁️ **Hosting** | Streamlit Cloud | Zero-setup, one-click deployment |
 
 <div align="center">
 
