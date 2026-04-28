@@ -351,3 +351,5 @@ if __name__ == "__main__":
     print("✅ ALL TESTS PASSED!")
     print("=" * 70)
     print("\n🎉 PDF report generation is ready for Streamlit dashboard!\n")
+
+# updated

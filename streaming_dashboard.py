@@ -197,3 +197,5 @@ def stream_live_alerts():
     # Uncomment for auto-refresh in production
     # thread = threading.Thread(target=auto_refresh, daemon=True)
     # thread.start()
+
+# updated
