@@ -525,3 +525,5 @@ if __name__ == "__main__":
     print(result[result["is_anomaly"] == 1][["date", "amount", "hour", "anomaly_score", "risk_level"]])
     detector.save()
     print("Done. Run: streamlit run app.py")
+
+# updated

@@ -493,3 +493,5 @@ header { visibility: hidden; }
 def inject_css():
     """Return the full CSS block for st.markdown injection."""
     return STARK_CSS
+
+# updated

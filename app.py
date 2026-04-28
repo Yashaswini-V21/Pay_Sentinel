@@ -675,3 +675,5 @@ with tab5:
             "The PDF includes a Kannada advisory section and Cyber Crime "
             "Helpline 1930. Safe to share with your bank."
         )
+
+# updated

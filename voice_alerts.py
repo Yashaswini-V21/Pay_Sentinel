@@ -309,3 +309,5 @@ if __name__ == "__main__":
     print("\n" + "=" * 70)
     print("🌍 World's First Kannada Fraud Alert Tool Ready!")
     print("=" * 70)
+
+# updated

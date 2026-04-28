@@ -1,153 +1,101 @@
 <div align="center">
 
 # 🛡️ **PAY SENTINEL**
-## *The First AI Fraud Shield Built for Indian Merchants in Their Language*
+## *The Future of Trust in Bharat's Digital Economy*
 
 ---
-
-### **Real-Time UPI Fraud Detection for Kirana Stores, Street Vendors & Small Businesses**
-
-> 🌟 ***"Stop ₹4,000 Crore of Fraud. One Kannada Alert at a Time."*** 🌟
-
-<br>
 
 ### 🏆 **Recognition**
 [![BLUEPRINT 2026](https://img.shields.io/badge/BLUEPRINT-2026-0fc98f?style=for-the-badge&logo=hackaday&logoColor=white)](https://blueprint.hackaday.io)
-[![Production Ready](https://img.shields.io/badge/Status-Production_Ready-27ae60?style=for-the-badge&logo=checkmark)](https://github.com/Yashaswini-V21/Pay_Sentinel)
+[![Status](https://img.shields.io/badge/Status-Alpha-27ae60?style=for-the-badge)](https://github.com/Yashaswini-V21/Pay_Sentinel)
+[![Language](https://img.shields.io/badge/Kannada-Available-e74c3c?style=for-the-badge)](./README.md)
 
-<br>
+**Stop ₹4,000 Crore of Fraud. One Kannada Alert at a Time.**
 
-### 🚀 **Tech Stack**
-[![Python 3.10+](https://img.shields.io/badge/Python-3.10+-3776ab?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-Premium_UI-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io)
-[![Scikit-Learn](https://img.shields.io/badge/ML-Hybrid_Ensemble-FCC624?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org)
-[![Apache Kafka](https://img.shields.io/badge/Apache_Kafka-Real_Time-231F20?style=for-the-badge&logo=apache-kafka&logoColor=white)](https://kafka.apache.org)
-[![SHAP](https://img.shields.io/badge/SHAP-Explainable_AI-1f77b4?style=for-the-badge)](https://github.com/slundberg/shap)
-[![Multilingual](https://img.shields.io/badge/Language-ಕನ್ನಡ_EN_5%2B-e74c3c?style=for-the-badge)](./README.md)
+[Quick Start](#-quick-start) • [Architecture](#-architecture) • [9.9 Features](#-9.9-features) • [Roadmap](#-roadmap)
 
 ---
 
 </div>
 
-## 💥 **THE PROBLEM (Real Numbers)**
+## 🔻 **The Crisis**
+Every year, small Indian merchants lose **₹4,000 Crore** to UPI fraud. Bank alerts are too slow, and language barriers make them ineffective.
 
-Every year in India, small merchants lose **₹4,000 Crore to UPI fraud** — that's ₹15,000+ per store annually.
+## 🛡️ **The Solution**
+**PaySentinel** is an AI-driven shield that detects fraud in **<100ms** and alerts merchants in their native **Kannada**, ensuring they can stop fraud before it happens.
 
-<table>
-<tr>
-<td width="50%">
+---
 
-### 🔴 **The Tragedy**
-- 🕐 Bank alerts arrive in **5-30 MINUTES**
-- 💸 Money is **ALREADY GONE**
-- 🇬🇧 Alerts only in **ENGLISH**
-- 6.5 Crore **KANNADA SPEAKERS** don't understand them
-- 🤖 Bot scammers operate at **SCALE**
-- 💔 Merchants lose entire **WEEK'S MARGIN**
+## 🚀 **CORE CAPABILITIES**
 
-</td>
-<td width="50%">
+| **⚡ Real-Time** | **🎙️ Multilingual** | **🧠 Explainable AI** |
+| :--- | :--- | :--- |
+| Sub-100ms detection via Kafka pipeline. | Kannada voice alerts for local trust. | SHAP-powered "Why it's fraud" logic. |
 
-### 📊 **Real Impact**
+---
+
+## 🛠️ **TECH STACK**
+
+| **Category** | **Technology** |
+| :--- | :--- |
+| **UX/UI** | Streamlit (Dark Theme) + Custom CSS |
+| **Intelligence** | Hybrid Ensemble (Isolation Forest + SVM) |
+| **Streaming** | Apache Kafka (Live Inference) |
+| **Explainability** | SHAP KernelExplainer |
+| **Auditory** | Google TTS (Kannada + English) |
+
+---
+
+## 🏗️ **ARCHITECTURE**
+
+```mermaid
+graph LR
+    A[UPI Stream] --> B[Kafka Producer]
+    B --> C[ML Analyzer]
+    C --> D[Voice Alerts]
+    C --> E[PDF Reports]
+    C --> F[Real-Time Dashboard]
 ```
-650 Crore UPI transactions/day in India
-    ↓
-0.5% fraud rate (industry avg)
-    ↓
-3.25 Crore fraudulent txns/day
-    ↓
-₹200 avg fraud per txn
-    ↓
-₹6,500 Crore/year fraud loss
-    ↓
-But small merchants catch ONLY 2-3%
+
+---
+
+## ⚡ **QUICK START**
+
+```bash
+# Clone the repository
+git clone https://github.com/Yashaswini-V21/Pay_Sentinel.git
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Launch the sentinel
+streamlit run app.py
 ```
 
-</td>
-</tr>
-</table>
+---
+
+## 📈 **9.9+ ADVANCED FEATURES**
+- **Dynamic Risk Gauge:** Real-time visual threat assessment.
+- **Merchant Profiling:** Learns unique business fingerprints.
+- **Bilingual Audits:** Generate Kannada/English fraud reports instantly.
+- **Anomalous Volume Analysis:** Detects structuring and velocity attacks.
 
 ---
 
-## ⚡ **THE SOLUTION (PaySentinel Advantage)**
-
-| Feature | PaySentinel | Banks | Fintech Apps | Open Source |
-|---------|------------|-------|--------------|-------------|
-| **Latency** | ⚡ <100ms | 🐢 5-30 min | 🐌 2-5 min | N/A |
-| **Language** | 🗣️ Kannada/EN 5+ | 🇬🇧 English only | 🇬🇧 English only | 🇬🇧 English |
-| **No Labels Needed** | ✅ Yes | ❌ No (supervised) | ❌ No | ❌ No |
-| **Explainability** | 🧠 SHAP + Plain Text | ❌ Black box | ⚠️ Basic | ⚠️ Raw scores |
-| **Voice Alerts** | 🎙️ Yes (Kannada) | ❌ No | ⚠️ English only | ❌ No |
-| **Small Merchant Focus** | ✅ Yes | ❌ Large corp only | ⚠️ Generic | ❌ Academic |
+## 🗺️ **ROADMAP**
+- [ ] **Phase 1:** Streamlit Cloud Hosting (In Progress)
+- [ ] **Phase 2:** Merchant Resilience Scoring
+- [ ] **Phase 3:** WhatsApp Business API Integration
 
 ---
-
-## 🎯 **Why PaySentinel Wins**
-
-<div style="background:rgba(15,201,143,0.08);border:2px solid #0fc98f;border-radius:10px;padding:20px;margin:15px 0">
-
-### ✨ **The PaySentinel Advantage**
-- 🚀 **Detects fraud in <100ms** — Before money leaves the account
-- 🎙️ **Speaks to merchants in Kannada** — First product to do this
-- 🧠 **Explains every flag** — "This is 7.5× your normal amount" (plain language)
-- 📱 **100% Accessible** — Voice + visual + tactile alerts (no reading required)
-- 📚 **45 engineered features** — Expert-level ML, zero labeled fraud data needed
-- 🔗 **Real-time Kafka pipeline** — Scales to 1M merchants instantly
-- 📊 **Hybrid ensemble** — Isolation Forest + SVM + Rules (beats any single model)
-- ✅ **Production-ready** — Open-source, deployable anywhere
-
-</div>
-
----
-
-## 📈 **HIGHLIGHTS & ACHIEVEMENTS**
 
 <div align="center">
 
-| 🎖️ | 📊 | 🏆 |
-|---|---|---|
-| **45 Features Engineered** | **<100ms Latency** | **9.9+ Advanced Features** |
-| 4-tier intelligence system | Real-time Kafka pipeline | In-progress enhancements |
-| Core + Level 1/2/3 features | Sub-millisecond inference | Resilience score, simulator, OAuth |
-| | | |
-| **94% Accuracy** | **100% Accessibility** | **₹4,000 Crore Problem** |
-| On synthetic fraud patterns | Voice + visual + tactile alerts | Addressable Indian market |
-| Hybrid ensemble outperforms singles | Kannada-first design | 6.5 Cr speakers, 6.5 Cr merchants |
-| | | |
-| **Bilingual Reports** | **SHAP Explainability** | **Production Ready** |
-| Kannada + English PDF audits | Every fraud flagged explained | Open-source, deployable |
-| Bank-submission ready | Plain-language reasons | Docker + Streamlit Cloud |
-| Legal defensibility | Feature importance breakdown | Zero-setup deployment |
+**Made with ❤️ for India's Merchants**
+
+[![GitHub](https://img.shields.io/badge/GitHub-Pay_Sentinel-181717?style=for-the-badge&logo=github)](https://github.com/Yashaswini-V21/Pay_Sentinel)
 
 </div>
-
----
-
-## 🎨 **FEATURED IN**
-
-<div align="center">
-
-```
-     BLUEPRINT 2026       GitHub        Streamlit Cloud
-        (Hackaday)         (Featured)       (Deployment)
-```
-
-</div>
-
----
-
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                        PAY SENTINEL ARCHITECTURE                       │
-├────────────────────────────────────────────────────────────────────────┤
-│                                                                        │
-│  ┌─────────────┐    ┌──────────────────┐    ┌───────────────────────┐ │
-│  │   DATA       │    │  FEATURE ENGINE  │    │   ML ENSEMBLE         │ │
-│  │   LAYER      │    │  (model.py)      │    │   (PaySentinelDetector│ │
-│  │             │    │                  │    │    )                   │ │
-│  │ • CSV Upload │───▶│ Level 1: Basic   │───▶│ • Isolation Forest    │ │
-│  │ • Kafka     │    │  (9 features)    │    │   (40% weight)        │ │
-│  │   Stream    │    │ Level 2: Adv.    │    │ • OneClass SVM        │ │
 │  │ • Synthetic │    │  (10 features)   │    │   (40% weight)        │ │
 │  │   Generator │    │ Level 3: Expert  │    │ • Rule Heuristics     │ │
 │  │             │    │  (6 features)    │    │   (20% weight)        │ │
@@ -258,6 +206,21 @@ UPI Transaction (CSV / Kafka)
 ---
 
 ## 💻 **PREMIUM TECH STACK**
+
+<div align="center">
+
+| Category | Technology | Why? |
+|----------|-----------|------|
+| 🎨 **Frontend** | Streamlit + Custom CSS | "Stark Tech" dark theme, 100% responsive |
+| 🧠 **ML Core** | Scikit-Learn | Lightweight, production-tested ensemble |
+| 📊 **Explainability** | SHAP KernelExplainer | *Why* each fraud is flagged (provable) |
+| 📈 **Statistics** | SciPy + NumPy | Mahalanobis distance, entropy, signals |
+| ⚡ **Real-Time** | Apache Kafka | <100ms streaming, scales to 1M merchants |
+| 🎙️ **Voice** | Google Text-to-Speech | Kannada support, high quality, free |
+| 📉 **Visualization** | Plotly | Animated gauges, heatmaps, timelines |
+| 📄 **Reports** | fpdf2 | Bilingual PDF audits (Kannada + English) |
+| 🐳 **Deployment** | Docker | One-command setup, full reproducibility |
+| ☁️ **Hosting** | Streamlit Cloud | Zero-setup, one-click deployment |
 
 <div align="center">
 
@@ -467,7 +430,7 @@ streamlit run streaming_dashboard.py # Live alert dashboard
 
 ---
 
-## 🚀 **FUTURE ENHANCEMENTS** (Roadmap)
+## 🚀 **FUTURE ENHANCEMENTS** ( Roadmap)
 
 ### 🔨 In Progress (2026 Q1-Q2)
 | Feature | Status | Impact |
@@ -599,3 +562,5 @@ We're building fraud protection for merchants who speak Kannada, Tamil, Telugu, 
 </div>
 
 </div>
+
+# updated
