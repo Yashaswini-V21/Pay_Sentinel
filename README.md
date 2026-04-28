@@ -467,7 +467,7 @@ streamlit run streaming_dashboard.py # Live alert dashboard
 
 ---
 
-## 🚀 **FUTURE ENHANCEMENTS** (9.9+ Features Roadmap)
+## 🚀 **FUTURE ENHANCEMENTS** (Roadmap)
 
 ### 🔨 In Progress (2026 Q1-Q2)
 | Feature | Status | Impact |
