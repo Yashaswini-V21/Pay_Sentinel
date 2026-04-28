@@ -1,3 +1,4 @@
+
 """
 PaySentinel: Synthetic UPI Transaction Data Generator
 Generates realistic kirana store transactions with injected fraud patterns.
