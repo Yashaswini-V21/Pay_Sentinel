@@ -54,7 +54,7 @@ def main():
     print(f"\n🚀 You can now start the streaming pipeline:")
     print(f"   Terminal 1: python kafka_producer.py")
     print(f"   Terminal 2: python kafka_consumer.py")
-    print(f"   Terminal 3: streamlit run app.py\n")
+    print(f"   Terminal 3: python app.py\n")
 
 
 if __name__ == "__main__":

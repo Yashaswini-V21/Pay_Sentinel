@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PaySentinel Dashboard — HTML Control Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Chakra+Petch:wght@300;400;600;700&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@300;400;500;700&family=Exo+2:wght@100;200;300;400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg0: #010308;
+      --bg1: #050a14;
+      --bg2: #0b1220;
+      --line: rgba(255, 255, 255, 0.08);
+      --text: #dce7f7;
+      --muted: rgba(220, 231, 247, 0.52);
+      --faint: rgba(220, 231, 247, 0.25);
+      --teal: #00f5d4;
+      --teal-soft: rgba(0, 245, 212, 0.12);
+      --saffron: #ff7043;
+      --gold: #ffc107;
+      --danger: #ff1744;
+      --safe: #00e676;
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-head: 'Exo 2', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-ui: 'Chakra Petch', sans-serif;
+      --radius: 18px;
+      --shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: var(--font-body);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(0, 245, 212, 0.06), transparent 28%),
+        radial-gradient(circle at 80% 10%, rgba(255, 112, 67, 0.07), transparent 24%),
+        linear-gradient(180deg, var(--bg0), var(--bg1) 45%, var(--bg2));
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0, 245, 212, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 245, 212, 0.03) 1px, transparent 1px);
+      background-size: 52px 52px;
+      mask-image: radial-gradient(circle at center, black 30%, transparent 100%);
+      opacity: 0.6;
+      z-index: 0;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      width: min(1440px, calc(100% - 32px));
+      margin: 0 auto;
+      padding-bottom: 40px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 18px 0 14px;
+      backdrop-filter: blur(20px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .shield {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, rgba(0, 245, 212, 0.14), rgba(255, 112, 67, 0.12));
+      border: 1px solid rgba(0, 245, 212, 0.18);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 24px rgba(0, 245, 212, 0.12);
+      font-size: 1.25rem;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-family: var(--font-display);
+      letter-spacing: 0.16em;
+      font-size: clamp(2rem, 3vw, 2.6rem);
+      line-height: 0.9;
+      background: linear-gradient(90deg, var(--teal), var(--saffron));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 230, 118, 0.18);
+      background: rgba(0, 230, 118, 0.08);
+      color: #9effc9;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--safe);
+      box-shadow: 0 0 12px rgba(0, 230, 118, 0.65);
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.45); opacity: 0.55; }
+    }
+
+    .hero {
+      margin-top: 10px;
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 70% 20%, rgba(0, 245, 212, 0.08), transparent 26%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 20px;
+      align-items: start;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.32em;
+      color: var(--saffron);
+      margin-bottom: 14px;
+    }
+
+    .hero-title {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(3.2rem, 9vw, 7rem);
+      letter-spacing: 0.06em;
+      line-height: 0.86;
+    }
+
+    .hero-title span {
+      display: block;
+    }
+
+    .hero-title .line2 {
+      background: linear-gradient(135deg, var(--teal), #6cf9ff 30%, var(--saffron) 70%, #ffc107);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-copy {
+      max-width: 760px;
+      margin: 14px 0 0;
+      font-size: 1rem;
+      line-height: 1.9;
+      color: rgba(220, 231, 247, 0.66);
+    }
+
+    .hero-aside {
+      display: grid;
+      gap: 12px;
+    }
+
+    .mini-card {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+    }
+
+    .mini-card .label {
+      font-family: var(--font-ui);
+      font-size: 0.64rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin-bottom: 8px;
+    }
+
+    .mini-card .value {
+      font-family: var(--font-display);
+      letter-spacing: 0.06em;
+      font-size: 2.1rem;
+      line-height: 1;
+    }
+
+    .mini-card .note {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.55;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 360px minmax(0, 1fr) 360px;
+      gap: 18px;
+      margin-top: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.02);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      padding: 18px 18px 0;
+      font-family: var(--font-ui);
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: rgba(0, 245, 212, 0.95);
+    }
+
+    .panel-body {
+      padding: 18px;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field label {
+      font-family: var(--font-ui);
+      font-size: 0.62rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+
+    .field input[type="text"],
+    .field input[type="file"],
+    .field select {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      background: rgba(3, 8, 16, 0.72);
+      color: var(--text);
+      outline: none;
+    }
+
+    .field input[type="text"]:focus,
+    .field select:focus {
+      border-color: rgba(0, 245, 212, 0.4);
+      box-shadow: 0 0 0 3px rgba(0, 245, 212, 0.08);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 14px;
+      padding: 13px 14px;
+      font-family: var(--font-ui);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--teal), #1ed9c6);
+      color: #03121a;
+      box-shadow: 0 14px 28px rgba(0, 245, 212, 0.18);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+    }
+    .btn-danger {
+      background: linear-gradient(135deg, var(--saffron), #ff4f1a);
+      color: #fff;
+      box-shadow: 0 14px 28px rgba(255, 112, 67, 0.18);
+    }
+
+    .status-box {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(0, 245, 212, 0.05);
+      border: 1px solid rgba(0, 245, 212, 0.12);
+      color: rgba(220, 231, 247, 0.82);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .preview {
+      margin-top: 14px;
+      overflow: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      max-height: 280px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      white-space: nowrap;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: rgba(7, 13, 24, 0.95);
+      color: rgba(220, 231, 247, 0.45);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.58rem;
+    }
+
+    td {
+      color: rgba(220, 231, 247, 0.82);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+      min-height: 110px;
+    }
+
+    .metric .kicker {
+      font-family: var(--font-ui);
+      font-size: 0.61rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--faint);
+      margin-bottom: 9px;
+    }
+
+    .metric .number {
+      font-family: var(--font-display);
+      font-size: 2.6rem;
+      line-height: 0.95;
+      letter-spacing: 0.05em;
+    }
+
+    .metric .sub {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .section {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.02);
+      box-shadow: var(--shadow);
+    }
+
+    .section-head {
+      padding: 18px 18px 0;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: end;
+    }
+
+    .section-title {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      letter-spacing: 0.08em;
+      line-height: 0.95;
+    }
+
+    .section-sub {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      max-width: 620px;
+    }
+
+    .section-body {
+      padding: 18px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .gauge-box {
+      display: grid;
+      justify-items: center;
+      gap: 12px;
+      padding: 20px 10px 8px;
+    }
+
+    .gauge {
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: conic-gradient(var(--safe) 0deg, var(--gold) 120deg, var(--danger) 220deg, rgba(255,255,255,0.05) 220deg 360deg);
+      position: relative;
+      box-shadow: 0 0 40px rgba(0, 245, 212, 0.08);
+    }
+
+    .gauge::after {
+      content: '';
+      position: absolute;
+      inset: 18px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, rgba(3, 8, 16, 0.96), rgba(8, 14, 24, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .gauge-inner {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .gauge-value {
+      font-family: var(--font-display);
+      font-size: 4.2rem;
+      line-height: 0.9;
+      letter-spacing: 0.05em;
+    }
+
+    .gauge-label {
+      color: var(--muted);
+      font-family: var(--font-ui);
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    .feed {
+      display: grid;
+      gap: 10px;
+    }
+
+    .feed-item {
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .feed-item.safe { border-left: 4px solid var(--safe); }
+    .feed-item.warn { border-left: 4px solid var(--gold); }
+    .feed-item.danger { border-left: 4px solid var(--danger); }
+
+    .feed-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+      margin-bottom: 8px;
+    }
+
+    .feed-name {
+      font-weight: 700;
+      font-size: 0.93rem;
+      color: rgba(220, 231, 247, 0.9);
+    }
+
+    .feed-meta {
+      color: var(--faint);
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+    }
+
+    .feed-amount {
+      font-family: var(--font-display);
+      font-size: 1.7rem;
+      line-height: 1;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      font-family: var(--font-ui);
+      font-size: 0.56rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(220, 231, 247, 0.74);
+    }
+
+    .timeline {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .timeline-row {
+      display: grid;
+      grid-template-columns: 76px 1fr 72px;
+      gap: 10px;
+      align-items: center;
+      font-size: 0.78rem;
+    }
+
+    .timeline-row .label {
+      color: var(--faint);
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+    }
+
+    .timeline-bar {
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+    }
+
+    .timeline-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, rgba(0, 245, 212, 0.95), rgba(255, 112, 67, 0.95));
+      width: 0;
+    }
+
+    .shap-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .shap-item {
+      display: grid;
+      grid-template-columns: 150px 1fr 54px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .shap-label {
+      color: rgba(220, 231, 247, 0.66);
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .shap-track {
+      height: 14px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .shap-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, rgba(255, 23, 68, 0.9), rgba(255, 193, 7, 0.9));
+      width: 0;
+    }
+
+    .shap-fill.safe {
+      background: linear-gradient(90deg, rgba(0, 230, 118, 0.9), rgba(0, 245, 212, 0.9));
+    }
+
+    .fingerprint {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .finger-card {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+    }
+
+    .finger-card .kicker {
+      color: var(--faint);
+      font-family: var(--font-ui);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .finger-card .value {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      line-height: 1;
+      letter-spacing: 0.05em;
+    }
+
+    .alert-box {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 23, 68, 0.06);
+      border: 1px solid rgba(255, 23, 68, 0.18);
+    }
+
+    .alert-box .title {
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--danger);
+      margin-bottom: 8px;
+    }
+
+    .alert-box .message {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: rgba(220, 231, 247, 0.92);
+    }
+
+    .alert-box .summary {
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .heatmap {
+      display: grid;
+      grid-template-columns: repeat(24, minmax(0, 1fr));
+      gap: 4px;
+      margin-top: 14px;
+    }
+
+    .heat-cell {
+      aspect-ratio: 1 / 1;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .heat-legend {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+      color: var(--faint);
+      font-family: var(--font-mono);
+      font-size: 0.56rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .muted {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .spacer { height: 12px; }
+
+    .hidden { display: none !important; }
+
+    .mobile-nav {
+      display: none;
+    }
+
+    @media (max-width: 1180px) {
+      .layout,
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .fingerprint {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .shell { width: min(100% - 20px, 100%); }
+      .topbar { flex-direction: column; align-items: stretch; }
+      .brand { align-items: flex-start; }
+      .controls { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: 1fr; }
+      .timeline-row, .shap-item { grid-template-columns: 1fr; }
+      .heatmap { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+      .mobile-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+      .mobile-nav a {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.03);
+        font-family: var(--font-ui);
+        font-size: 0.58rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(220, 231, 247, 0.78);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="shield">🛡️</div>
+        <div>
+          <h1>PAYSENTINEL</h1>
+          <p>HTML + CSS control room for merchant fraud detection</p>
+        </div>
+      </div>
+      <div class="status-pill"><span class="pulse"></span> API ONLINE · READY</div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">merchant fraud shield · upload → analyze → report</div>
+          <h2 class="hero-title"><span>DETECT.</span><span class="line2">PROTECT.</span></h2>
+          <p class="hero-copy">
+            This is the HTML-first version of PaySentinel. Merchants can load a CSV or sample data, run the ML detector, inspect suspicious transactions, review explainability, and export a PDF report without any extra dashboard runtime.
+          </p>
+          <div class="mobile-nav">
+            <a href="#upload-panel">Upload</a>
+            <a href="#alerts-panel">Alerts</a>
+            <a href="#explain-panel">Explain</a>
+            <a href="#report-panel">Report</a>
+          </div>
+        </div>
+        <div class="hero-aside">
+          <div class="mini-card">
+            <div class="label">workflow</div>
+            <div class="value">3 STEPS</div>
+            <div class="note">Load data, run the detector, review the dashboard and PDF audit output.</div>
+          </div>
+          <div class="mini-card">
+            <div class="label">core engine</div>
+            <div class="value">ML + SHAP</div>
+            <div class="note">Isolation Forest, One-Class SVM, feature engineering, and explainability stay in Python.</div>
+          </div>
+          <div class="mini-card">
+            <div class="label">merchant focus</div>
+            <div class="value">LOCAL UI</div>
+            <div class="note">Designed to keep the same merchant flow, but implemented with plain HTML, CSS, and fetch calls.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="panel" id="upload-panel">
+        <div class="panel-head">upload & analyse</div>
+        <div class="panel-body">
+          <div class="form-grid">
+            <div class="field">
+              <label for="merchantName">Merchant name</label>
+              <input id="merchantName" type="text" value="My UPI Store" />
+            </div>
+            <div class="field">
+              <label for="language">Alert language</label>
+              <select id="language">
+                <option>English</option>
+                <option>Kannada</option>
+                <option>Hindi</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="sensitivity">Detection sensitivity</label>
+              <select id="sensitivity">
+                <option>2%</option>
+                <option selected>5%</option>
+                <option>8%</option>
+                <option>12%</option>
+                <option>15%</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="csvFile">Upload CSV</label>
+              <input id="csvFile" type="file" accept=".csv" />
+            </div>
+          </div>
+
+          <div class="controls">
+            <button class="btn btn-secondary" id="sampleBtn">Load sample</button>
+            <button class="btn btn-primary" id="runBtn">Run analysis</button>
+            <button class="btn btn-danger" id="reportBtn">Download PDF</button>
+            <button class="btn btn-secondary" id="clearBtn">Clear</button>
+          </div>
+
+          <div class="spacer"></div>
+          <div class="status-box" id="statusBox">Load a CSV or sample data to begin.</div>
+
+          <div class="preview" id="samplePreview"></div>
+        </div>
+      </aside>
+
+      <main class="panel">
+        <div class="panel-head">main dashboard</div>
+        <div class="panel-body">
+          <div class="metrics" id="metricsGrid">
+            <div class="metric">
+              <div class="kicker">total transactions</div>
+              <div class="number" id="metricTotal">0</div>
+              <div class="sub">Transactions analyzed in the current session.</div>
+            </div>
+            <div class="metric">
+              <div class="kicker">suspicious</div>
+              <div class="number" id="metricSuspicious">0</div>
+              <div class="sub">Rows flagged by the hybrid detector.</div>
+            </div>
+            <div class="metric">
+              <div class="kicker">at-risk amount</div>
+              <div class="number" id="metricRisk">₹0</div>
+              <div class="sub">Total amount attached to suspicious activity.</div>
+            </div>
+            <div class="metric">
+              <div class="kicker">resilience score</div>
+              <div class="number" id="metricResilience">100</div>
+              <div class="sub" id="metricResilienceLabel">EXCELLENT</div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid" style="margin-top: 18px;">
+            <section class="panel" id="alerts-panel">
+              <div class="panel-head">fraud alerts</div>
+              <div class="panel-body">
+                <div class="feed" id="feed"></div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">risk overview</div>
+              <div class="panel-body">
+                <div class="gauge-box">
+                  <div class="gauge" id="gaugeRing">
+                    <div class="gauge-inner">
+                      <div>
+                        <div class="gauge-value" id="gaugeValue">0</div>
+                        <div class="gauge-label">risk anomaly score</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="muted" id="topAlertSummary">Run analysis to see the strongest signal.</div>
+                </div>
+
+                <div class="alert-box" id="alertBox">
+                  <div class="title">active alert</div>
+                  <div class="message" id="alertMessage">No alert yet.</div>
+                  <div class="summary" id="alertSummary">The alert copy will follow the selected language.</div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+
+      <aside class="panel" id="explain-panel">
+        <div class="panel-head">explainability</div>
+        <div class="panel-body">
+          <div class="status-box">
+            <strong id="fingerMerchant">Merchant fingerprint</strong><br />
+            Baseline values learned from the uploaded or sample transaction history.
+          </div>
+
+          <div class="fingerprint">
+            <div class="finger-card">
+              <div class="kicker">normal hours</div>
+              <div class="value" id="fpHours">8:00 - 21:00</div>
+            </div>
+            <div class="finger-card">
+              <div class="kicker">peak hour</div>
+              <div class="value" id="fpPeak">12:00</div>
+            </div>
+            <div class="finger-card">
+              <div class="kicker">typical max</div>
+              <div class="value" id="fpAmount">₹1,500</div>
+            </div>
+          </div>
+
+          <div class="spacer"></div>
+          <div class="shap-list" id="shapList"></div>
+
+          <div class="spacer"></div>
+          <div class="status-box" id="explanationText">
+            SHAP explanation will appear here after analysis.
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="section" id="report-panel">
+      <div class="section-head">
+        <div>
+          <h3 class="section-title">timelines, heatmap, and transaction table</h3>
+          <p class="section-sub">The same analysis flow as the original dashboard, but rendered as a clean HTML UI with local controls and API-driven data.</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="dashboard-grid">
+          <div>
+            <div class="panel" style="box-shadow:none;">
+              <div class="panel-head">timeline</div>
+              <div class="panel-body">
+                <div class="timeline" id="timeline"></div>
+              </div>
+            </div>
+
+            <div class="spacer"></div>
+            <div class="panel" style="box-shadow:none;">
+              <div class="panel-head">transaction heatmap</div>
+              <div class="panel-body">
+                <div class="heatmap" id="heatmap"></div>
+                <div class="heat-legend">
+                  <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="panel" style="box-shadow:none;">
+              <div class="panel-head">processed transactions</div>
+              <div class="panel-body">
+                <div class="preview" style="max-height: 560px;" id="resultsTable"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const state = {
+      sampleRows: null,
+      analysis: null,
+      file: null,
+    };
+
+    const el = (id) => document.getElementById(id);
+
+    const statusBox = el('statusBox');
+    const samplePreview = el('samplePreview');
+    const feed = el('feed');
+    const shapList = el('shapList');
+    const timeline = el('timeline');
+    const heatmap = el('heatmap');
+    const resultsTable = el('resultsTable');
+
+    function setStatus(message) {
+      statusBox.textContent = message;
+    }
+
+    function money(value) {
+      const number = Number(value || 0);
+      return `₹${number.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+    }
+
+    function riskClass(score) {
+      if (score >= 85) return 'danger';
+      if (score >= 60) return 'warn';
+      return 'safe';
+    }
+
+    function parseRowsFromTable(rows, columns) {
+      if (!rows || !rows.length) return '<div class="status-box">No rows to show.</div>';
+      const visibleCols = columns && columns.length ? columns : Object.keys(rows[0]).slice(0, 8);
+      let html = '<table><thead><tr>';
+      visibleCols.forEach((column) => {
+        html += `<th>${column}</th>`;
+      });
+      html += '</tr></thead><tbody>';
+      rows.forEach((row) => {
+        html += '<tr>';
+        visibleCols.forEach((column) => {
+          let value = row[column];
+          if (value === null || value === undefined) value = '';
+          if (column === 'amount' && value !== '') value = money(value);
+          if (column === 'anomaly_score' && value !== '') value = Number(value).toFixed(1);
+          html += `<td>${String(value)}</td>`;
+        });
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      return html;
+    }
+
+    function renderSamplePreview(data) {
+      samplePreview.innerHTML = parseRowsFromTable(data.data, data.columns.slice(0, 6));
+      setStatus(`Loaded ${data.rows} sample transactions for ${data.merchant_name}.`);
+    }
+
+    function renderMetrics(summary) {
+      el('metricTotal').textContent = summary.total.toLocaleString();
+      el('metricSuspicious').textContent = summary.suspicious.toLocaleString();
+      el('metricRisk').textContent = money(summary.at_risk_amount);
+      el('metricResilience').textContent = summary.resilience_score.toLocaleString();
+      el('metricResilienceLabel').textContent = summary.resilience_label;
+    }
+
+    function renderAlert(topTransaction, alertText, summary) {
+      el('gaugeValue').textContent = Number(topTransaction?.anomaly_score || 0).toFixed(0);
+      el('gaugeRing').style.background = `conic-gradient(var(--safe) 0deg, var(--gold) 120deg, var(--danger) 220deg, rgba(255,255,255,0.05) 220deg 360deg)`;
+      el('topAlertSummary').textContent = `Top alert: ${topTransaction?.risk_level || 'LOW'} · ${money(topTransaction?.amount || 0)} · ${topTransaction?.hour ?? '--'}:00`;
+      el('alertMessage').textContent = alertText.alert;
+      el('alertSummary').textContent = alertText.summary;
+      el('alertBox').style.borderColor = summary.suspicious > 0 ? 'rgba(255, 23, 68, 0.18)' : 'rgba(0, 230, 118, 0.18)';
+    }
+
+    function renderFeed(anomalies) {
+      if (!anomalies.length) {
+        feed.innerHTML = '<div class="status-box">No suspicious transactions found. The merchant appears healthy.</div>';
+        return;
+      }
+
+      feed.innerHTML = anomalies.map((row) => {
+        const cls = riskClass(Number(row.anomaly_score || 0));
+        return `
+          <div class="feed-item ${cls}">
+            <div class="feed-head">
+              <div>
+                <div class="feed-name">${row.sender || 'Unknown sender'}</div>
+                <div class="feed-meta">${row.date || ''} · ${row.description || 'Transaction'} · ${row.risk_level || ''}</div>
+              </div>
+              <div class="feed-amount" style="color:${cls === 'danger' ? 'var(--danger)' : cls === 'warn' ? 'var(--gold)' : 'var(--safe)'}">${money(row.amount)}</div>
+            </div>
+            <div class="feed-meta">Score ${Number(row.anomaly_score || 0).toFixed(1)} · Hour ${row.hour ?? '--'} · ID ${row.transaction_id || 'n/a'}</div>
+            <div class="pill-row">
+              <span class="pill">${row.risk_level || 'LOW'}</span>
+              <span class="pill">${row.is_anomaly ? 'flagged' : 'safe'}</span>
+              <span class="pill">${row.sender || 'unknown'}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderFingerprint(fingerprint) {
+      const hourMin = Number(fingerprint?.hour_min ?? 8);
+      const hourMax = Number(fingerprint?.hour_max ?? 21);
+      const peakHour = Number(fingerprint?.peak_hour ?? 12);
+      const amtP95 = Number(fingerprint?.amt_p95 ?? 1500);
+      el('fpHours').textContent = `${hourMin.toFixed(0)}:00 - ${hourMax.toFixed(0)}:00`;
+      el('fpPeak').textContent = `${peakHour.toFixed(0)}:00`;
+      el('fpAmount').textContent = money(amtP95);
+      el('fingerMerchant').textContent = 'Merchant fingerprint';
+    }
+
+    function renderExplanation(explanation) {
+      if (!explanation || !explanation.length) {
+        shapList.innerHTML = '<div class="status-box">No SHAP explanation available for this transaction.</div>';
+        el('explanationText').textContent = 'No feature explanation was returned.';
+        return;
+      }
+
+      shapList.innerHTML = explanation.map((item) => {
+        const width = Math.min(100, Math.max(8, Number(item.impact || 0) * 100));
+        const safeClass = item.direction === 'decreases' ? 'safe' : '';
+        return `
+          <div class="shap-item">
+            <div class="shap-label">${item.feature}</div>
+            <div class="shap-track"><div class="shap-fill ${safeClass}" style="width:${width}%"></div></div>
+            <div class="feed-meta">${Number(item.value || 0).toFixed(2)}</div>
+          </div>
+        `;
+      }).join('');
+
+      const first = explanation[0];
+      el('explanationText').textContent = `${first.feature} ${first.direction} the risk score with a value of ${Number(first.value || 0).toFixed(2)}.`;
+    }
+
+    function renderTimeline(rows) {
+      if (!rows || !rows.length) {
+        timeline.innerHTML = '<div class="status-box">Timeline will appear after analysis.</div>';
+        return;
+      }
+
+      const maxTotal = Math.max(...rows.map((row) => Number(row.total || 0)), 1);
+      timeline.innerHTML = rows.map((row) => {
+        const width = Math.max(6, Math.round((Number(row.total || 0) / maxTotal) * 100));
+        return `
+          <div class="timeline-row">
+            <div class="label">${row.date}</div>
+            <div class="timeline-bar"><div class="timeline-fill" style="width:${width}%;"></div></div>
+            <div class="feed-meta">${row.suspicious || 0} flagged</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderHeatmap(grid) {
+      const values = Array.isArray(grid) ? grid.flat() : [];
+      if (!values.length) {
+        heatmap.innerHTML = '<div class="status-box">Heatmap will appear after analysis.</div>';
+        return;
+      }
+
+      const max = Math.max(...values, 1);
+      heatmap.innerHTML = grid.flatMap((row) => row).map((value) => {
+        const opacity = value <= 0 ? 0.05 : Math.min(0.95, 0.08 + (value / max) * 0.75);
+        return `<div class="heat-cell" style="background: rgba(255, 23, 68, ${opacity});"></div>`;
+      }).join('');
+    }
+
+    function renderResults(results) {
+      const summary = results.summary;
+      const anomalies = results.anomalies || [];
+      renderMetrics(summary);
+      renderFeed(anomalies);
+      renderFingerprint(results.fingerprint);
+      renderExplanation(results.explanation);
+      renderTimeline(results.timeline);
+      renderHeatmap(results.heatmap);
+      renderAlert(results.top_transaction, results.alert_text, summary);
+      resultsTable.innerHTML = parseRowsFromTable(results.results_preview, results.risk_table_columns);
+      el('metricResilienceLabel').textContent = `${summary.resilience_label} · ${summary.suspicious_ratio}% suspicious`;
+      setStatus(`Analysis complete for ${results.merchant_name}. ${summary.suspicious} suspicious transactions found.`);
+      state.analysis = results;
+    }
+
+    async function loadSample() {
+      try {
+        setStatus('Loading sample transactions...');
+        const merchantName = el('merchantName').value.trim() || 'My UPI Store';
+        const response = await fetch(`/api/sample-data?merchant_name=${encodeURIComponent(merchantName)}`);
+        const data = await response.json();
+        state.sampleRows = data.data;
+        state.file = null;
+        el('csvFile').value = '';
+        renderSamplePreview(data);
+      } catch (error) {
+        setStatus(`Sample load failed: ${error.message}`);
+      }
+    }
+
+    async function runAnalysis() {
+      const merchantName = el('merchantName').value.trim() || 'My UPI Store';
+      const language = el('language').value;
+      const sensitivity = el('sensitivity').value;
+      const fileInput = el('csvFile');
+      const selectedFile = fileInput.files && fileInput.files[0];
+
+      try {
+        setStatus('Running anomaly detection...');
+        const useJsonSample = !selectedFile && state.sampleRows;
+
+        let response;
+        if (selectedFile) {
+          const formData = new FormData();
+          formData.append('file', selectedFile);
+          formData.append('merchant_name', merchantName);
+          formData.append('language', language);
+          formData.append('sensitivity', sensitivity);
+          response = await fetch('/api/analyze', { method: 'POST', body: formData });
+        } else if (useJsonSample) {
+          response = await fetch('/api/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ rows: state.sampleRows, merchant_name: merchantName, language, sensitivity }),
+          });
+        } else {
+          const formData = new FormData();
+          formData.append('merchant_name', merchantName);
+          formData.append('language', language);
+          formData.append('sensitivity', sensitivity);
+          response = await fetch('/api/analyze', { method: 'POST', body: formData });
+        }
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || 'Analysis failed');
+        }
+        renderResults(data);
+      } catch (error) {
+        setStatus(`Analysis error: ${error.message}`);
+      }
+    }
+
+    async function downloadReport() {
+      const merchantName = el('merchantName').value.trim() || 'My UPI Store';
+      const language = el('language').value;
+      const sensitivity = el('sensitivity').value;
+      const fileInput = el('csvFile');
+      const selectedFile = fileInput.files && fileInput.files[0];
+
+      try {
+        setStatus('Preparing PDF report...');
+        let response;
+        if (selectedFile) {
+          const formData = new FormData();
+          formData.append('file', selectedFile);
+          formData.append('merchant_name', merchantName);
+          formData.append('language', language);
+          formData.append('sensitivity', sensitivity);
+          response = await fetch('/api/report', { method: 'POST', body: formData });
+        } else if (state.sampleRows) {
+          response = await fetch('/api/report', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ rows: state.sampleRows, merchant_name: merchantName, language, sensitivity }),
+          });
+        } else {
+          const formData = new FormData();
+          formData.append('merchant_name', merchantName);
+          formData.append('language', language);
+          formData.append('sensitivity', sensitivity);
+          response = await fetch('/api/report', { method: 'POST', body: formData });
+        }
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || 'Report generation failed');
+        }
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `paysentinel_${merchantName.replace(/\s+/g, '_')}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        setStatus('PDF report downloaded.');
+      } catch (error) {
+        setStatus(`Report error: ${error.message}`);
+      }
+    }
+
+    function clearState() {
+      state.sampleRows = null;
+      state.analysis = null;
+      state.file = null;
+      el('csvFile').value = '';
+      samplePreview.innerHTML = '';
+      feed.innerHTML = '';
+      shapList.innerHTML = '';
+      timeline.innerHTML = '';
+      heatmap.innerHTML = '';
+      resultsTable.innerHTML = '';
+      el('gaugeValue').textContent = '0';
+      el('metricTotal').textContent = '0';
+      el('metricSuspicious').textContent = '0';
+      el('metricRisk').textContent = '₹0';
+      el('metricResilience').textContent = '100';
+      el('metricResilienceLabel').textContent = 'EXCELLENT';
+      el('alertMessage').textContent = 'No alert yet.';
+      el('alertSummary').textContent = 'The alert copy will follow the selected language.';
+      el('topAlertSummary').textContent = 'Run analysis to see the strongest signal.';
+      el('explanationText').textContent = 'SHAP explanation will appear here after analysis.';
+      setStatus('State cleared. Load a sample or CSV to begin again.');
+    }
+
+    el('sampleBtn').addEventListener('click', loadSample);
+    el('runBtn').addEventListener('click', runAnalysis);
+    el('reportBtn').addEventListener('click', downloadReport);
+    el('clearBtn').addEventListener('click', clearState);
+
+    el('csvFile').addEventListener('change', () => {
+      const file = el('csvFile').files && el('csvFile').files[0];
+      if (file) {
+        state.file = file;
+        state.sampleRows = null;
+        setStatus(`Selected file: ${file.name}. Run analysis when ready.`);
+      }
+    });
+  </script>
+</body>
+</html>

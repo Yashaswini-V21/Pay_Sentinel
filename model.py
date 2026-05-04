@@ -10,6 +10,8 @@ from scipy.stats import entropy as shannon_entropy
 from sklearn.ensemble import IsolationForest
 from sklearn.svm import OneClassSVM
 from sklearn.preprocessing import StandardScaler
+import hashlib
+from datetime import datetime
 
 warnings.filterwarnings("ignore")
 
@@ -450,6 +452,62 @@ class PaySentinelDetector:
         r["flags"] = [get_flags(df_f.iloc[i], self.fp) for i in range(len(df_f))]
         return r
 
+    def calculate_resilience_score(self, results):
+        """
+        Calculates a 'Merchant Fraud Resilience Score' (0-100).
+        Formula: 100 - (5 * fraud_count) - (2 * false_pos_estimate) + (10 * protection_actions)
+        """
+        if results is None or len(results) == 0:
+            return 100, "EXCELLENT", "#0fc98f"
+        
+        anomalies = results[results["is_anomaly"] == 1]
+        n_fraud = len(anomalies)
+        n_total = len(results)
+        
+        # Heuristic: 5% of anomalies might be false positives if not reviewed
+        fp_estimate = n_fraud * 0.05 
+        
+        # Base score starts at 100
+        score = 100 - (n_fraud * 2) - (fp_estimate * 1)
+        
+        # Bonus for low fraud ratio
+        fraud_ratio = n_fraud / n_total
+        if fraud_ratio < 0.02:
+            score += 10
+        elif fraud_ratio < 0.05:
+            score += 5
+            
+        score = np.clip(score, 0, 100)
+        
+        if score > 85:
+            return int(score), "EXCELLENT", "#0fc98f"
+        elif score > 60:
+            return int(score), "GOOD", "#f0a828"
+        elif score > 30:
+            return int(score), "RISKY", "#e24b4a"
+        else:
+            return int(score), "CRITICAL", "#ff0000"
+
+    def generate_fraud_proof(self, merchant_name, txn_row):
+        """
+        Generates a cryptographic 'Fraud Proof' for a specific transaction.
+        Returns a dictionary with hash, timestamp, and proof_id.
+        """
+        ts = datetime.utcnow().isoformat()
+        txn_id = txn_row.get("transaction_id", "TXN_UNKNOWN")
+        amt = txn_row.get("amount", 0)
+        score = txn_row.get("anomaly_score", 0)
+        
+        raw_proof = f"{merchant_name}|{txn_id}|{amt}|{score}|{ts}"
+        proof_hash = hashlib.sha256(raw_proof.encode()).hexdigest()
+        
+        return {
+            "proof_id": f"PS-{proof_hash[:8].upper()}",
+            "timestamp": ts,
+            "hash": proof_hash,
+            "verification_url": f"https://paysentinel.ai/verify/{proof_hash[:16]}"
+        }
+
     def explain(self, df, idx):
         """
         Get SHAP-based explanation for a transaction's anomaly score.
@@ -524,6 +582,6 @@ if __name__ == "__main__":
     result = detector.predict(df)
     print(result[result["is_anomaly"] == 1][["date", "amount", "hour", "anomaly_score", "risk_level"]])
     detector.save()
-    print("Done. Run: streamlit run app.py")
+    print("Done. Run: python app.py")
 
 # updated

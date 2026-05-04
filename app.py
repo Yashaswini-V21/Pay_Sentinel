@@ -1,679 +1,482 @@
-# ============================================================================
-# PaySentinel — app.py  (Premium Fintech Dashboard)
-# AI-Powered UPI Merchant Fraud Detection | English + Kannada
-# "Stark Tech" Aesthetic — Award-winning Fintech UI
-# ============================================================================
+from __future__ import annotations
 
-# ── IMPORTS ─────────────────────────────────────────────────────────────────
-import streamlit as st
-import pandas as pd
-import numpy as np
-import plotly.graph_objects as go
-import plotly.express as px
+import hashlib
+import io
+import json
+import logging
+import os
+import pickle
 import time
+from collections import defaultdict
+from datetime import datetime
+from pathlib import Path
+from functools import wraps
+
+import numpy as np
+import pandas as pd
+from flask import Flask, jsonify, request, send_file, send_from_directory
 
 from generate_data import generate_merchant_transactions
 from model import PaySentinelDetector
-from voice_alerts import alert_html, summary_html
 from pdf_report import make_pdf
-from premium_css import inject_css
-from premium_components import (
-    risk_gauge,
-    transaction_bubble,
-    merchant_profile_card,
-    animated_timeline,
-    daily_volume_chart,
-    fraud_heatmap,
-    shap_bar_chart,
-    skeleton_loader,
-    section_header,
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_CACHE_DIR = Path(BASE_DIR) / "models"
+LOG_DIR = Path(BASE_DIR) / "logs"
+
+# Create directories if they don't exist
+MODEL_CACHE_DIR.mkdir(exist_ok=True)
+LOG_DIR.mkdir(exist_ok=True)
+
+# Configure logging
+logger = logging.getLogger("paysentinel")
+logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter(
+    "%(asctime)s - %(name)s - %(levelname)s - [%(funcName)s:%(lineno)d] - %(message)s"
 )
 
-# ── PAGE CONFIG ─────────────────────────────────────────────────────────────
-st.set_page_config(
-    page_title="PaySentinel — AI Fraud Shield",
-    page_icon="🛡️",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
+file_handler = logging.FileHandler(LOG_DIR / "paysentinel.log")
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
 
-# ── INJECT PREMIUM CSS ─────────────────────────────────────────────────────
-st.markdown(inject_css(), unsafe_allow_html=True)
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
 
-# ── SESSION STATE ───────────────────────────────────────────────────────────
-for key, default in [("detector", None), ("results", None),
-                     ("df_raw", None), ("merchant_name", "My UPI Store")]:
-    if key not in st.session_state:
-        st.session_state[key] = default
+app = Flask(__name__, static_folder="static", static_url_path="/static")
+app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 
-# ── PREMIUM HEADER ──────────────────────────────────────────────────────────
-merchant = st.session_state["merchant_name"]
-st.markdown(
-    f"""
-    <div style="display:flex; align-items:center; gap:14px; margin-bottom:8px;">
-      <div style="font-size:2rem;">🛡️</div>
-      <div>
-        <div style="font-size:1.7rem; font-weight:800;
-                    background:linear-gradient(135deg,#e24b4a,#ff8a80);
-                    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-                    letter-spacing:-0.5px; font-family:'Space Grotesk',sans-serif;">
-          PaySentinel
-        </div>
-        <div style="font-size:0.76rem; color:#8888a8; font-weight:400;
-                    letter-spacing:0.5px;">
-          AI-Powered Fraud Shield for {merchant}
-        </div>
-      </div>
-      <div style="flex:1;"></div>
-      <div style="display:flex; align-items:center; gap:6px;
-                  background:rgba(15,201,143,0.1); padding:4px 12px;
-                  border-radius:999px; border:1px solid rgba(15,201,143,0.2);">
-        <span class="live-dot"></span>
-        <span style="font-size:0.72rem; color:#0fc98f; font-weight:600;
-                     letter-spacing:0.5px;">MONITORING</span>
-      </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+# Rate limiting: track requests per IP
+REQUEST_LIMIT_WINDOW = 60  # seconds
+REQUEST_LIMIT_COUNT = 30  # requests per window
+request_tracker = defaultdict(list)
 
-# ── SIDEBAR ─────────────────────────────────────────────────────────────────
-with st.sidebar:
-    st.markdown("# 🛡️ PaySentinel")
-    st.markdown(
-        '<span style="color:#8888a8; font-size:0.82rem;">AI Merchant Fraud Shield</span>',
-        unsafe_allow_html=True,
-    )
-    st.divider()
 
-    merchant_name = st.text_input(
-        "🏪 Merchant Name", value=st.session_state["merchant_name"]
-    )
-    st.session_state["merchant_name"] = merchant_name
-
-    lang_select = st.selectbox(
-        "🔊 Alert Language", ["English", "Kannada (ಕನ್ನಡ)"]
-    )
-    lang_key = "Kannada" if "Kannada" in lang_select else "English"
-
-    sensitivity = st.select_slider(
-        "🎯 Detection Sensitivity",
-        options=["2%", "5%", "8%", "12%", "15%"],
-        value="5%",
-    )
-    contamination = float(sensitivity.replace("%", "")) / 100
-    st.caption(f"Detecting top {sensitivity} unusual transactions")
-
-    st.divider()
-
-    st.markdown(
-        """
-        <div style="background:rgba(112,96,238,0.08); border:1px solid rgba(112,96,238,0.15);
-                    border-radius:12px; padding:14px; margin:8px 0;">
-          <div style="font-size:0.75rem; font-weight:600; color:#7060ee;
-                      text-transform:uppercase; letter-spacing:0.8px; margin-bottom:8px;">
-            Tech Stack
-          </div>
-          <div style="font-size:0.78rem; color:#aaa; line-height:1.8;">
-            🤖 Isolation Forest + SVM Hybrid<br>
-            🧠 SHAP Explainability<br>
-            🔊 Kannada + English Voice<br>
-            📄 Bilingual PDF Reports<br>
-            ⚡ &lt;100ms Kafka Pipeline
-          </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    st.markdown("---")
-    st.markdown(
-        '<div style="text-align:center; font-size:0.7rem; color:#555577;">'
-        'ಕನ್ನಡ + English &nbsp;|&nbsp; Blueprint 2026</div>',
-        unsafe_allow_html=True,
-    )
-
-# ── TABS ────────────────────────────────────────────────────────────────────
-tab1, tab2, tab3, tab4, tab5 = st.tabs(
-    [
-        "📤 Upload & Analyse",
-        "🚨 Fraud Alerts",
-        "📈 Timeline & Heatmap",
-        "🧠 Explain (SHAP)",
-        "📄 PDF Report",
-    ]
-)
-
-# ════════════════════════════════════════════════════════════════════════════
-# TAB 1 — UPLOAD & ANALYSE
-# ════════════════════════════════════════════════════════════════════════════
-with tab1:
-    st.markdown(
-        section_header("Upload & Analyse", "Load transaction data and run ML detection"),
-        unsafe_allow_html=True,
-    )
-
-    col_upload, col_sample = st.columns(2)
-
-    with col_upload:
-        uploaded = st.file_uploader(
-            "Upload UPI CSV",
-            type=["csv"],
-            help="Columns needed: date, hour, amount, sender (optional)",
-        )
-
-    with col_sample:
-        st.markdown("")
-        if st.button("🎲 Generate Sample Data", use_container_width=True):
-            with st.spinner("Generating sample data..."):
-                df = generate_merchant_transactions(
-                    merchant_name=st.session_state["merchant_name"]
-                )
-                st.session_state["df_raw"] = df
-            st.success(f"✅ Loaded {len(df):,} sample transactions!")
-
-    if uploaded is not None:
-        df_up = pd.read_csv(uploaded)
-        st.session_state["df_raw"] = df_up
-        st.success(
-            f"✅ Loaded {len(df_up):,} transactions from {uploaded.name}"
-        )
-
-    if st.session_state["df_raw"] is not None and uploaded is None:
-        st.download_button(
-            "⬇️ Download Sample CSV",
-            st.session_state["df_raw"].to_csv(index=False),
-            "sample_upi_transactions.csv",
-            "text/csv",
-        )
-
-    # ── Run Detection ──
-    if st.session_state["df_raw"] is not None:
-        st.markdown("---")
-        if st.button("🔍 Run Anomaly Detection", type="primary",
-                     use_container_width=True):
-            progress = st.progress(0)
-            status = st.empty()
-
-            # Show skeleton while processing
-            placeholder = st.empty()
-            placeholder.markdown(
-                skeleton_loader("chart") + skeleton_loader("card"),
-                unsafe_allow_html=True,
-            )
-
-            steps = [
-                (15, "⚙️ Loading data..."),
-                (35, "🔧 Engineering 20 features..."),
-                (50, "👤 Building merchant fingerprint..."),
-            ]
-            for pct, msg in steps:
-                status.text(msg)
-                time.sleep(0.2)
-                progress.progress(pct)
-
-            detector = PaySentinelDetector(contamination=contamination)
-            detector.fit(st.session_state["df_raw"])
-            progress.progress(65)
-
-            status.text("🔍 Running hybrid anomaly detection...")
-            results = detector.predict(st.session_state["df_raw"])
-            progress.progress(85)
-
-            status.text("🧠 Setting up SHAP explainer...")
-            time.sleep(0.2)
-            progress.progress(100)
-
-            progress.empty()
-            status.empty()
-            placeholder.empty()
-            st.session_state["detector"] = detector
-            st.session_state["results"] = results
-
-            st.success("✅ Analysis complete! Navigate to other tabs →")
-
-    # ── Summary Metrics + Merchant Profile ──
-    if st.session_state["results"] is not None:
-        results = st.session_state["results"]
-        anomalies = results[results["is_anomaly"] == 1]
-        n_total = len(results)
-        n_fraud = len(anomalies)
-        risk_amt = (
-            anomalies["amount"].sum() if "amount" in anomalies.columns else 0
-        )
-
-        st.markdown("---")
-
-        # Premium Metric Cards
-        m1, m2, m3, m4 = st.columns(4)
-        m1.metric("Total Transactions", f"{n_total:,}")
-        m2.metric(
-            "🚨 Suspicious Found",
-            f"{n_fraud}",
-            delta=f"{n_fraud / n_total * 100:.1f}% of total",
-            delta_color="inverse",
-        )
-        m3.metric("💰 At-Risk Amount", f"₹{risk_amt:,.0f}")
-        m4.metric("✅ Safe", f"{n_total - n_fraud:,}")
-
-        # Merchant Profile Card
-        st.markdown("---")
-        detector = st.session_state["detector"]
-        st.markdown(
-            merchant_profile_card(
-                st.session_state["merchant_name"],
-                detector.fp,
-                n_total,
-                n_fraud,
-                risk_amt,
-            ),
-            unsafe_allow_html=True,
-        )
-
-        # Data table
-        st.markdown("---")
-        st.markdown(
-            section_header("Transaction Data", "All processed transactions"),
-            unsafe_allow_html=True,
-        )
-        display_cols = [
-            c
-            for c in [
-                "transaction_id", "date", "hour", "amount", "sender",
-                "description", "is_anomaly", "anomaly_score", "risk_level",
-            ]
-            if c in results.columns
+def _rate_limit(f):
+    """Decorator to enforce rate limiting per client IP."""
+    @wraps(f)
+    def rate_limited(*args, **kwargs):
+        client_ip = request.remote_addr
+        now = time.time()
+        
+        # Clean old entries outside the window
+        request_tracker[client_ip] = [
+            req_time for req_time in request_tracker[client_ip]
+            if now - req_time < REQUEST_LIMIT_WINDOW
         ]
-        st.dataframe(
-            results[display_cols], use_container_width=True, height=360
-        )
+        
+        # Check if limit exceeded
+        if len(request_tracker[client_ip]) >= REQUEST_LIMIT_COUNT:
+            logger.warning(f"Rate limit exceeded for IP {client_ip}")
+            return jsonify({"status": "error", "message": "Rate limit exceeded. Max 30 requests per minute."}), 429
+        
+        request_tracker[client_ip].append(now)
+        return f(*args, **kwargs)
+    return rate_limited
 
-# ════════════════════════════════════════════════════════════════════════════
-# TAB 2 — FRAUD ALERTS (Live Feed + Risk Gauges)
-# ════════════════════════════════════════════════════════════════════════════
-with tab2:
-    if st.session_state["results"] is None:
-        st.markdown(
-            section_header("Fraud Alerts", "Run detection first"),
-            unsafe_allow_html=True,
-        )
-        st.info("👆 Run detection in the Upload tab first.")
-        st.markdown(skeleton_loader("card") * 3, unsafe_allow_html=True)
+
+def _get_cache_key(merchant_name: str, contamination: float) -> str:
+    """Generate a cache key for model persistence."""
+    key_str = f"{merchant_name}_{contamination:.4f}"
+    return hashlib.md5(key_str.encode()).hexdigest()
+
+
+def _get_cached_detector(merchant_name: str, contamination: float) -> PaySentinelDetector | None:
+    """Load detector from cache if available and fresh."""
+    cache_key = _get_cache_key(merchant_name, contamination)
+    cache_file = MODEL_CACHE_DIR / f"detector_{cache_key}.pkl"
+    cache_meta = MODEL_CACHE_DIR / f"detector_{cache_key}.meta"
+    
+    if not cache_file.exists() or not cache_meta.exists():
+        return None
+    
+    try:
+        # Check cache TTL (1 hour)
+        with open(cache_meta, "r") as f:
+            meta = json.load(f)
+            if time.time() - meta["timestamp"] > 3600:  # 1 hour TTL
+                logger.info(f"Cache expired for {merchant_name}, contamination={contamination}")
+                return None
+        
+        with open(cache_file, "rb") as f:
+            detector = pickle.load(f)
+            logger.info(f"Loaded detector from cache: {merchant_name}, contamination={contamination}")
+            return detector
+    except Exception as e:
+        logger.warning(f"Failed to load detector from cache: {e}")
+        return None
+
+
+def _save_detector_cache(detector: PaySentinelDetector, merchant_name: str, contamination: float) -> None:
+    """Save detector to cache."""
+    cache_key = _get_cache_key(merchant_name, contamination)
+    cache_file = MODEL_CACHE_DIR / f"detector_{cache_key}.pkl"
+    cache_meta = MODEL_CACHE_DIR / f"detector_{cache_key}.meta"
+    
+    try:
+        with open(cache_file, "wb") as f:
+            pickle.dump(detector, f)
+        with open(cache_meta, "w") as f:
+            json.dump({"timestamp": time.time(), "merchant": merchant_name, "contamination": contamination}, f)
+        logger.info(f"Saved detector to cache: {merchant_name}, contamination={contamination}")
+    except Exception as e:
+        logger.error(f"Failed to save detector to cache: {e}")
+
+
+def _validate_file_upload(uploaded_file) -> tuple[bool, str]:
+    """Validate file upload: size and MIME type."""
+    if not uploaded_file:
+        return False, "No file provided"
+    
+    if not uploaded_file.filename:
+        return False, "File has no name"
+    
+    # Check file size (max 10MB)
+    uploaded_file.seek(0, os.SEEK_END)
+    file_size = uploaded_file.tell()
+    uploaded_file.seek(0)
+    
+    if file_size > 10 * 1024 * 1024:
+        return False, "File size exceeds 10MB limit"
+    
+    # Check MIME type
+    allowed_mimes = {"text/csv", "application/csv", "text/plain"}
+    if uploaded_file.content_type not in allowed_mimes and not uploaded_file.filename.endswith(".csv"):
+        return False, "Invalid file type. Only CSV files are accepted."
+    
+    return True, ""
+
+
+def _parse_sensitivity(value: str | None) -> float:
+    try:
+        raw = str(value or "5%").strip().replace("%", "")
+        return max(0.01, min(float(raw) / 100.0, 0.25))
+    except Exception:
+        return 0.05
+
+
+def _normalize_input_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    data = df.copy()
+
+    if "timestamp" in data.columns:
+        timestamps = pd.to_datetime(data["timestamp"], errors="coerce")
+        if "date" not in data.columns:
+            data["date"] = timestamps.dt.strftime("%Y-%m-%d")
+        if "hour" not in data.columns:
+            data["hour"] = timestamps.dt.hour.fillna(12).astype(int)
+
+    if "date" not in data.columns:
+        data["date"] = datetime.now().strftime("%Y-%m-%d")
+    if "hour" not in data.columns:
+        data["hour"] = 12
+    if "amount" not in data.columns:
+        raise ValueError("CSV must include an 'amount' column.")
+    if "sender" not in data.columns:
+        data["sender"] = "unknown@upi"
+    if "description" not in data.columns:
+        data["description"] = "Transaction"
+
+    data["date"] = pd.to_datetime(data["date"], errors="coerce").fillna(
+        pd.Timestamp.now()
+    ).dt.strftime("%Y-%m-%d")
+    data["hour"] = pd.to_numeric(data["hour"], errors="coerce").fillna(12).astype(int)
+    data["amount"] = pd.to_numeric(data["amount"], errors="coerce").fillna(0)
+
+    if "transaction_id" not in data.columns:
+        data["transaction_id"] = [f"TXN-{i:05d}" for i in range(len(data))]
+    if "timestamp" not in data.columns:
+        data["timestamp"] = (
+            pd.to_datetime(data["date"], errors="coerce")
+            + pd.to_timedelta(data["hour"], unit="h")
+        ).dt.strftime("%Y-%m-%dT%H:%M:%S")
+
+    return data.reset_index(drop=True)
+
+
+def _request_payload() -> dict:
+    if request.is_json:
+        return request.get_json(silent=True) or {}
+    return request.form.to_dict(flat=True)
+
+
+def _request_value(name: str, default: str) -> str:
+    payload = _request_payload()
+    value = payload.get(name, default)
+    if value in (None, ""):
+        return default
+    return str(value)
+
+
+def _read_dataframe_from_request() -> tuple[pd.DataFrame, str]:
+    payload = _request_payload()
+
+    if request.is_json:
+        if "rows" in payload:
+            rows = payload.get("rows") or []
+            frame = pd.DataFrame(rows)
+            if frame.empty:
+                return frame, "sample"
+            return _normalize_input_dataframe(frame), "sample"
+
+    uploaded = request.files.get("file")
+    if uploaded and uploaded.filename:
+        # Validate file upload
+        is_valid, error_msg = _validate_file_upload(uploaded)
+        if not is_valid:
+            raise ValueError(f"File validation failed: {error_msg}")
+        try:
+            df = pd.read_csv(uploaded)
+            logger.info(f"Uploaded file: {uploaded.filename}, rows: {len(df)}")
+            return _normalize_input_dataframe(df), uploaded.filename
+        except Exception as e:
+            logger.error(f"Failed to parse CSV file: {e}")
+            raise ValueError(f"Failed to parse CSV file: {str(e)}")
+
+    merchant_name = _request_value("merchant_name", "My UPI Store")
+    return _normalize_input_dataframe(
+        generate_merchant_transactions(merchant_name=merchant_name)
+    ), "sample"
+
+
+def _json_records(df: pd.DataFrame, limit: int | None = None) -> list[dict]:
+    frame = df.copy()
+    if limit is not None:
+        frame = frame.head(limit)
+    return json.loads(frame.replace({np.nan: None}).to_json(orient="records", date_format="iso"))
+
+
+def _build_timeline(results: pd.DataFrame) -> list[dict]:
+    if "date" not in results.columns:
+        return []
+    timeline = (
+        results.assign(date=pd.to_datetime(results["date"], errors="coerce"))
+        .dropna(subset=["date"])
+        .assign(date=lambda frame: frame["date"].dt.strftime("%Y-%m-%d"))
+        .groupby("date", as_index=False)
+        .agg(total=("amount", "size"), suspicious=("is_anomaly", "sum"), amount=("amount", "sum"))
+        .sort_values("date")
+    )
+    return timeline.to_dict(orient="records")
+
+
+def _build_heatmap(results: pd.DataFrame) -> list[list[int]]:
+    grid = [[0 for _ in range(24)] for _ in range(7)]
+    if "date" not in results.columns or "hour" not in results.columns:
+        return grid
+
+    dates = pd.to_datetime(results["date"], errors="coerce")
+    hours = pd.to_numeric(results["hour"], errors="coerce").fillna(0).astype(int)
+    for idx, date_value in enumerate(dates):
+        if pd.isna(date_value):
+            continue
+        day = int(date_value.dayofweek)
+        hour = int(hours.iloc[idx]) if idx < len(hours) else 0
+        hour = max(0, min(23, hour))
+        grid[day][hour] += int(results.iloc[idx].get("is_anomaly", 0))
+    return grid
+
+
+def _risk_summary(detector: PaySentinelDetector, results: pd.DataFrame) -> dict:
+    anomalies = results[results["is_anomaly"] == 1]
+    score, label, color = detector.calculate_resilience_score(results)
+    return {
+        "total": int(len(results)),
+        "suspicious": int(len(anomalies)),
+        "safe": int(len(results) - len(anomalies)),
+        "at_risk_amount": float(anomalies["amount"].sum()) if len(anomalies) else 0.0,
+        "suspicious_ratio": round((len(anomalies) / len(results) * 100) if len(results) else 0, 1),
+        "resilience_score": int(score),
+        "resilience_label": label,
+        "resilience_color": color,
+    }
+
+
+def _alert_texts(row: pd.Series, count: int, language: str) -> dict:
+    amount = float(row.get("amount", 0))
+    hour = int(row.get("hour", 0))
+    risk = str(row.get("risk_level", "HIGH"))
+    amount_text = f"₹{amount:,.0f}"
+
+    if language.lower() in {"kannada", "ಕನ್ನಡ", "kn"}:
+        summary = f"{count} ಸಂಶಯಾಸ್ಪದ ವ್ಯವಹಾರ ಪತ್ತೆ. ವರದಿಯನ್ನು ಪರಿಶೀಲಿಸಿ."
+        alert = f"ಎಚ್ಚರಿಕೆ! {amount_text} ಮೊತ್ತದ {risk.lower()} ಅಪಾಯದ ವ್ಯವಹಾರ {hour}:00ಕ್ಕೆ ಪತ್ತೆಯಾಗಿದೆ."
+    elif language.lower() in {"hindi", "हिन्दी", "hi"}:
+        summary = f"{count} संदिग्ध लेनदेन पाए गए। कृपया समीक्षा करें।"
+        alert = f"चेतावनी! {amount_text} का {risk.lower()} जोखिम लेनदेन {hour}:00 बजे पाया गया।"
     else:
-        results = st.session_state["results"]
-        anomalies = results[results["is_anomaly"] == 1].sort_values(
-            "anomaly_score", ascending=False
-        )
+        summary = f"{count} suspicious transactions detected. Please review the report."
+        alert = f"Warning. A {risk.lower()} risk transaction of {amount_text} was detected at {hour}:00."
 
-        # Summary audio
-        st.markdown(
-            summary_html(len(anomalies), lang_key), unsafe_allow_html=True
-        )
+    return {"summary": summary, "alert": alert}
 
-        st.markdown(
-            section_header(
-                "Live Transaction Feed",
-                f'<span class="live-dot"></span> {len(anomalies)} alerts detected',
-            ),
-            unsafe_allow_html=True,
-        )
 
-        if len(anomalies) == 0:
-            st.success(
-                "✅ No suspicious transactions found! "
-                "Your merchant activity looks normal."
-            )
-        else:
-            # ── Risk Gauge for top threat ──
-            top_score = float(anomalies.iloc[0].get("anomaly_score", 0))
-            col_gauge, col_summary = st.columns([1, 1])
+def _run_analysis(df: pd.DataFrame, merchant_name: str, sensitivity: str, language: str) -> dict:
+    if df is None or df.empty:
+        raise ValueError("No transaction rows were provided. Upload a CSV or load sample data first.")
 
-            with col_gauge:
-                fig_gauge = risk_gauge(top_score, "Highest Threat Score")
-                st.plotly_chart(fig_gauge, use_container_width=True)
-
-            with col_summary:
-                n_crit = len(anomalies[anomalies['risk_level'] == 'CRITICAL'])
-                n_high = len(anomalies[anomalies['risk_level'] == 'HIGH'])
-                n_med = len(anomalies[anomalies['risk_level'] == 'MEDIUM'])
-                st.markdown(
-                    f"""
-                    <div class="threat-summary">
-                      <div style="font-size:0.7rem; color:#8888a8; text-transform:uppercase;
-                                  letter-spacing:1px; margin-bottom:12px;">Threat Summary</div>
-                      <div style="font-family:'JetBrains Mono',monospace; font-size:2.4rem;
-                                  font-weight:800; color:#e24b4a; margin-bottom:8px;">
-                        {len(anomalies)} alerts
-                      </div>
-                      <div style="color:#aaa; font-size:0.85rem; line-height:2;">
-                        🔴 Critical: {n_crit} &nbsp;
-                        🟠 High: {n_high} &nbsp;
-                        🟡 Medium: {n_med}<br>
-                        💰 Total at risk: ₹{anomalies['amount'].sum():,.0f}
-                      </div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-
-            st.markdown("---")
-
-            # ── Transaction Feed ──
-            for i, (_, row) in enumerate(anomalies.head(12).iterrows()):
-                is_new = i < 3  # First 3 get blink animation
-                st.markdown(
-                    transaction_bubble(row, index=i, is_new=is_new),
-                    unsafe_allow_html=True,
-                )
-
-                # Voice buttons for first 5
-                if i < 5:
-                    c_en, c_kn, c_gauge = st.columns([1, 1, 1])
-                    with c_en:
-                        if st.button(f"🔊 English", key=f"en_{i}"):
-                            html = alert_html(
-                                row.get("amount", 0),
-                                int(row.get("hour", 0)),
-                                str(row.get("risk_level", "HIGH")),
-                                "English",
-                                autoplay=True,
-                            )
-                            st.markdown(html, unsafe_allow_html=True)
-                    with c_kn:
-                        if st.button(f"🔊 ಕನ್ನಡ", key=f"kn_{i}"):
-                            html = alert_html(
-                                row.get("amount", 0),
-                                int(row.get("hour", 0)),
-                                str(row.get("risk_level", "HIGH")),
-                                "Kannada",
-                                autoplay=True,
-                            )
-                            st.markdown(html, unsafe_allow_html=True)
-                    with c_gauge:
-                        score = float(row.get("anomaly_score", 0))
-                        mini_fig = risk_gauge(score, f"Score")
-                        mini_fig.update_layout(height=180,
-                                               margin=dict(t=30, b=0, l=20, r=20))
-                        st.plotly_chart(mini_fig, use_container_width=True,
-                                        key=f"gauge_{i}")
-
-# ════════════════════════════════════════════════════════════════════════════
-# TAB 3 — TIMELINE & HEATMAP
-# ════════════════════════════════════════════════════════════════════════════
-with tab3:
-    if st.session_state["results"] is None:
-        st.markdown(
-            section_header("Timeline & Heatmap", "Run detection first"),
-            unsafe_allow_html=True,
-        )
-        st.info("👆 Run detection in the Upload tab first.")
-        st.markdown(skeleton_loader("chart"), unsafe_allow_html=True)
+    contamination = _parse_sensitivity(sensitivity)
+    
+    # Try to load cached detector first
+    detector = _get_cached_detector(merchant_name, contamination)
+    
+    # If no cached detector, create and cache a new one
+    if detector is None:
+        logger.info(f"Training new detector for {merchant_name}, contamination={contamination}")
+        detector = PaySentinelDetector(contamination=contamination)
+        detector.fit(df)
+        _save_detector_cache(detector, merchant_name, contamination)
     else:
-        results = st.session_state["results"]
+        logger.info(f"Using cached detector for {merchant_name}, contamination={contamination}")
+    
+    results = detector.predict(df)
 
-        st.markdown(
-            section_header("Animated Fraud Timeline",
-                           "Press ▶ Play to watch transactions unfold over 60 days"),
-            unsafe_allow_html=True,
+    summary = _risk_summary(detector, results)
+    anomalies = results[results["is_anomaly"] == 1].sort_values("anomaly_score", ascending=False)
+    top_row = anomalies.iloc[0] if len(anomalies) else results.iloc[0]
+    explanation = []
+    if len(results) > 0:
+        try:
+            explanation_index = int(anomalies.index[0]) if len(anomalies) else 0
+            explanation = detector.explain(df, min(explanation_index, len(df) - 1))
+        except Exception:
+            explanation = []
+
+    display_columns = [
+        column
+        for column in [
+            "transaction_id",
+            "date",
+            "hour",
+            "amount",
+            "sender",
+            "description",
+            "is_anomaly",
+            "anomaly_score",
+            "risk_level",
+        ]
+        if column in results.columns
+    ]
+
+    payload = {
+        "merchant_name": merchant_name,
+        "language": language,
+        "contamination": contamination,
+        "summary": summary,
+        "fingerprint": detector.fp,
+        "top_transaction": _json_records(pd.DataFrame([top_row]), limit=1)[0],
+        "alert_text": _alert_texts(top_row, summary["suspicious"], language),
+        "anomalies": _json_records(anomalies, limit=12),
+        "results_preview": _json_records(results[display_columns], limit=50) if display_columns else [],
+        "timeline": _build_timeline(results),
+        "heatmap": _build_heatmap(results),
+        "explanation": explanation,
+        "risk_table_columns": display_columns,
+        "report_rows": len(results),
+    }
+    return payload, detector, results
+
+
+@app.get("/")
+def index():
+    return send_from_directory(BASE_DIR, "index.html")
+
+
+@app.get("/dashboard")
+@app.get("/dashboard.html")
+def dashboard():
+    return send_from_directory(BASE_DIR, "dashboard.html")
+
+
+@app.get("/api/health")
+def health():
+    return jsonify({"status": "ok", "app": "PaySentinel HTML dashboard"})
+
+
+@app.get("/api/sample-data")
+@_rate_limit
+def sample_data():
+    try:
+        merchant_name = request.args.get("merchant_name", "My UPI Store")
+        logger.info(f"[SAMPLE-DATA] merchant={merchant_name}, ip={request.remote_addr}")
+        
+        df = _normalize_input_dataframe(generate_merchant_transactions(merchant_name=merchant_name))
+        
+        logger.debug(f"[SAMPLE-DATA] Generated {len(df)} sample transactions")
+        
+        return jsonify(
+            {
+                "merchant_name": merchant_name,
+                "rows": len(df),
+                "columns": list(df.columns),
+                "data": _json_records(df, limit=12),
+            }
         )
+    except Exception as exc:
+        logger.error(f"[SAMPLE-DATA] ERROR - {str(exc)}", exc_info=True)
+        return jsonify({"status": "error", "message": str(exc)}), 400
 
-        # Chart 1 — Animated Timeline with play button
-        fig_timeline = animated_timeline(results)
-        st.plotly_chart(fig_timeline, use_container_width=True)
 
-        # Chart 2 — Daily Volume
-        st.markdown(
-            section_header("Daily Volume",
-                           "Transaction count per day with fraud overlay"),
-            unsafe_allow_html=True,
+@app.post("/api/analyze")
+@_rate_limit
+def analyze():
+    start_time = time.time()
+    try:
+        merchant_name = _request_value("merchant_name", "My UPI Store")
+        language = _request_value("language", "English")
+        sensitivity = _request_value("sensitivity", "5%")
+        
+        logger.info(f"[ANALYZE] START - merchant={merchant_name}, sensitivity={sensitivity}, language={language}, ip={request.remote_addr}")
+        
+        df, source = _read_dataframe_from_request()
+        logger.debug(f"[ANALYZE] Data loaded - source={source}, rows={len(df)}")
+        
+        payload, _, _ = _run_analysis(df, merchant_name, sensitivity, language)
+        payload["source"] = source
+        
+        elapsed = time.time() - start_time
+        logger.info(f"[ANALYZE] SUCCESS - merchant={merchant_name}, rows={len(df)}, time={elapsed:.2f}s, ip={request.remote_addr}")
+        
+        return jsonify(payload)
+    except Exception as exc:
+        elapsed = time.time() - start_time
+        logger.error(f"[ANALYZE] ERROR - {str(exc)}, time={elapsed:.2f}s, ip={request.remote_addr}", exc_info=True)
+        return jsonify({"status": "error", "message": str(exc)}), 400
+
+
+@app.post("/api/report")
+@_rate_limit
+def report():
+    start_time = time.time()
+    try:
+        merchant_name = _request_value("merchant_name", "My UPI Store")
+        language = _request_value("language", "English")
+        sensitivity = _request_value("sensitivity", "5%")
+        
+        logger.info(f"[REPORT] START - merchant={merchant_name}, sensitivity={sensitivity}, language={language}, ip={request.remote_addr}")
+        
+        df, _ = _read_dataframe_from_request()
+        logger.debug(f"[REPORT] Data loaded - rows={len(df)}")
+        
+        payload, detector, results = _run_analysis(df, merchant_name, sensitivity, language)
+        pdf_bytes = make_pdf(merchant_name, results, detector.fp)
+        filename = f"paysentinel_{merchant_name.replace(' ', '_')}.pdf"
+        
+        elapsed = time.time() - start_time
+        logger.info(f"[REPORT] SUCCESS - merchant={merchant_name}, rows={len(df)}, pdf_size={len(pdf_bytes)} bytes, time={elapsed:.2f}s, ip={request.remote_addr}")
+        
+        return send_file(
+            io.BytesIO(pdf_bytes),
+            as_attachment=True,
+            download_name=filename,
+            mimetype="application/pdf",
         )
-        fig_vol = daily_volume_chart(results)
-        st.plotly_chart(fig_vol, use_container_width=True)
+    except Exception as exc:
+        elapsed = time.time() - start_time
+        logger.error(f"[REPORT] ERROR - {str(exc)}, time={elapsed:.2f}s, ip={request.remote_addr}", exc_info=True)
+        return jsonify({"status": "error", "message": str(exc)}), 400
 
-        # Chart 3 — Heatmap
-        st.markdown(
-            section_header("Fraud Risk Heatmap",
-                           "Hour × Day concentration of suspicious activity"),
-            unsafe_allow_html=True,
-        )
-        fig_heat = fraud_heatmap(results)
-        if fig_heat is not None:
-            st.plotly_chart(fig_heat, use_container_width=True)
-            st.caption(
-                "🔴 Darker red = higher fraud concentration at that hour + day"
-            )
-        else:
-            st.info("No fraud detected — heatmap unavailable.")
 
-# ════════════════════════════════════════════════════════════════════════════
-# TAB 4 — EXPLAIN (SHAP)
-# ════════════════════════════════════════════════════════════════════════════
-with tab4:
-    if (
-        st.session_state["results"] is None
-        or st.session_state["detector"] is None
-    ):
-        st.markdown(
-            section_header("SHAP Explainability", "Run detection first"),
-            unsafe_allow_html=True,
-        )
-        st.info("👆 Run detection in the Upload tab first.")
-        st.markdown(skeleton_loader("chart"), unsafe_allow_html=True)
-    else:
-        results = st.session_state["results"]
-        detector = st.session_state["detector"]
-        df_raw = st.session_state["df_raw"]
-        fp = detector.fp
-
-        st.markdown(
-            section_header("SHAP Explainability",
-                           "Understand why each transaction was flagged"),
-            unsafe_allow_html=True,
-        )
-
-        anomalies = results[results["is_anomaly"] == 1]
-
-        if len(anomalies) == 0:
-            st.success("✅ No suspicious transactions to explain.")
-        else:
-            # Build dropdown
-            options = [
-                f"#{i} — ₹{row['amount']:,.0f} at "
-                f"{int(row.get('hour', 0))}:00 "
-                f"| Score: {row.get('anomaly_score', 0):.1f} "
-                f"| {str(row.get('risk_level', ''))}"
-                for i, (_, row) in enumerate(anomalies.head(10).iterrows())
-            ]
-            selected = st.selectbox("Select a suspicious transaction:", options)
-            sel_pos = options.index(selected)
-            sel_idx = anomalies.index[sel_pos]
-            row = results.loc[sel_idx]
-
-            # ── Two columns: Details + Risk Gauge ──
-            c_left, c_right = st.columns([3, 2])
-
-            with c_left:
-                st.markdown(
-                    section_header("Transaction Details"),
-                    unsafe_allow_html=True,
-                )
-                for col in [
-                    "date", "hour", "amount", "sender", "description",
-                    "anomaly_score", "risk_level",
-                ]:
-                    if col in row.index:
-                        val = row[col]
-                        if col == "amount":
-                            val = f"₹{val:,.0f}"
-                        st.markdown(f"- **{col.replace('_',' ').title()}:** {val}")
-
-                st.markdown(
-                    section_header("Why Flagged?"), unsafe_allow_html=True
-                )
-                flags = row.get("flags", [])
-                if isinstance(flags, list) and flags:
-                    for flag in flags:
-                        st.markdown(f"⚠️ {flag}")
-                else:
-                    st.markdown("⚠️ Statistical outlier detected by ML")
-
-            with c_right:
-                score = float(row.get("anomaly_score", 0))
-                fig_g = risk_gauge(score, "Risk Score")
-                st.plotly_chart(fig_g, use_container_width=True)
-
-            # ── SHAP bar chart ──
-            st.markdown("---")
-            st.markdown(
-                section_header("SHAP Feature Importance",
-                               "How each feature contributed to the score"),
-                unsafe_allow_html=True,
-            )
-            with st.spinner("Computing SHAP values..."):
-                try:
-                    orig_pos = (
-                        list(df_raw.index).index(sel_idx)
-                        if sel_idx in df_raw.index
-                        else 0
-                    )
-                    explanation = detector.explain(
-                        df_raw, min(orig_pos, len(df_raw) - 1)
-                    )
-                    fig_shap = shap_bar_chart(explanation)
-                    st.plotly_chart(fig_shap, use_container_width=True)
-                    st.caption(
-                        "🔴 Red = increases fraud risk   "
-                        "🟢 Green = decreases fraud risk"
-                    )
-                except Exception as e:
-                    st.warning(f"SHAP could not compute: {e}")
-
-            # ── Plain Language Explanation ──
-            st.markdown("---")
-            st.markdown(
-                section_header("Plain Language Explanation"),
-                unsafe_allow_html=True,
-            )
-            amt = row.get("amount", 0)
-            hour = int(row.get("hour", 0))
-            explanation_text = (
-                f"This transaction of **₹{amt:,.0f}** at **{hour}:00** "
-                f"was flagged because it deviates from your normal pattern. "
-                f"Your store normally operates between "
-                f"**{fp.get('hour_min', 8):.0f}:00** and "
-                f"**{fp.get('hour_max', 21):.0f}:00**, and typical amounts "
-                f"are up to **₹{fp.get('amt_p95', 1500):,.0f}**."
-            )
-            st.info(explanation_text)
-
-            # ── Merchant Fingerprint ──
-            st.markdown("---")
-            st.markdown(
-                section_header("Merchant Behaviour Fingerprint",
-                               "Baseline learned from your history"),
-                unsafe_allow_html=True,
-            )
-            f1, f2, f3 = st.columns(3)
-            f1.metric(
-                "Normal Operating Hours",
-                f"{fp.get('hour_min', 8):.0f}:00 – "
-                f"{fp.get('hour_max', 21):.0f}:00",
-            )
-            f2.metric(
-                "Typical Max Amount",
-                f"₹{fp.get('amt_p95', 1500):,.0f}",
-            )
-            f3.metric(
-                "Peak Business Hour",
-                f"{fp.get('peak_hour', 12)}:00",
-            )
-
-# ════════════════════════════════════════════════════════════════════════════
-# TAB 5 — PDF REPORT
-# ════════════════════════════════════════════════════════════════════════════
-with tab5:
-    if (
-        st.session_state["results"] is None
-        or st.session_state["detector"] is None
-    ):
-        st.markdown(
-            section_header("PDF Report", "Run detection first"),
-            unsafe_allow_html=True,
-        )
-        st.info("👆 Run detection in the Upload tab first.")
-    else:
-        results = st.session_state["results"]
-        detector = st.session_state["detector"]
-        merchant = st.session_state["merchant_name"]
-        anomalies = results[results["is_anomaly"] == 1]
-        risk_amt = (
-            anomalies["amount"].sum() if "amount" in anomalies.columns else 0
-        )
-
-        st.markdown(
-            section_header("Generate Audit Report",
-                           "Bilingual PDF for bank submission"),
-            unsafe_allow_html=True,
-        )
-
-        col_a, col_b = st.columns(2)
-
-        with col_a:
-            st.markdown(
-                f"""
-                <div class="info-card info-card-purple">
-                  <div class="info-card-label" style="color:#7060ee;">
-                    Report Contents
-                  </div>
-                  <div style="color:#ccc; font-size:0.85rem; line-height:2;">
-                    📊 <strong>{len(results):,}</strong> total transactions analysed<br>
-                    🚨 <strong>{len(anomalies)}</strong> suspicious transactions<br>
-                    💰 <strong>₹{risk_amt:,.0f}</strong> at-risk amount<br>
-                    🌐 English + ಕನ್ನಡ sections<br>
-                    📞 Cyber Crime Helpline: <strong>1930</strong>
-                  </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-        with col_b:
-            st.markdown(
-                """
-                <div class="info-card info-card-orange">
-                  <div class="info-card-label" style="color:#f0a828;">
-                    Kannada Advisory Preview
-                  </div>
-                  <div style="color:#ccc; font-size:0.85rem; line-height:2;">
-                    ಕನ್ನಡ ಸಲಹೆ (Kannada Advisory):<br>
-                    ಸಂಶಯಾಸ್ಪದ ವ್ಯವಹಾರ: ತಕ್ಷಣ ಬ್ಯಾಂಕ್‌ಗೆ ತಿಳಿಸಿ<br>
-                    ಸೈಬರ್ ಕ್ರೈಮ್ ಸಹಾಯವಾಣಿ: 1930
-                  </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-
-        st.markdown("---")
-        if st.button("📄 Generate PDF Report", type="primary",
-                     use_container_width=True):
-            with st.spinner("Generating report..."):
-                try:
-                    pdf_bytes = make_pdf(merchant, results, detector.fp)
-                    st.success("✅ Report generated!")
-                    fname = f"paysentinel_{merchant.replace(' ', '_')}.pdf"
-                    st.download_button(
-                        label="⬇️ Download PDF Report",
-                        data=pdf_bytes,
-                        file_name=fname,
-                        mime="application/pdf",
-                    )
-                except Exception as e:
-                    st.error(f"PDF error: {e}")
-
-        st.caption(
-            "The PDF includes a Kannada advisory section and Cyber Crime "
-            "Helpline 1930. Safe to share with your bank."
-        )
-
-# updated
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=5000)

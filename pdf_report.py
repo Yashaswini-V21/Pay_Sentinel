@@ -350,6 +350,6 @@ if __name__ == "__main__":
     print("\n" + "=" * 70)
     print("✅ ALL TESTS PASSED!")
     print("=" * 70)
-    print("\n🎉 PDF report generation is ready for Streamlit dashboard!\n")
+    print("\n🎉 PDF report generation is ready for the HTML dashboard!\n")
 
 # updated

@@ -38,6 +38,9 @@ STARK_CSS = """
     --radius-lg: 16px;
     --radius-xl: 20px;
     --transition-smooth: all 0.35s cubic-bezier(0.4,0,0.2,1);
+    --glass-bg: rgba(13, 13, 28, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --stark-glow: 0 0 20px rgba(112, 96, 238, 0.15);
 }
 
 /* ── App Background with Grid Texture ── */
@@ -199,6 +202,18 @@ hr { border-color: var(--border-subtle) !important; }
 @keyframes border-glow {
     0%, 100% { border-color: rgba(112,96,238,0.15); }
     50% { border-color: rgba(112,96,238,0.4); }
+}
+@keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+}
+@keyframes scanline {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
 }
 
 /* ═══════ PREMIUM COMPONENT CLASSES ═══════ */
@@ -467,13 +482,7 @@ hr { border-color: var(--border-subtle) !important; }
     font-family: var(--font-sans) !important;
 }
 
-/* ── Expander ── */
-.streamlit-expanderHeader {
-    font-weight: 600 !important;
-    font-family: var(--font-sans) !important;
-}
-
-/* ── Hide Streamlit Branding ── */
+/* ── Legacy app chrome ── */
 #MainMenu { visibility: hidden; }
 footer { visibility: hidden; }
 header { visibility: hidden; }
@@ -486,6 +495,48 @@ header { visibility: hidden; }
     border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover { background: rgba(112,96,238,0.5); }
+/* ── Scanline Effect Overlay ── */
+.stApp::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+    background-size: 100% 4px, 3px 100%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.15;
+}
+
+/* ── Glassmorphism Containers ── */
+.glass-container {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.stTabs {
+    background: transparent !important;
+}
+
+/* ── Peer Comparison Specific ── */
+.peer-card {
+    background: rgba(112,96,238,0.03);
+    border: 1px solid rgba(112,96,238,0.1);
+    border-radius: var(--radius-md);
+    padding: 15px;
+    transition: var(--transition-smooth);
+}
+.peer-card:hover {
+    background: rgba(112,96,238,0.06);
+    border-color: var(--accent-purple);
+}
 </style>
 """
 

@@ -31,6 +31,17 @@ EN = {
     "summary": "{count} suspicious transactions detected. Please review.",
 }
 
+# ============================================================================
+# HINDI ALERT TEMPLATES
+# ============================================================================
+
+HI = {
+    "critical": "चेतावनी! गंभीर खतरा। {amt} रुपये का संदिग्ध लेनदेन {hour} बजे पाया गया।",
+    "high": "चेतावनी! {amt} रुपये का असामान्य लेनदेन। कृपया जांच करें।",
+    "medium": "ध्यान दें। {amt} रुपये का लेनदेन थोड़ा असामान्य है।",
+    "summary": "{count} संदिग्ध लेनदेन पाए गए। कृपया समीक्षा करें।",
+}
+
 
 # ============================================================================
 # PRIVATE FUNCTION: Generate Base64 Audio HTML
@@ -124,6 +135,9 @@ def alert_html(amount, hour, risk="HIGH", language="English", autoplay=True):
     if language.lower() in ["kannada", "ಕನ್ನಡ", "kn"]:
         template = KN[risk]
         lang_code = "kn"
+    elif language.lower() in ["hindi", "हिन्दी", "hi"]:
+        template = HI[risk]
+        lang_code = "hi"
     else:
         template = EN[risk]
         lang_code = "en"
@@ -162,6 +176,9 @@ def summary_html(count, language="English", autoplay=False):
     if language.lower() in ["kannada", "ಕನ್ನಡ", "kn"]:
         template = KN["summary"]
         lang_code = "kn"
+    elif language.lower() in ["hindi", "हिन्दी", "hi"]:
+        template = HI["summary"]
+        lang_code = "hi"
     else:
         template = EN["summary"]
         lang_code = "en"
