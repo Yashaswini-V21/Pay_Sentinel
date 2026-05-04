@@ -340,6 +340,12 @@ PaySentinel engineers **45 battle-tested fraud signals** — 3× more than indus
 - Applied to all API endpoints (`/api/analyze`, `/api/report`, `/api/sample-data`)
 - Prevents abuse and ensures fair resource allocation
 
+### 🔐 Optional API Key
+- **Optional API key**: enable by setting environment variable `PAYSENTINEL_API_KEY`
+- When enabled, requests must include header `X-API-Key: <your-key>` or `api_key` in JSON/form payload
+- Useful for simple access control in demos and private deployments
+- Backwards compatible: if no `PAYSENTINEL_API_KEY` is set, endpoints remain open (no auth)
+
 ### 📋 Structured Logging
 - **Centralized logging** to `logs/paysentinel.log` + console output
 - **Request-level metrics**: merchant name, rows processed, processing time, client IP
