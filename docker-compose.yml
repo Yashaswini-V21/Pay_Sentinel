@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: paysentinel-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: paysentinel-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+
+volumes:
+  zookeeper-data:
+  kafka-data:
+
+# Quick Start:
+#
+# 1. Start Kafka cluster:
+#    docker-compose up -d
+#
+# 2. Verify containers are running:
+#    docker ps
+#
+# 3. Create topics manually (optional, auto-created):
+#    docker exec paysentinel-kafka kafka-topics --create --topic upi-transactions \
+#      --bootstrap-server localhost:9092 --partitions 3 --replication-factor 1
+#    docker exec paysentinel-kafka kafka-topics --create --topic fraud-alerts \
+#      --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+#
+# 4. In separate terminals, run:
+#    python kafka_producer.py
+#    python kafka_consumer.py
+#
+# 5. Stop cluster:
+#    docker-compose down
+#
+# 6. Clean up volumes:
+#    docker-compose down -v
+
+# updated
