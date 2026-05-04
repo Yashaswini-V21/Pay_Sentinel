@@ -77,6 +77,35 @@ def _rate_limit(f):
     return rate_limited
 
 
+def _require_api_key(f):
+    """Optional API key auth. If environment variable PAYSENTINEL_API_KEY is set,
+    requests must provide the same key in `X-API-Key` header or `api_key` payload.
+    If env var is not set, this decorator is a no-op for backward compatibility.
+    """
+    @wraps(f)
+    def wrapped(*args, **kwargs):
+        required = os.environ.get("PAYSENTINEL_API_KEY")
+        if not required:
+            return f(*args, **kwargs)
+
+        provided = None
+        # Prefer header, fallback to JSON/form payload
+        try:
+            provided = request.headers.get("X-API-Key")
+        except Exception:
+            provided = None
+        if not provided:
+            payload = _request_payload()
+            provided = payload.get("api_key") if isinstance(payload, dict) else None
+
+        if provided != required:
+            logger.warning(f"Unauthorized request from {request.remote_addr}")
+            return jsonify({"status": "error", "message": "Unauthorized"}), 401
+        return f(*args, **kwargs)
+
+    return wrapped
+
+
 def _get_cache_key(merchant_name: str, contamination: float) -> str:
     """Generate a cache key for model persistence."""
     key_str = f"{merchant_name}_{contamination:.4f}"
@@ -396,6 +425,7 @@ def health():
 
 @app.get("/api/sample-data")
 @_rate_limit
+@_require_api_key
 def sample_data():
     try:
         merchant_name = request.args.get("merchant_name", "My UPI Store")
@@ -420,6 +450,7 @@ def sample_data():
 
 @app.post("/api/analyze")
 @_rate_limit
+@_require_api_key
 def analyze():
     start_time = time.time()
     try:
@@ -447,6 +478,7 @@ def analyze():
 
 @app.post("/api/report")
 @_rate_limit
+@_require_api_key
 def report():
     start_time = time.time()
     try:
