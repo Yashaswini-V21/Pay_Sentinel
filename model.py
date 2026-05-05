@@ -535,7 +535,7 @@ class PaySentinelDetector:
                     pd.DataFrame(Xs, columns=FEATURES), min(50, len(Xs))
                 )
             self.explainer = shap.KernelExplainer(
-                lambda x: self.model.score_samples(x), bg
+                lambda x: self.iforest.score_samples(x), bg
             )
 
         sv = self.explainer.shap_values(Xs[idx : idx + 1], nsamples=80)[0]

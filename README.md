@@ -444,7 +444,7 @@ Pay_Sentinel/
 
 | Feature | Status |
 |---------|--------|
-| Streamlit Cloud Hosting | 🔨 Building |
+| Flask / Docker Hosting | 🔨 Building |
 | Merchant Resilience Score (0–100) | 🔨 Building |
 | Fraud Training Simulator (gamified) | 🔨 Building |
 | WhatsApp Business API Alerts | 🔨 Testing |
