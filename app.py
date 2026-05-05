@@ -15,6 +15,7 @@ from functools import wraps
 import numpy as np
 import pandas as pd
 from flask import Flask, jsonify, request, send_file, send_from_directory
+from werkzeug.exceptions import RequestEntityTooLarge
 
 from generate_data import generate_merchant_transactions
 from model import PaySentinelDetector
@@ -106,6 +107,25 @@ def _require_api_key(f):
     return wrapped
 
 
+def _json_error(message: str, status_code: int):
+    return jsonify({"status": "error", "message": message}), status_code
+
+
+@app.errorhandler(RequestEntityTooLarge)
+def handle_payload_too_large(error):
+    return _json_error("Upload exceeds the 10MB limit.", 413)
+
+
+@app.errorhandler(429)
+def handle_too_many_requests(error):
+    return _json_error("Rate limit exceeded. Max 30 requests per minute.", 429)
+
+
+@app.errorhandler(401)
+def handle_unauthorized(error):
+    return _json_error("Unauthorized", 401)
+
+
 def _get_cache_key(merchant_name: str, contamination: float) -> str:
     """Generate a cache key for model persistence."""
     key_str = f"{merchant_name}_{contamination:.4f}"
@@ -145,13 +165,16 @@ def _save_detector_cache(detector: PaySentinelDetector, merchant_name: str, cont
     cache_meta = MODEL_CACHE_DIR / f"detector_{cache_key}.meta"
     
     try:
+        if app.testing:
+            logger.debug(f"Skipping detector cache save during tests: {merchant_name}, contamination={contamination}")
+            return
         with open(cache_file, "wb") as f:
             pickle.dump(detector, f)
         with open(cache_meta, "w") as f:
             json.dump({"timestamp": time.time(), "merchant": merchant_name, "contamination": contamination}, f)
         logger.info(f"Saved detector to cache: {merchant_name}, contamination={contamination}")
     except Exception as e:
-        logger.error(f"Failed to save detector to cache: {e}")
+        logger.warning(f"Skipping detector cache save: {e}")
 
 
 def _validate_file_upload(uploaded_file) -> tuple[bool, str]:
