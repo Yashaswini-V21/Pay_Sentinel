@@ -163,3 +163,120 @@ ValueError: Failed to parse CSV file: CSV must include an 'amount' column.
 2026-05-05 19:31:33,753 - paysentinel - INFO - [_run_analysis:378] - Training new detector for Sensitivity Test, contamination=0.1
 2026-05-05 19:31:33,754 - paysentinel - DEBUG - [_save_detector_cache:169] - Skipping detector cache save during tests: Sensitivity Test, contamination=0.1
 2026-05-05 19:31:33,782 - paysentinel - INFO - [analyze:493] - [ANALYZE] SUCCESS - merchant=Sensitivity Test, rows=1, time=0.04s, ip=127.0.0.1
+2026-05-06 21:12:30,250 - paysentinel.peer_comparison - INFO - [find_similar_merchants:88] - Found 1 similar merchants for Bangalore kirana
+2026-05-06 21:12:30,254 - paysentinel.peer_comparison - INFO - [compare_metric:153] - fraud_risk_pct: You=1.2, Peers: median=0.8, mean=0.8, better_than=0%
+2026-05-06 21:12:30,254 - paysentinel.peer_comparison - INFO - [compare_metric:153] - false_positive_rate: You=0.9, Peers: median=1.9, mean=1.9, better_than=100%
+2026-05-06 21:12:30,255 - paysentinel.peer_comparison - INFO - [compare_metric:153] - resilience_score: You=70.0, Peers: median=46.0, mean=46.0, better_than=100%
+2026-05-06 21:12:30,259 - paysentinel.peer_comparison - INFO - [find_similar_merchants:88] - Found 0 similar merchants for Mumbai restaurant
+2026-05-06 21:12:30,259 - paysentinel.peer_comparison - WARNING - [get_peer_report:185] - No peer data available for Mumbai restaurant
+2026-05-06 21:12:30,271 - paysentinel.training - INFO - [check_answer:356] - Training check: velocity_attack, answer=2, correct=True, points=20
+2026-05-06 21:12:45,816 - paysentinel - ERROR - [resilience_score_endpoint:616] - [RESILIENCE] ERROR - 'fraud_flag'
+Traceback (most recent call last):
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "pandas/_libs/index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7088, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7096, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'fraud_flag'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel-main\app.py", line 575, in resilience_score_endpoint
+    metrics = ResilienceCalculator.from_dataframe(df)
+  File "C:\Pay_Sentinel-main\resilience_score.py", line 231, in from_dataframe
+    fraud_caught = int((df[fraud_column] == 1).sum())
+                        ~~^^^^^^^^^^^^^^
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\pandas\core\frame.py", line 4113, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\pandas\core\indexes\base.py", line 3819, in get_loc
+    raise KeyError(key) from err
+KeyError: 'fraud_flag'
+2026-05-06 21:12:45,999 - paysentinel.peer_comparison - INFO - [find_similar_merchants:88] - Found 0 similar merchants for Bangalore kirana
+2026-05-06 21:12:45,999 - paysentinel.peer_comparison - WARNING - [get_peer_report:185] - No peer data available for Bangalore kirana
+2026-05-06 21:12:46,000 - paysentinel - ERROR - [peer_comparison_endpoint:694] - [PEER-COMP] ERROR - Unknown format code 'f' for object of type 'str'
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel-main\app.py", line 665, in peer_comparison_endpoint
+    f"percentile={report.get('fraud_risk').your_percentile if 'fraud_risk' in report else 'N/A':.0f}%"
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Unknown format code 'f' for object of type 'str'
+2026-05-06 21:12:46,012 - paysentinel - INFO - [training_scenarios_endpoint:715] - [TRAINING] Retrieved 5 scenarios
+2026-05-06 21:12:46,020 - paysentinel.training - INFO - [check_answer:356] - Training check: velocity_attack, answer=2, correct=True, points=20
+2026-05-06 21:12:46,020 - paysentinel - INFO - [training_check_answer_endpoint:758] - [TRAINING] test_001 - scenario=velocity_attack, correct=True, points=20
+2026-05-06 21:17:34,862 - paysentinel.peer_comparison - INFO - [find_similar_merchants:88] - Found 3 similar merchants for Bangalore kirana
+2026-05-06 21:17:34,864 - paysentinel.peer_comparison - INFO - [compare_metric:153] - fraud_risk_pct: You=1.2, Peers: median=2.3, mean=2.0, better_than=67%
+2026-05-06 21:17:34,864 - paysentinel.peer_comparison - INFO - [compare_metric:153] - false_positive_rate: You=0.9, Peers: median=0.7, mean=0.8, better_than=33%
+2026-05-06 21:17:34,864 - paysentinel.peer_comparison - INFO - [compare_metric:153] - resilience_score: You=70.0, Peers: median=67.0, mean=66.0, better_than=67%
+2026-05-06 21:17:34,869 - paysentinel.peer_comparison - INFO - [find_similar_merchants:88] - Found 0 similar merchants for Mumbai restaurant
+2026-05-06 21:17:34,870 - paysentinel.peer_comparison - WARNING - [get_peer_report:185] - No peer data available for Mumbai restaurant
+2026-05-06 21:17:34,887 - paysentinel.training - INFO - [check_answer:356] - Training check: velocity_attack, answer=2, correct=True, points=20
+2026-05-06 21:17:34,962 - paysentinel - ERROR - [resilience_score_endpoint:616] - [RESILIENCE] ERROR - 'fraud_flag'
+Traceback (most recent call last):
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "pandas/_libs/index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7088, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7096, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'fraud_flag'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel-main\app.py", line 575, in resilience_score_endpoint
+    metrics = ResilienceCalculator.from_dataframe(df)
+  File "C:\Pay_Sentinel-main\resilience_score.py", line 231, in from_dataframe
+    fraud_caught = int((df[fraud_column] == 1).sum())
+                        ~~^^^^^^^^^^^^^^
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\pandas\core\frame.py", line 4113, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\pandas\core\indexes\base.py", line 3819, in get_loc
+    raise KeyError(key) from err
+KeyError: 'fraud_flag'
+2026-05-06 21:17:34,998 - paysentinel.peer_comparison - INFO - [find_similar_merchants:88] - Found 0 similar merchants for Bangalore kirana
+2026-05-06 21:17:34,999 - paysentinel.peer_comparison - WARNING - [get_peer_report:185] - No peer data available for Bangalore kirana
+2026-05-06 21:17:34,999 - paysentinel - ERROR - [peer_comparison_endpoint:694] - [PEER-COMP] ERROR - Unknown format code 'f' for object of type 'str'
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel-main\app.py", line 665, in peer_comparison_endpoint
+    f"percentile={report.get('fraud_risk').your_percentile if 'fraud_risk' in report else 'N/A':.0f}%"
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Unknown format code 'f' for object of type 'str'
+2026-05-06 21:17:35,003 - paysentinel - INFO - [training_scenarios_endpoint:715] - [TRAINING] Retrieved 5 scenarios
+2026-05-06 21:17:35,007 - paysentinel.training - INFO - [check_answer:356] - Training check: velocity_attack, answer=2, correct=True, points=20
+2026-05-06 21:17:35,007 - paysentinel - INFO - [training_check_answer_endpoint:758] - [TRAINING] test_001 - scenario=velocity_attack, correct=True, points=20
+2026-05-06 21:17:35,031 - paysentinel - ERROR - [resilience_score_endpoint:616] - [RESILIENCE] ERROR - 'fraud_flag'
+Traceback (most recent call last):
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\pandas\core\indexes\base.py", line 3812, in get_loc
+    return self._engine.get_loc(casted_key)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "pandas/_libs/index.pyx", line 167, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 196, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7088, in pandas._libs.hashtable.PyObjectHashTable.get_item
+  File "pandas/_libs/hashtable_class_helper.pxi", line 7096, in pandas._libs.hashtable.PyObjectHashTable.get_item
+KeyError: 'fraud_flag'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel-main\app.py", line 575, in resilience_score_endpoint
+    metrics = ResilienceCalculator.from_dataframe(df)
+  File "C:\Pay_Sentinel-main\resilience_score.py", line 231, in from_dataframe
+    fraud_caught = int((df[fraud_column] == 1).sum())
+                        ~~^^^^^^^^^^^^^^
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\pandas\core\frame.py", line 4113, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\pandas\core\indexes\base.py", line 3819, in get_loc
+    raise KeyError(key) from err
+KeyError: 'fraud_flag'
+2026-05-06 21:17:35,067 - paysentinel.peer_comparison - INFO - [find_similar_merchants:88] - Found 0 similar merchants for NonexistentCity invalid
+2026-05-06 21:17:35,068 - paysentinel.peer_comparison - WARNING - [get_peer_report:185] - No peer data available for NonexistentCity invalid
+2026-05-06 21:17:35,068 - paysentinel - ERROR - [peer_comparison_endpoint:694] - [PEER-COMP] ERROR - Unknown format code 'f' for object of type 'str'
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel-main\app.py", line 665, in peer_comparison_endpoint
+    f"percentile={report.get('fraud_risk').your_percentile if 'fraud_risk' in report else 'N/A':.0f}%"
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Unknown format code 'f' for object of type 'str'
+2026-05-06 21:17:35,074 - paysentinel.training - ERROR - [check_answer:340] - Scenario not found: invalid_id

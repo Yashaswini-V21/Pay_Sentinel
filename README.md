@@ -598,8 +598,6 @@ pytest test_api.py --cov=app --cov-report=html
 | | Mobile App | 📋 Q3 2026 |
 | | WhatsApp Business API | 🔨 In Progress |
 
----
-
 ## 🤝 Join the Mission
 
 We're building fraud protection for merchants who speak Kannada, Tamil, Telugu, Hindi, and Marathi.
