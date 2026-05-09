@@ -1,0 +1,56 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "PaySentinel API",
+    "description": "Enterprise-grade forensic fintech fraud detection API.",
+    "version": "2.0.0",
+    "contact": {
+      "name": "PaySentinel Security Team",
+      "url": "https://paysentinel.ai"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000",
+      "description": "Local Development"
+    }
+  ],
+  "paths": {
+    "/api/txn": {
+      "post": {
+        "summary": "Process Transaction",
+        "description": "Analyze a single UPI transaction for fraud.",
+        "responses": {
+          "200": { "description": "Success" },
+          "429": { "description": "Rate Limit Exceeded" }
+        }
+      }
+    },
+    "/api/analyze": {
+      "post": {
+        "summary": "Batch Analysis",
+        "description": "Analyze a CSV file of transactions.",
+        "responses": {
+          "200": { "description": "Success" }
+        }
+      }
+    },
+    "/api/metrics": {
+      "get": {
+        "summary": "Prometheus Metrics",
+        "description": "Operational telemetry in Prometheus format.",
+        "responses": {
+          "200": { "description": "Success" }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
+        "summary": "Health Check",
+        "responses": {
+          "200": { "description": "OK" }
+        }
+      }
+    }
+  }
+}

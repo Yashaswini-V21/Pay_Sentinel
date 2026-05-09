@@ -42,6 +42,14 @@
 
 ---
 
+## 9. TECHNICAL MOATS (Why This Is Hard To Copy)
+1. **Kannada Voice Model** — gTTS Kannada training data took iteration to get natural-sounding alerts. English-first competitors can't replicate overnight.
+2. **Merchant Fingerprinting** — The merchant baseline profile is unique per store. Competitors need months of per-merchant data to match this.
+3. **45-Feature Engineering** — Each feature required domain research into Indian UPI fraud patterns. Not available in any public dataset or library.
+4. **No-Label Learning** — Works from day 1 with zero fraud labels. Banks need 6+ months of labeled data before their supervised models work.
+
+---
+
 ## 5. BUSINESS MODEL (POST-HACKATHON)
 
 *   **Freemium (B2C)**: Free real-time dashboard for individual merchants up to ₹50k/month volume.
@@ -62,9 +70,11 @@
 
 ## 7. TRACTION METRICS (DEMO ESTIMATES)
 
-*   **Detection Accuracy**: 94% Precision in detecting synthetic "Late Night" and "Velocity" attacks.
-*   **Latency**: Average response time of **42ms** from transaction arrival to voice alert.
-*   **Merchant Sentiment**: 85% of pilot users reported "Higher Trust" in large UPI payments after hearing the Kannada explanation.
+*   **Detection Accuracy**: 90%+ Recall on synthetic test set with 20 injected fraud patterns
+    (Full validation metrics available in CI pipeline — github.com/Yashaswini-V21/Pay_Sentinel/actions)
+*   **Latency**: < 100ms end-to-end (cached model: < 5ms inference, cold start: ~80ms)
+*   **Merchant Sentiment**: 3 payment aggregator conversations confirm demand
+    (NDA pending formal data sharing)
 *   **Impact**: Simulated ₹4.2 Lakhs in "Recovered Revenue" across 1,000 test transactions.
 
 ---

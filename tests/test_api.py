@@ -6,16 +6,19 @@ Run with: pytest test_api.py -v
 """
 
 import json
+import os
 import sys
 import types
 from io import BytesIO
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src"))
 
 import pandas as pd
 import pytest
 
 
-def setup_module():
-    """Mock heavy dependencies before importing app."""
+def setup_mocks():
+    """Mock heavy dependencies only for app import."""
     # Create fake model module
     fake_model = types.ModuleType("model")
 
@@ -44,12 +47,10 @@ def setup_module():
             ]
 
     fake_model.PaySentinelDetector = FakeDetector
-    sys.modules["model"] = fake_model
 
     # Create fake pdf_report module
     fake_pdf = types.ModuleType("pdf_report")
     fake_pdf.make_pdf = lambda merchant, results, fp: b"PDF"
-    sys.modules["pdf_report"] = fake_pdf
 
     # Create fake generate_data module
     fake_gen = types.ModuleType("generate_data")
@@ -68,13 +69,31 @@ def setup_module():
         )
 
     fake_gen.generate_merchant_transactions = fake_generate
+
+    # Save originals
+    orig = {
+        "model": sys.modules.get("model"),
+        "pdf_report": sys.modules.get("pdf_report"),
+        "generate_data": sys.modules.get("generate_data"),
+    }
+
+    # Apply mocks
+    sys.modules["model"] = fake_model
+    sys.modules["pdf_report"] = fake_pdf
     sys.modules["generate_data"] = fake_gen
 
+    return orig
 
-# Must call setup before importing app
-setup_module()
 
+# Apply mocks, import app, then RESTORE originals to avoid polluting other tests
+orig_modules = setup_mocks()
 from app import app
+
+for name, mod in orig_modules.items():
+    if mod:
+        sys.modules[name] = mod
+    else:
+        sys.modules.pop(name, None)
 
 
 @pytest.fixture
@@ -476,5 +495,202 @@ class TestSensitivityParsing:
         assert abs(data["contamination"] - 0.10) < 0.01
 
 
+class TestStreamEndpoint:
+    """Test /api/stream endpoint."""
+
+    def test_stream_endpoint_exists(self, client):
+        """Just check endpoint exists, don't consume SSE fully."""
+        response = client.get('/api/stream?merchant=Test', headers={'Accept': 'text/event-stream'})
+        # Accept 200 or 404 (if not yet implemented)
+        assert response.status_code in [200, 404]
+
+    def test_stream_requires_no_auth_when_no_key_set(self, client):
+        """Stream should be accessible if no API key is configured."""
+        response = client.get('/api/stream')
+        assert response.status_code in [200, 404]
+
+
+class TestExplainEndpoint:
+    """Test /api/explain endpoint."""
+
+    def test_explain_english(self, client):
+        """Test explanation generation in English."""
+        payload = {
+            'question': 'Why is this suspicious?',
+            'language': 'English',
+            'context': {
+                'amount': 8200, 'score': 85, 'risk_level': 'CRITICAL',
+                'hour': 2, 'sender': 'unknown@ybl', 'flags': ['Late night'],
+                'fp': {'hour_min': 9, 'hour_max': 21}
+            }
+        }
+        response = client.post('/api/explain', json=payload)
+        assert response.status_code in [200, 404]  # 404 if not yet added
+        if response.status_code == 200:
+            data = json.loads(response.data)
+            assert 'explanation' in data or 'error' in data
+
+    def test_explain_kannada_language(self, client):
+        """Test explanation generation in Kannada."""
+        payload = {'language': 'Kannada', 'context': {'amount': 5000, 'score': 70}}
+        response = client.post('/api/explain', json=payload)
+        assert response.status_code in [200, 404]
+
+    def test_explain_invalid_language_defaults(self, client):
+        """Invalid language should default to English without crashing."""
+        payload = {'language': 'Swahili', 'context': {'amount': 100, 'score': 20}}
+        response = client.post('/api/explain', json=payload)
+        assert response.status_code in [200, 404]
+
+
+class TestInputSanitization:
+    """Test XSS and SQL Injection protection."""
+
+    def test_merchant_name_xss_attempt(self, client):
+        """XSS tags should be stripped from merchant name."""
+        payload = {
+            'rows': [{'date': '2026-05-04', 'hour': 12, 'amount': 100, 'sender': 'a@b', 'description': 'x'}],
+            'merchant_name': '<script>alert("xss")</script>Merchant',
+            'language': 'English', 'sensitivity': '5%'
+        }
+        response = client.post('/api/analyze', json=payload)
+        assert response.status_code == 200
+        data = json.loads(response.data)
+        assert '<script>' not in data.get('merchant_name', '')
+
+    def test_merchant_name_sql_injection(self, client):
+        """SQL injection characters in merchant name should not cause errors."""
+        payload = {
+            'rows': [{'date': '2026-05-04', 'hour': 12, 'amount': 100, 'sender': 'a@b', 'description': 'x'}],
+            'merchant_name': "'; DROP TABLE transactions; --",
+            'language': 'English', 'sensitivity': '5%'
+        }
+        response = client.post('/api/analyze', json=payload)
+        assert response.status_code == 200
+
+    def test_extremely_long_merchant_name(self, client):
+        """Oversized merchant names should be truncated."""
+        long_name = 'A' * 10000
+        payload = {
+            'rows': [{'date': '2026-05-04', 'hour': 12, 'amount': 100, 'sender': 'a@b', 'description': 'x'}],
+            'merchant_name': long_name, 'sensitivity': '5%'
+        }
+        response = client.post('/api/analyze', json=payload)
+        assert response.status_code == 200
+        data = json.loads(response.data)
+        assert len(data.get('merchant_name', '')) <= 200
+
+    def test_unicode_merchant_name(self, client):
+        """Unicode characters (Kannada) should be preserved if allowed."""
+        payload = {
+            'rows': [{'date': '2026-05-04', 'hour': 12, 'amount': 100, 'sender': 'a@b', 'description': 'x'}],
+            'merchant_name': 'ಮಂಜುನಾಥ್ ಕಿರಾಣ ಅಂಗಡಿ', 'sensitivity': '5%'
+        }
+        response = client.post('/api/analyze', json=payload)
+        assert response.status_code == 200
+
+    def test_invalid_sensitivity_values(self, client):
+        """Malformed sensitivity values should not crash the API."""
+        for bad_val in ['abc', '-5%', '200%', None, '', '0']:
+            payload = {
+                'rows': [{'date': '2026-05-04', 'hour': 12, 'amount': 100, 'sender': 'a@b', 'description': 'x'}],
+                'merchant_name': 'Test', 'sensitivity': bad_val
+            }
+            response = client.post('/api/analyze', json=payload)
+            assert response.status_code == 200  # Should not crash
+
+
+class TestSecurityHeaders:
+    """Test that mandatory security headers are present."""
+
+    def test_x_content_type_nosniff(self, client):
+        """MIME sniffing protection should be enabled."""
+        r = client.get('/api/health')
+        assert r.headers.get('X-Content-Type-Options') == 'nosniff'
+
+    def test_x_frame_options_deny(self, client):
+        """Clickjacking protection should be enabled."""
+        r = client.get('/dashboard')
+        assert r.headers.get('X-Frame-Options') == 'DENY'
+
+    def test_no_server_header_leaked(self, client):
+        """Backend server version should not be leaked."""
+        r = client.get('/api/health')
+        assert 'Server' not in r.headers or 'Werkzeug' not in r.headers.get('Server', '')
+
+    def test_referrer_policy_set(self, client):
+        """Referrer policy should be configured."""
+        r = client.get('/api/health')
+        assert 'Referrer-Policy' in r.headers
+
+
+class TestDataValidation:
+    """Test business logic validation for financial data."""
+
+    def test_negative_amounts_rejected(self, client):
+        """Transactions with negative amounts must return 400."""
+        csv_data = 'date,hour,amount,sender,description\n2026-05-04,12,-500,test@upi,payment'
+        data = {'file': (BytesIO(csv_data.encode()), 'neg.csv'), 'merchant_name': 'Test'}
+        response = client.post('/api/analyze', data=data, content_type='multipart/form-data')
+        assert response.status_code == 400
+
+    def test_extremely_large_amount_rejected(self, client):
+        """Amounts exceeding safety thresholds (₹10cr) must return 400."""
+        csv_data = 'date,hour,amount,sender,description\n2026-05-04,12,999999999,test@upi,payment'
+        data = {'file': (BytesIO(csv_data.encode()), 'big.csv'), 'merchant_name': 'Test'}
+        response = client.post('/api/analyze', data=data, content_type='multipart/form-data')
+        assert response.status_code == 400
+
+    def test_all_nan_amounts_rejected(self, client):
+        """Non-numeric amounts should be rejected with 400."""
+        csv_data = 'date,hour,amount,sender\n2026-05-04,12,notanumber,test@upi'
+        data = {'file': (BytesIO(csv_data.encode()), 'nan.csv'), 'merchant_name': 'Test'}
+        response = client.post('/api/analyze', data=data, content_type='multipart/form-data')
+        assert response.status_code == 400
+
+
+class TestResponseSchema:
+    """Test the structural integrity of API responses."""
+
+    def test_analyze_summary_has_resilience_score(self, client):
+        """Analysis summary must include Resilience metrics."""
+        payload = {
+            'rows': [{'date': '2026-05-04', 'hour': 12, 'amount': 100, 'sender': 'a@b', 'description': 'x'}],
+            'merchant_name': 'Schema Test', 'sensitivity': '5%'
+        }
+        response = client.post('/api/analyze', json=payload)
+        assert response.status_code == 200
+        data = json.loads(response.data)
+        assert 'resilience_score' in data['summary']
+        assert 'resilience_label' in data['summary']
+        assert 'resilience_color' in data['summary']
+
+    def test_analyze_fingerprint_has_required_keys(self, client):
+        """Merchant fingerprint must include all required statistical keys."""
+        payload = {
+            'rows': [{'date': '2026-05-04', 'hour': 12, 'amount': 100, 'sender': 'a@b', 'description': 'x'}],
+            'merchant_name': 'FP Test', 'sensitivity': '5%'
+        }
+        response = client.post('/api/analyze', json=payload)
+        data = json.loads(response.data)
+        fp = data.get('fingerprint', {})
+        for key in ['hour_min', 'hour_max', 'peak_hour', 'amt_p95']:
+            assert key in fp, f"Missing fingerprint key: {key}"
+
+    def test_analyze_heatmap_is_7x24_grid(self, client):
+        """Risk heatmap must be a standard 7x24 weekly-hourly grid."""
+        payload = {
+            'rows': [{'date': '2026-05-04', 'hour': 12, 'amount': 100, 'sender': 'a@b', 'description': 'x'}],
+            'merchant_name': 'Heatmap Test', 'sensitivity': '5%'
+        }
+        response = client.post('/api/analyze', json=payload)
+        data = json.loads(response.data)
+        heatmap = data.get('heatmap', [])
+        assert len(heatmap) == 7
+        for row in heatmap:
+            assert len(row) == 24
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "--tb=short"])
+

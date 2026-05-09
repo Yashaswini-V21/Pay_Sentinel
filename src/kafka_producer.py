@@ -4,25 +4,28 @@ PaySentinel Kafka Producer: Simulates live UPI transaction stream.
 Produces realistic UPI transactions to 'upi-transactions' topic:
 - 95% normal transactions (low fraud probability)
 - 5% suspicious transactions (high fraud probability patterns)
-- One transaction every 0.5–2 seconds
-
 Run: python kafka_producer.py
 """
 
 import json
-import time
 import random
+import time
 from datetime import datetime, timedelta
-from kafka import KafkaProducer
 from uuid import uuid4
 
-# ── Kafka Setup ──
+from kafka import KafkaProducer
+
+# ── Configuration ──
+TRANSACTIONS_PER_MINUTE = 40
 BROKER = "localhost:9092"
 TOPIC = "upi-transactions"
 
 producer = KafkaProducer(
     bootstrap_servers=BROKER,
-    value_serializer=lambda v: json.dumps(v).encode('utf-8')
+    value_serializer=lambda v: json.dumps(v).encode('utf-8'),
+    acks='all',
+    retries=3,
+    retry_backoff_ms=500
 )
 
 # ── Merchant & Sender Database (Simulated) ──
@@ -49,12 +52,27 @@ NORMAL_AMOUNTS = [100, 250, 500, 1000, 2000, 3000, 5000]
 SUSPICIOUS_AMOUNTS = [10000, 15000, 20000, 50000, 100000]  # Structuring attempts
 
 
+def realistic_hour():
+    """Generate hour based on realistic merchant peaks."""
+    r = random.random()
+    if r < 0.25:
+        return random.randint(8, 10)    # Morning
+    elif r < 0.55:
+        return random.randint(11, 14)   # Lunch peak
+    elif r < 0.75:
+        return random.randint(15, 17)   # Afternoon
+    elif r < 0.95:
+        return random.randint(18, 21)   # Evening peak
+    else:
+        return random.randint(22, 23)   # Late night
+
+
 def generate_normal_transaction():
     """Generate a normal UPI transaction (95% probability)."""
     merchant = random.choice(MERCHANTS)
     sender = random.choice(SENDERS[:6])  # Use only known senders
     
-    hour = random.randint(9, 21)  # Business hours
+    hour = realistic_hour()
     amount = random.choice(NORMAL_AMOUNTS)
     
     return {
@@ -141,6 +159,7 @@ def main():
     print(f"🔄 Sending transactions... (Ctrl+C to stop)\n")
     
     try:
+        delay = 60.0 / TRANSACTIONS_PER_MINUTE
         while True:
             # 95% normal, 5% suspicious
             if random.random() < 0.95:
@@ -150,8 +169,8 @@ def main():
             
             send_transaction(tx)
             
-            # Random delay between 0.5 and 2 seconds
-            time.sleep(random.uniform(0.5, 2))
+            # Rate controlled delay
+            time.sleep(delay + random.uniform(-0.1, 0.1))
     
     except KeyboardInterrupt:
         print("\n\n⏹️  Producer stopped.")
@@ -161,4 +180,3 @@ def main():
 if __name__ == "__main__":
     main()
 
-# updated

@@ -1,37 +1,32 @@
 # Core Data Science
-pandas>=1.5.0
-numpy>=1.23.0
-scikit-learn>=1.2.0
-scipy>=1.10.0
+pandas==2.2.2
+numpy==1.26.4
+scikit-learn==1.4.2
+scipy==1.13.0
 
 # ML & Explainability
-shap>=0.42.0
-joblib>=1.2.0
+shap==0.45.0
+joblib==1.4.2
 
 # Kafka Streaming
-kafka-python>=2.0.2
-confluent-kafka>=1.9.0
+kafka-python==2.0.2
 
-# Web & Visualization
-flask>=3.0.0
-plotly>=5.14.0
+# Web & API
+flask==3.0.3
+bleach==6.1.0
+anthropic==0.28.0
 
 # Audio & Reporting
-gtts>=2.3.0
-pyttsx3>=2.90
-fpdf2>=2.7.0
+gtts==2.5.1
+fpdf2==2.7.9
+qrcode[pil]==7.4.2
 
 # Utilities
-python-dotenv>=1.0.0
-requests>=2.31.0
-pytz>=2023.3
-
-# Optional: Production monitoring
-prometheus-client>=0.17.0
-
-# Optional: Database
-sqlalchemy>=2.0.0
-pymongo>=4.6.0
-psycopg2-binary>=2.9.0
-
-# updated
+python-dotenv==1.0.1
+requests==2.32.3
+pytz==2024.1
+prometheus-client==0.17.0
+flasgger==0.9.7.1
+flask-swagger-ui==4.11.1
+psutil==5.9.8
+gunicorn==22.0.0

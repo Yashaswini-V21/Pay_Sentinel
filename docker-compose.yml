@@ -50,13 +50,11 @@ volumes:
 #      --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
 #
 # 4. In separate terminals, run:
-#    python kafka_producer.py
-#    python kafka_consumer.py
+#    python src/kafka_producer.py
+#    python src/kafka_consumer.py
 #
 # 5. Stop cluster:
 #    docker-compose down
 #
 # 6. Clean up volumes:
 #    docker-compose down -v
-
-# updated

@@ -1,0 +1,2589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PaySentinel Dashboard — HTML Control Room</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Chakra+Petch:wght@300;400;600;700&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@300;400;500;700&family=Exo+2:wght@100;200;300;400;700;900&family=Outfit:wght@100;300;400;600;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="static/css/global.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  <style>
+    :root {
+      --bg0: var(--c0); --bg1: var(--c1); --bg2: var(--c2);
+      --line: rgba(255, 255, 255, 0.08);
+      --text: #dce7f7;
+      --muted: rgba(220, 231, 247, 0.52);
+      --faint: rgba(220, 231, 247, 0.25);
+      --font-display: var(--ff-display);
+      --font-head: var(--ff-head);
+      --font-body: var(--ff-body);
+      --font-mono: var(--ff-mono);
+      --font-ui: var(--ff-ui);
+      --radius: 18px;
+      --shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+    }
+
+    /* ─── DASHBOARD SPECIFIC REFINEMENTS ─── */
+
+    /* Topbar entrance */
+    .topbar {
+      animation: fadeSlideUp 0.6s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    /* Hero animated gradient border */
+    .hero {
+      animation: fadeSlideUp 0.8s cubic-bezier(.16,1,.3,1) 0.1s both;
+      background-size: 200% 200%;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 30px;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(0,245,212,0.3), transparent 40%, transparent 60%, rgba(255,112,67,0.3));
+      background-size: 300% 300%;
+      animation: gradientShift 6s ease infinite;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Hero title shimmer */
+    .hero-title .line2 {
+      background-size: 300% 100%;
+      animation: gradientShift 4s ease infinite;
+    }
+
+    /* Panels entrance stagger */
+    .layout > :nth-child(1) { animation: fadeSlideLeft 0.7s cubic-bezier(.16,1,.3,1) 0.2s both; }
+    .layout > :nth-child(2) { animation: fadeSlideUp 0.7s cubic-bezier(.16,1,.3,1) 0.3s both; }
+    .layout > :nth-child(3) { animation: fadeSlideRight 0.7s cubic-bezier(.16,1,.3,1) 0.4s both; }
+
+    /* Panel hover glow */
+    .panel {
+      transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.3s ease;
+    }
+    .panel:hover {
+      border-color: rgba(0,245,212,0.15);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.45), 0 0 40px rgba(0,245,212,0.05);
+    }
+
+    /* Metric cards entrance + hover */
+    .metric {
+      animation: scaleIn 0.5s cubic-bezier(.16,1,.3,1) both;
+      transition: transform 0.25s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+    .metric:nth-child(1) { animation-delay: 0.35s; }
+    .metric:nth-child(2) { animation-delay: 0.42s; }
+    .metric:nth-child(3) { animation-delay: 0.49s; }
+    .metric:nth-child(4) { animation-delay: 0.56s; }
+    .metric:hover {
+      transform: translateY(-3px);
+      border-color: rgba(0,245,212,0.2);
+      box-shadow: 0 12px 40px rgba(0,245,212,0.08);
+    }
+
+    /* Number counter animation class */
+    .number[data-animate] {
+      transition: color 0.3s ease;
+    }
+
+    /* Mini-card float */
+    .mini-card {
+      transition: transform 0.4s ease, border-color 0.4s ease;
+    }
+    .mini-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0,245,212,0.2);
+    }
+
+    /* Button press feedback */
+    .btn:active {
+      transform: scale(0.96) !important;
+    }
+    .btn-primary {
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+      transform: translateX(-100%);
+      transition: none;
+    }
+    .btn-primary:hover::after {
+      animation: shimmer 1.2s ease;
+      background-size: 100% 100%;
+    }
+
+    /* Section entrance on scroll (Intersection Observer driven) */
+    .section {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s cubic-bezier(.16,1,.3,1), transform 0.6s cubic-bezier(.16,1,.3,1);
+    }
+    .section.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* Fingerprint card stagger */
+    .finger-card {
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .finger-card:hover {
+      transform: translateY(-3px) scale(1.02);
+      border-color: rgba(0,245,212,0.25);
+      box-shadow: 0 8px 30px rgba(0,245,212,0.1);
+    }
+
+    /* Status pill animation */
+    .status-pill {
+      animation: fadeSlideRight 0.5s cubic-bezier(.16,1,.3,1) 0.3s both;
+    }
+
+    /* Skeleton loading placeholder */
+    .skeleton {
+      background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s ease infinite;
+      border-radius: 8px;
+    }
+
+    /* Alert box entrance */
+    .alert-box {
+      transition: border-color 0.4s ease, background 0.4s ease;
+    }
+
+    /* Smooth scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0,245,212,0.15);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(0,245,212,0.3);
+    }
+
+    /* Shield icon float animation */
+    .shield {
+      animation: floatY 3s ease-in-out infinite;
+    }
+
+    /* Timeline bar entrance */
+    .timeline-fill {
+      transition: width 0.8s cubic-bezier(.16,1,.3,1);
+    }
+
+    /* SHAP bar entrance */
+    .shap-fill {
+      transition: width 0.8s cubic-bezier(.16,1,.3,1) 0.2s;
+    }
+
+    /* Focus ring for accessibility */
+    *:focus-visible {
+      outline: 2px solid rgba(0,245,212,0.5);
+      outline-offset: 2px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: var(--font-body);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(0, 245, 212, 0.06), transparent 28%),
+        radial-gradient(circle at 80% 10%, rgba(255, 112, 67, 0.07), transparent 24%),
+        linear-gradient(180deg, var(--bg0), var(--bg1) 45%, var(--bg2));
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0, 245, 212, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 245, 212, 0.03) 1px, transparent 1px);
+      background-size: 52px 52px;
+      mask-image: radial-gradient(circle at center, black 30%, transparent 100%);
+      opacity: 0.6;
+      z-index: 0;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, select { font: inherit; }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      width: min(1440px, calc(100% - 32px));
+      margin: 0 auto;
+      padding-bottom: 40px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 18px 0 14px;
+      backdrop-filter: blur(20px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .shield {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, rgba(0, 245, 212, 0.14), rgba(255, 112, 67, 0.12));
+      border: 1px solid rgba(0, 245, 212, 0.18);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 24px rgba(0, 245, 212, 0.12);
+      font-size: 1.25rem;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-family: var(--font-display);
+      letter-spacing: 0.16em;
+      font-size: clamp(2rem, 3vw, 2.6rem);
+      line-height: 0.9;
+      background: linear-gradient(90deg, var(--teal), var(--saffron));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 230, 118, 0.18);
+      background: rgba(0, 230, 118, 0.08);
+      color: #9effc9;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--safe);
+      box-shadow: 0 0 12px rgba(0, 230, 118, 0.65);
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.45); opacity: 0.55; }
+    }
+
+    .hero {
+      margin-top: 10px;
+      padding: 26px;
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 70% 20%, rgba(0, 245, 212, 0.08), transparent 26%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 20px;
+      align-items: start;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.32em;
+      color: var(--saffron);
+      margin-bottom: 14px;
+    }
+
+    .hero-title {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(3.2rem, 9vw, 7rem);
+      letter-spacing: 0.06em;
+      line-height: 0.86;
+    }
+
+    .hero-title span {
+      display: block;
+    }
+
+    .hero-title .line2 {
+      background: linear-gradient(135deg, var(--teal), #6cf9ff 30%, var(--saffron) 70%, #ffc107);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-copy {
+      max-width: 760px;
+      margin: 14px 0 0;
+      font-size: 1rem;
+      line-height: 1.9;
+      color: rgba(220, 231, 247, 0.66);
+    }
+
+    .hero-aside {
+      display: grid;
+      gap: 12px;
+    }
+
+    .mini-card {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+    }
+
+    .mini-card .label {
+      font-family: var(--font-ui);
+      font-size: 0.64rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin-bottom: 8px;
+    }
+
+    .mini-card .value {
+      font-family: var(--font-display);
+      letter-spacing: 0.06em;
+      font-size: 2.1rem;
+      line-height: 1;
+    }
+
+    .mini-card .note {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.55;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 360px minmax(0, 1fr) 360px;
+      gap: 18px;
+      margin-top: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.02);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      padding: 18px 18px 0;
+      font-family: var(--font-ui);
+      font-size: 0.66rem;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: rgba(0, 245, 212, 0.95);
+    }
+
+    .panel-body {
+      padding: 18px;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field label {
+      font-family: var(--font-ui);
+      font-size: 0.62rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--faint);
+    }
+
+    .field input[type="text"],
+    .field input[type="file"],
+    .field select {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      background: rgba(3, 8, 16, 0.72);
+      color: var(--text);
+      outline: none;
+    }
+
+    .field input[type="text"]:focus,
+    .field select:focus {
+      border-color: rgba(0, 245, 212, 0.4);
+      box-shadow: 0 0 0 3px rgba(0, 245, 212, 0.08);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 14px;
+      padding: 13px 14px;
+      font-family: var(--font-ui);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease;
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--teal), #1ed9c6);
+      color: #03121a;
+      box-shadow: 0 14px 28px rgba(0, 245, 212, 0.18);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+    }
+    .btn-danger {
+      background: linear-gradient(135deg, var(--saffron), #ff4f1a);
+      color: #fff;
+      box-shadow: 0 14px 28px rgba(255, 112, 67, 0.18);
+    }
+
+    .status-box {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(0, 245, 212, 0.05);
+      border: 1px solid rgba(0, 245, 212, 0.12);
+      color: rgba(220, 231, 247, 0.82);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .preview {
+      margin-top: 14px;
+      overflow: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      max-height: 280px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      white-space: nowrap;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: rgba(7, 13, 24, 0.95);
+      color: rgba(220, 231, 247, 0.45);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.58rem;
+    }
+
+    td {
+      color: rgba(220, 231, 247, 0.82);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+      min-height: 110px;
+    }
+
+    .metric .kicker {
+      font-family: var(--font-ui);
+      font-size: 0.61rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--faint);
+      margin-bottom: 9px;
+    }
+
+    .metric .number {
+      font-family: var(--font-display);
+      font-size: 2.6rem;
+      line-height: 0.95;
+      letter-spacing: 0.05em;
+    }
+
+    .metric .sub {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .section {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.02);
+      box-shadow: var(--shadow);
+    }
+
+    .section-head {
+      padding: 18px 18px 0;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: end;
+    }
+
+    .section-title {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      letter-spacing: 0.08em;
+      line-height: 0.95;
+    }
+
+    .section-sub {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      max-width: 620px;
+    }
+
+    .section-body {
+      padding: 18px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .gauge-box {
+      display: grid;
+      justify-items: center;
+      gap: 12px;
+      padding: 20px 10px 8px;
+    }
+
+    /* Liquid Gauge placeholder styles */
+    .gauge-container {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      margin: 0 auto;
+    }
+
+    .feed {
+      display: grid;
+      gap: 12px;
+      perspective: 2000px;
+    }
+
+    .flip-card {
+      perspective: 1000px;
+      margin-bottom: 4px;
+      opacity: 0;
+      animation: cardSlideIn 0.5s cubic-bezier(.16,1,.3,1) forwards;
+    }
+
+    @keyframes cardSlideIn {
+      from { opacity: 0; transform: translateX(-30px) scale(0.9); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .flip-inner {
+      position: relative;
+      width: 100%;
+      min-height: 140px;
+      transition: transform 0.6s cubic-bezier(.16, 1, .3, 1);
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+
+    .flip-front, .flip-back {
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 18px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      background: var(--bg2);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .flip-front {
+      background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .flip-front::before {
+      content: '';
+      position: absolute;
+      inset: -50%;
+      background: linear-gradient(115deg, transparent 40%, rgba(0, 245, 212, 0.1) 45%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 112, 67, 0.1) 55%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+      transform: rotate(20deg);
+    }
+
+    .flip-card:hover .flip-front::before {
+      opacity: 1;
+      animation: sweep 2s infinite;
+    }
+
+    @keyframes sweep {
+      from { transform: translateX(-50%) rotate(20deg); }
+      to { transform: translateX(50%) rotate(20deg); }
+    }
+
+    .flip-back {
+      transform: rotateY(180deg);
+      position: absolute;
+      inset: 0;
+      background: #050a14;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(0, 245, 212, 0.2);
+    }
+
+    .merchant-eye {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      z-index: 2;
+    }
+
+    .critical-border-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      border-radius: 18px;
+    }
+
+    @keyframes dashRun {
+      from { stroke-dashoffset: 800; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    .shap-mini-bar {
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.05);
+      margin: 4px 0 8px;
+      overflow: hidden;
+      position: relative;
+    }
+    .shap-mini-fill { height: 100%; position: absolute; left: 0; top: 0; }
+
+    .feed-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+      margin-bottom: 8px;
+    }
+
+    .feed-name {
+      font-weight: 700;
+      font-size: 0.93rem;
+      color: rgba(220, 231, 247, 0.9);
+    }
+
+    .feed-meta {
+      color: var(--faint);
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+    }
+
+    .feed-amount {
+      font-family: var(--font-display);
+      font-size: 1.7rem;
+      line-height: 1;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      font-family: var(--font-ui);
+      font-size: 0.56rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(220, 231, 247, 0.74);
+    }
+
+    .timeline {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .timeline-row {
+      display: grid;
+      grid-template-columns: 76px 1fr 72px;
+      gap: 10px;
+      align-items: center;
+      font-size: 0.78rem;
+    }
+
+    .timeline-row .label {
+      color: var(--faint);
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+    }
+
+    .timeline-bar {
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+    }
+
+    .timeline-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, rgba(0, 245, 212, 0.95), rgba(255, 112, 67, 0.95));
+      width: 0;
+    }
+
+    .shap-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .shap-item {
+      display: grid;
+      grid-template-columns: 150px 1fr 54px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .shap-label {
+      color: rgba(220, 231, 247, 0.66);
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.08em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .shap-track {
+      height: 14px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .shap-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, rgba(255, 23, 68, 0.9), rgba(255, 193, 7, 0.9));
+      width: 0;
+    }
+
+    .shap-fill.safe {
+      background: linear-gradient(90deg, rgba(0, 230, 118, 0.9), rgba(0, 245, 212, 0.9));
+    }
+
+    .fingerprint {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .finger-card {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--line);
+    }
+
+    .finger-card .kicker {
+      color: var(--faint);
+      font-family: var(--font-ui);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .finger-card .value {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      line-height: 1;
+      letter-spacing: 0.05em;
+    }
+
+    .alert-box {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 23, 68, 0.06);
+      border: 1px solid rgba(255, 23, 68, 0.18);
+    }
+
+    .alert-box .title {
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--danger);
+      margin-bottom: 8px;
+    }
+
+    .alert-box .message {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: rgba(220, 231, 247, 0.92);
+    }
+
+    .alert-box .summary {
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .heatmap {
+      position: relative;
+      margin-top: 14px;
+      background: #010308;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: grab;
+    }
+    .heatmap:active { cursor: grabbing; }
+
+    .heat-cell {
+      aspect-ratio: 1 / 1;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .heat-legend {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 10px;
+      color: var(--faint);
+      font-family: var(--font-mono);
+      font-size: 0.56rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .muted {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .spacer { height: 12px; }
+
+    .hidden { display: none !important; }
+
+    .mobile-nav {
+      display: none;
+    }
+
+    /* Mobile base — 0 to 767px */
+    @media (max-width: 767px) {
+      html { -webkit-text-size-adjust: 100%; }
+      .shell { width: 100%; padding: 0 10px 80px; }
+      .topbar { padding: 10px; flex-wrap: wrap; gap: 8px; }
+      .brand h1 { font-size: 1.5rem; }
+      .brand p { display: none; }
+      .status-pill { font-size: .55rem; padding: 6px 10px; }
+      .layout { grid-template-columns: 1fr; gap: 12px; }
+      .dashboard-grid { grid-template-columns: 1fr; gap: 12px; }
+      .metrics { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .metric .number { font-size: 1.8rem; }
+      .metric .sub { display: none; }
+      .fingerprint { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-aside { display: none; }
+      .hero-title { font-size: clamp(2.8rem,14vw,5rem); }
+      .controls { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .btn { padding: 11px 10px; font-size: .6rem; min-height: 44px; }
+      .field input[type="text"], .field select { min-height: 44px; font-size: 16px; }
+      .field input[type="file"] { min-height: 44px; }
+      .shap-item { grid-template-columns: 1fr; gap: 4px; }
+      .timeline-row { grid-template-columns: 1fr; gap: 4px; }
+      .section-title { font-size: 1.4rem; }
+      .gauge { width: 200px; height: 200px; }
+      .gauge-value { font-size: 3.2rem; }
+      table { font-size: .72rem; }
+      th, td { padding: 7px 8px; }
+      #mobile-nav { display: block !important; }
+    }
+
+    /* Tablet — 768px to 1179px */
+    @media (min-width: 768px) and (max-width: 1179px) {
+      .layout { grid-template-columns: 300px 1fr; }
+      .dashboard-grid { grid-template-columns: 1fr 1fr; }
+      .fingerprint { grid-template-columns: repeat(3,1fr); }
+    }
+
+    @supports (padding: max(0px)) {
+      .topbar { padding-top: max(10px, env(safe-area-inset-top)); }
+      .shell { padding-bottom: max(80px, calc(64px + env(safe-area-inset-bottom))); }
+    }
+
+    button, input, select, .flip-card, .btn { touch-action: manipulation; }
+
+    .lang-pill {
+      padding: 4px 12px;
+      border-radius: 99px;
+      cursor: pointer;
+      border: 1px solid rgba(0,245,212,0.15);
+      font-size: 11px;
+      color: rgba(220, 231, 247, 0.5);
+      font-family: 'Chakra Petch';
+      transition: all 0.3s ease;
+    }
+    .lang-pill.active {
+      background: rgba(0,245,212,0.1);
+      color: #00f5d4;
+      border-color: rgba(0,245,212,0.35);
+    }
+    .lang-pill:hover {
+      border-color: rgba(0,245,212,0.5);
+      color: var(--text);
+    }
+    .qbtn {
+      font-size:10px; padding:3px 9px; border-radius:99px; cursor:pointer;
+      border:1px solid rgba(0,245,212,0.15); background:rgba(0,245,212,0.04);
+      color:rgba(0,245,212,0.65); font-family:'Chakra Petch'; letter-spacing:.06em;
+      transition:.2s;
+    }
+    .qbtn:hover { background:rgba(0,245,212,0.1); border-color:rgba(0,245,212,0.3); }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <canvas id="starCanvas"></canvas>
+  <div class="space-overlay"></div>
+    <header class="topbar">
+      <div class="brand">
+        <div class="shield">🛡️</div>
+        <div>
+          <h1>PAYSENTINEL</h1>
+          <p>HTML + CSS control room for merchant fraud detection</p>
+        </div>
+      </div>
+      <div class="status-pill"><span class="pulse"></span> API ONLINE · READY</div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">merchant fraud shield · upload → analyze → report</div>
+          <h2 class="hero-title"><span>DETECT.</span><span class="line2">PROTECT.</span></h2>
+          <p class="hero-copy">
+            This is the HTML-first version of PaySentinel. Merchants can load a CSV or sample data, run the ML detector, inspect suspicious transactions, review explainability, and export a PDF report without any extra dashboard runtime.
+          </p>
+          <div class="mobile-nav">
+            <a href="#upload-panel">Upload</a>
+            <a href="#alerts-panel">Alerts</a>
+            <a href="#explain-panel">Explain</a>
+            <a href="#report-panel">Report</a>
+          </div>
+        </div>
+        <div class="hero-aside">
+          <div class="mini-card">
+            <div class="label">workflow</div>
+            <div class="value">3 STEPS</div>
+            <div class="note">Load data, run the detector, review the dashboard and PDF audit output.</div>
+          </div>
+          <div class="mini-card">
+            <div class="label">core engine</div>
+            <div class="value">ML + SHAP</div>
+            <div class="note">Isolation Forest, One-Class SVM, feature engineering, and explainability stay in Python.</div>
+          </div>
+          <div class="mini-card">
+            <div class="label">merchant focus</div>
+            <div class="value">LOCAL UI</div>
+            <div class="note">Designed to keep the same merchant flow, but implemented with plain HTML, CSS, and fetch calls.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <aside class="panel" id="upload-panel">
+        <div class="panel-head">upload & analyse</div>
+        <div class="panel-body">
+          <div class="form-grid">
+            <div class="field">
+              <label for="merchantName">Merchant name</label>
+              <input id="merchantName" type="text" value="My UPI Store" />
+            </div>
+            <div class="field">
+              <label for="language">Alert language</label>
+              <select id="language">
+                <option>English</option>
+                <option>Kannada</option>
+                <option>Hindi</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="sensitivity">Detection sensitivity</label>
+              <select id="sensitivity">
+                <option>2%</option>
+                <option selected>5%</option>
+                <option>8%</option>
+                <option>12%</option>
+                <option>15%</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="csvFile">Upload CSV</label>
+              <input id="csvFile" type="file" accept=".csv" />
+            </div>
+          </div>
+
+          <div class="controls">
+            <button class="btn btn-secondary" id="sampleBtn">Load sample</button>
+            <button class="btn btn-primary" id="runBtn">Run analysis</button>
+            <button class="btn btn-danger" id="reportBtn">Download PDF</button>
+            <button class="btn btn-secondary" id="clearBtn">Clear</button>
+          </div>
+
+          <div class="spacer"></div>
+          <div class="status-box" id="statusBox">Load a CSV or sample data to begin.</div>
+
+          <div class="preview" id="samplePreview"></div>
+        </div>
+      </aside>
+
+      <main class="panel">
+        <div class="panel-head">main dashboard</div>
+        <div class="panel-body">
+          <div class="metrics" id="metricsGrid">
+            <div class="metric">
+              <div class="kicker">total transactions</div>
+              <div class="number" id="metricTotal">0</div>
+              <div class="sub">Transactions analyzed in the current session.</div>
+            </div>
+            <div class="metric">
+              <div class="kicker">suspicious</div>
+              <div class="number" id="metricSuspicious">0</div>
+              <div class="sub">Rows flagged by the hybrid detector.</div>
+            </div>
+            <div class="metric">
+              <div class="kicker">at-risk amount</div>
+              <div class="number" id="metricRisk">₹0</div>
+              <div class="sub">Total amount attached to suspicious activity.</div>
+            </div>
+            <div class="metric">
+              <div class="kicker">resilience score</div>
+              <div class="number" id="metricResilience">100</div>
+              <div class="sub" id="metricResilienceLabel">EXCELLENT</div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid" style="margin-top: 18px;">
+            <section class="panel" id="alerts-panel">
+              <div class="panel-head">fraud alerts</div>
+              <div class="panel-body">
+                <div class="feed" id="feed"></div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">risk overview</div>
+              <div class="panel-body">
+                <div class="gauge-box">
+                  <div class="gauge-container">
+                    <canvas id="risk-gauge-canvas" width="280" height="280"
+                      style="width:280px;height:280px;display:block;margin:0 auto"
+                      role="img" aria-label="Risk gauge showing current fraud risk score"></canvas>
+                    <span id="gaugeValue" style="display:none">0</span>
+                  </div>
+                  <div class="muted" id="topAlertSummary">Run analysis to see the strongest signal.</div>
+                </div>
+
+                <div class="alert-box" id="alertBox">
+                  <div class="title">active alert</div>
+                  <div class="message" id="alertMessage">No alert yet.</div>
+                  <div class="summary" id="alertSummary">The alert copy will follow the selected language.</div>
+                </div>
+                <div id="voice-section" style="display:none;margin-top:12px">
+                  <canvas id="voice-waveform" width="300" height="80"
+                    style="width:100%;height:80px;border-radius:12px;background:rgba(0,0,0,0.3)"
+                    role="img" aria-label="Kannada voice alert audio waveform"></canvas>
+                  <div id="voice-label" style="font-family:'Chakra Petch';font-size:.62rem;
+                    letter-spacing:.2em;text-transform:uppercase;color:rgba(0,245,212,0.6);
+                    margin-top:8px;text-align:center">
+                    ಕನ್ನಡ ಎಚ್ಚರಿಕೆ — AUTO PLAYING
+                  </div>
+                  <div id="lang-pills" style="display:flex;gap:6px;justify-content:center;margin-top:8px">
+                    <span class="lang-pill active" data-lang="Kannada">🇮🇳 ಕನ್ನಡ</span>
+                    <span class="lang-pill" data-lang="English">English</span>
+                    <span class="lang-pill" data-lang="Hindi">हिंदी</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+
+      <aside class="panel" id="explain-panel">
+        <div class="panel-head">explainability</div>
+        <div class="panel-body">
+          <div class="status-box">
+            <strong id="fingerMerchant">Merchant fingerprint</strong><br />
+            Baseline values learned from the uploaded or sample transaction history.
+          </div>
+
+          <div class="fingerprint">
+            <div class="finger-card">
+              <div class="kicker">normal hours</div>
+              <div class="value" id="fpHours">8:00 - 21:00</div>
+            </div>
+            <div class="finger-card">
+              <div class="kicker">peak hour</div>
+              <div class="value" id="fpPeak">12:00</div>
+            </div>
+            <div class="finger-card">
+              <div class="kicker">typical max</div>
+              <div class="value" id="fpAmount">₹1,500</div>
+            </div>
+          </div>
+
+          <div id="modelCardInfo" style="margin-top: 14px; display: none;">
+            <div class="status-box" style="font-size: 0.72rem; color: var(--faint);">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span>MODEL ID: <span id="mcId" style="color: var(--teal);">N/A</span></span>
+                <span>TRAINED ON: <span id="mcSamples" style="color: var(--text);">0</span> TXNS</span>
+              </div>
+              <div style="font-size: 0.65rem;">
+                Verified PaySentinel Engine v2.0.0 (Ensemble Strategy)
+              </div>
+            </div>
+          </div>
+
+          <div class="spacer"></div>
+          <div class="shap-list" id="shapList"></div>
+
+          <!-- AI Chat Assistant -->
+          <div id="ai-chat" style="margin-top:16px;border:1px solid rgba(0,245,212,0.15);
+            border-radius:14px;overflow:hidden;background:rgba(3,8,16,0.4)">
+            <div style="padding:10px 14px;border-bottom:1px solid rgba(0,245,212,0.08);
+              display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <div style="font-family:'Chakra Petch';font-size:.62rem;letter-spacing:.18em;
+                  text-transform:uppercase;color:rgba(0,245,212,0.9)">AI FRAUD ASSISTANT</div>
+                <div style="font-size:.65rem;color:rgba(220,231,247,.35);margin-top:1px">
+                  ಕನ್ನಡ · हिंदी · English
+                </div>
+              </div>
+              <div style="width:7px;height:7px;border-radius:50%;background:#00f5d4;
+                box-shadow:0 0 8px rgba(0,245,212,.5);animation:pulse 1.6s ease-in-out infinite">
+              </div>
+            </div>
+
+            <div id="chat-msgs" style="max-height:240px;overflow-y:auto;padding:10px 12px;
+              display:flex;flex-direction:column;gap:8px">
+              <div style="background:rgba(0,245,212,.05);border:1px solid rgba(0,245,212,.12);
+                border-radius:10px;padding:8px 10px;font-size:12px;line-height:1.7;
+                color:rgba(220,231,247,.85)">
+                ನಮಸ್ಕಾರ! ವ್ಯವಹಾರಗಳ ಬಗ್ಗೆ ಪ್ರಶ್ನೆ ಕೇಳಿ.<br>
+                <span style="font-size:10px;color:rgba(220,231,247,.4)">
+                  Hello! Ask me anything about your transactions.
+                </span>
+              </div>
+            </div>
+
+            <div style="padding:6px 10px;display:flex;gap:5px;flex-wrap:wrap;
+              border-top:1px solid rgba(255,255,255,.04)">
+              <button onclick="sendChat('Why suspicious?')" class="qbtn">Why suspicious?</button>
+              <button onclick="sendChat('ಏಕೆ ಅಪಾಯ?')" class="qbtn">ಏಕೆ ಅಪಾಯ?</button>
+              <button onclick="sendChat('What should I do now?')" class="qbtn">What to do?</button>
+              <button onclick="sendChat('ಬ್ಯಾಂಕ್ಗೆ ಕರೆ ಮಾಡಬೇಕೇ?')" class="qbtn">Bank ಕರೆ?</button>
+            </div>
+
+            <div style="padding:8px 10px;border-top:1px solid rgba(255,255,255,.04);
+              display:flex;gap:6px">
+              <input id="chat-in" type="text"
+                placeholder="Ask about fraud... / ಪ್ರಶ್ನೆ ಕೇಳಿ..."
+                style="flex:1;background:rgba(3,8,16,.7);border:1px solid rgba(255,255,255,.08);
+                border-radius:8px;padding:8px 12px;color:#dce7f7;font-size:12px;outline:none;
+                font-family:'DM Sans'"
+                onkeydown="if(event.key==='Enter')sendChat(this.value)">
+              <button onclick="sendChat(document.getElementById('chat-in').value)"
+                style="padding:8px 14px;background:rgba(0,245,212,.08);
+                border:1px solid rgba(0,245,212,.2);border-radius:8px;color:#00f5d4;cursor:pointer;
+                font-family:'Chakra Petch';font-size:.58rem;letter-spacing:.1em">SEND</button>
+            </div>
+          </div>
+
+          <div class="spacer"></div>
+          <div class="status-box" id="explanationText">
+            SHAP explanation will appear here after analysis.
+          </div>
+
+          <!-- Security Status Panel -->
+          <details style="margin-top:14px;background:rgba(255,255,255,0.02);
+            border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px">
+            <summary style="font-family:'Chakra Petch';font-size:.62rem;letter-spacing:.18em;
+              text-transform:uppercase;color:rgba(0,245,212,0.7);cursor:pointer;list-style:none">
+              🔒 Security Status
+            </summary>
+            <div style="margin-top:10px;display:grid;gap:6px;font-size:11px">
+              <div style="display:flex;justify-content:space-between">
+                <span style="color:rgba(220,231,247,0.5)">HTTPS</span>
+                <span id="sec-https" style="font-family:'JetBrains Mono';color:#00f5d4">Checking...</span>
+              </div>
+              <div style="display:flex;justify-content:space-between">
+                <span style="color:rgba(220,231,247,0.5)">File Validation</span>
+                <span style="color:#00f5d4;font-family:'JetBrains Mono'">10MB max, CSV only</span>
+              </div>
+              <div style="display:flex;justify-content:space-between">
+                <span style="color:rgba(220,231,247,0.5)">Rate Limiting</span>
+                <span style="color:#00f5d4;font-family:'JetBrains Mono'">30 req/min per IP</span>
+              </div>
+              <div style="display:flex;justify-content:space-between">
+                <span style="color:rgba(220,231,247,0.5)">Input Sanitization</span>
+                <span style="color:#00f5d4;font-family:'JetBrains Mono'">bleach + regex</span>
+              </div>
+              <div style="display:flex;justify-content:space-between">
+                <span style="color:rgba(220,231,247,0.5)">No PII Stored</span>
+                <span style="color:#00f5d4;font-family:'JetBrains Mono'">in-memory only</span>
+              </div>
+            </div>
+          </details>
+        </div>
+      </aside>
+    </div>
+
+    <section class="section" id="report-panel">
+      <div class="section-head">
+        <div>
+          <h3 class="section-title">timelines, heatmap, and transaction table</h3>
+          <p class="section-sub">The same analysis flow as the original dashboard, but rendered as a clean HTML UI with local controls and API-driven data.</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="dashboard-grid">
+          <div>
+            <div class="panel" style="box-shadow:none;">
+              <div class="panel-head">timeline</div>
+              <div class="panel-body">
+                <div class="timeline" id="timeline" style="min-height:160px">
+                  <div id="timeline-scrubber" style="padding:16px 0">
+                    <div id="tl-header" style="display:flex;justify-content:space-between; align-items:center;margin-bottom:12px">
+                      <div id="tl-current-date" style="font-family:'Bebas Neue';font-size:2rem; letter-spacing:.08em;color:rgba(220,231,247,0.9)">—</div>
+                      <div id="tl-risk-amount" style="font-family:'JetBrains Mono';font-size:.85rem; color:var(--danger); opacity:0.8">₹0 at risk</div>
+                    </div>
+                    <div id="tl-track-wrap" style="position:relative;height:60px;cursor:pointer;background:rgba(255,255,255,0.02);border-radius:8px">
+                      <svg id="tl-svg" width="100%" height="60" style="overflow:visible"></svg>
+                      <div id="tl-cursor" style="position:absolute;top:0;width:2px;height:60px; background:var(--teal);pointer-events:none;transition:left 0.1s;box-shadow:0 0 10px var(--teal)"></div>
+                    </div>
+                    <div id="tl-controls" style="display:flex;gap:12px;margin-top:16px;align-items:center">
+                      <button id="tl-play-btn" onclick="toggleTimelinePlay()" class="btn btn-secondary" style="padding:6px 16px;font-size:0.65rem;border-radius:99px">▶ PLAY REPLAY</button>
+                      <div style="font-family:'JetBrains Mono';font-size:.65rem; color:rgba(220,231,247,.4)" id="tl-progress-text">Waiting for analysis...</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="spacer"></div>
+            <div class="panel" style="box-shadow:none;">
+              <div class="panel-head">transaction heatmap</div>
+              <div class="panel-body">
+                <div class="heatmap" id="heatmap">
+                  <canvas id="txn-universe" style="width:100%;height:320px"></canvas>
+                  <div id="universe-tooltip" style="position:fixed; pointer-events:none; background:rgba(1,3,8,0.9); border:1px solid var(--teal); padding:8px 12px; border-radius:8px; font-size:0.75rem; color:white; z-index:1000; display:none; backdrop-filter:blur(4px); box-shadow:0 10px 30px rgba(0,0,0,0.5)"></div>
+                </div>
+                <div class="heat-legend">
+                  <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="panel" style="box-shadow:none;">
+              <div class="panel-head" style="display:flex; justify-content:space-between; align-items:center">
+                <span>processed transactions</span>
+                <div style="display:flex; gap:6px;">
+                  <button class="btn btn-secondary" style="padding:4px 10px; font-size:0.6rem; border-radius:8px" onclick="showTableTab()">📊 Table</button>
+                  <button class="btn btn-secondary" style="padding:4px 10px; font-size:0.6rem; border-radius:8px" onclick="showNetworkTab()">🕸 Network</button>
+                </div>
+              </div>
+              <div class="panel-body" id="table-panel">
+                <div class="preview" style="max-height: 560px;" id="resultsTable"></div>
+              </div>
+              <div id="network-panel" style="display:none">
+                <div class="panel-body">
+                  <svg id="sender-graph" width="100%" height="420" role="img" aria-label="Sender trust network graph"></svg>
+                  <div id="network-stats" style="margin-top:12px; font-size:0.75rem; color:var(--muted); font-family:var(--font-mono)"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const state = {
+      sampleRows: null,
+      analysis: null,
+      file: null,
+    };
+
+    const el = (id) => document.getElementById(id);
+
+    const statusBox = el('statusBox');
+    const samplePreview = el('samplePreview');
+    const feed = el('feed');
+    const shapList = el('shapList');
+    const timeline = el('timeline');
+    const heatmap = el('heatmap');
+    const resultsTable = el('resultsTable');
+
+    function setStatus(message) {
+      statusBox.textContent = message;
+    }
+
+    function money(value) {
+      const number = Number(value || 0);
+      return `₹${number.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+    }
+
+    function riskClass(score) {
+      if (score >= 85) return 'danger';
+      if (score >= 60) return 'warn';
+      return 'safe';
+    }
+
+    function parseRowsFromTable(rows, columns) {
+      if (!rows || !rows.length) return '<div class="status-box">No rows to show.</div>';
+      const visibleCols = columns && columns.length ? columns : Object.keys(rows[0]).slice(0, 8);
+      let html = '<table><thead><tr>';
+      visibleCols.forEach((column) => {
+        html += `<th>${column}</th>`;
+      });
+      html += '</tr></thead><tbody>';
+      rows.forEach((row) => {
+        html += '<tr>';
+        visibleCols.forEach((column) => {
+          let value = row[column];
+          if (value === null || value === undefined) value = '';
+          if (column === 'amount' && value !== '') value = money(value);
+          if (column === 'anomaly_score' && value !== '') value = Number(value).toFixed(1);
+          html += `<td>${String(value)}</td>`;
+        });
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      return html;
+    }
+
+    function renderSamplePreview(data) {
+      samplePreview.innerHTML = parseRowsFromTable(data.data, data.columns.slice(0, 6));
+      setStatus(`Loaded ${data.rows} sample transactions for ${data.merchant_name}.`);
+    }
+
+    function renderMetrics(summary) {
+      animateCounter('metricTotal', summary.total);
+      animateCounter('metricSuspicious', summary.suspicious);
+      el('metricRisk').textContent = money(summary.at_risk_amount);
+      animateCounter('metricResilience', summary.resilience_score);
+      el('metricResilienceLabel').textContent = summary.resilience_label;
+    }
+
+    function animateCounter(elementId, target) {
+      const elem = el(elementId);
+      const isMonetary = elementId === 'metricRisk';
+      const start = 0;
+      const duration = 1200;
+      const startTime = performance.now();
+      function step(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+        const current = Math.round(start + (target - start) * ease);
+        elem.textContent = isMonetary ? money(current) : current.toLocaleString();
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    function renderAlert(topTransaction, alertText, summary) {
+      const score = Number(topTransaction?.anomaly_score || 0);
+      el('gaugeValue').textContent = score.toFixed(0);
+      updateGauge(score);
+      el('topAlertSummary').textContent = `Top alert: ${topTransaction?.risk_level || 'LOW'} · ${money(topTransaction?.amount || 0)} · ${topTransaction?.hour ?? '--'}:00`;
+      el('alertMessage').textContent = alertText.alert;
+      el('alertSummary').textContent = alertText.summary;
+      el('alertBox').style.borderColor = summary.suspicious > 0 ? 'rgba(255, 23, 68, 0.18)' : 'rgba(0, 230, 118, 0.18)';
+
+      if (summary.suspicious > 0) {
+        el('voice-section').style.display = 'block';
+        const lang = el('language').value;
+        const text = alertText.alert;
+        setTimeout(() => voiceWave.playText(text, lang), 600);
+      }
+    }
+
+    function renderFeed(anomalies) {
+      if (!anomalies.length) {
+        feed.innerHTML = '<div class="status-box">No suspicious transactions found. The merchant appears healthy.</div>';
+        return;
+      }
+
+      const explanation = state.analysis?.explanation || [];
+      const top4Features = explanation.slice(0, 4);
+
+      const kannadaReasons = {
+        'CRITICAL': 'ಅತ್ಯಂತ ಅಪಾಯಕಾರಿ ವಹಿವಾಟು ಪತ್ತೆಯಾಗಿದೆ.',
+        'HIGH': 'ಹೆಚ್ಚಿನ ಅಪಾಯದ ಸಾಧ್ಯತೆಯಿದೆ.',
+        'MEDIUM': 'ಸಾಧಾರಣ ಅಪಾಯದ ಮುನ್ಸೂಚನೆ.',
+        'LOW': 'ಕಡಿಮೆ ಅಪಾಯ, ಆದರೆ ಗಮನಹರಿಸಿ.'
+      };
+
+      feed.innerHTML = '';
+      
+      anomalies.forEach((row, index) => {
+        const score = Number(row.anomaly_score || 0);
+        const riskLevel = row.risk_level || (score >= 85 ? 'CRITICAL' : score >= 60 ? 'HIGH' : score >= 30 ? 'MEDIUM' : 'LOW');
+        const eyeColor = score >= 85 ? 'var(--danger)' : score >= 60 ? 'var(--gold)' : 'var(--teal)';
+        const proofId = `PS-${btoa(row.transaction_id || Math.random()).slice(0, 8).toUpperCase()}`;
+
+        const card = document.createElement('div');
+        card.className = 'flip-card';
+        card.style.animationDelay = `${index * 80}ms`;
+
+        let borderSvg = '';
+        if (score >= 85) {
+          borderSvg = `
+            <svg class="critical-border-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <rect x="0" y="0" width="100" height="100" fill="none" stroke="#ff1744" stroke-width="2" stroke-dasharray="400" style="animation: dashRun 3s linear infinite" />
+            </svg>
+          `;
+        }
+
+        const leftBorder = score >= 85 ? 'none' : (score >= 60 ? '3px solid var(--gold)' : '3px solid var(--teal)');
+        const glow = score >= 60 ? `box-shadow: 0 0 25px ${eyeColor === 'var(--danger)' ? 'rgba(255,23,68,0.2)' : 'rgba(255,193,7,0.15)'};` : '';
+
+        card.innerHTML = `
+          <div class="flip-inner">
+            <div class="flip-front" style="border-left: ${leftBorder}; ${glow}">
+              ${borderSvg}
+              <div class="merchant-eye" style="background:${eyeColor}; ${score >= 85 ? 'animation: pulse 1s infinite' : ''}"></div>
+              <div class="feed-head">
+                <div>
+                  <div class="feed-name">${row.sender || 'Unknown sender'}</div>
+                  <div class="feed-meta">${row.date || ''} · ${row.description || 'Transaction'}</div>
+                </div>
+                <div class="feed-amount" style="color:${eyeColor}">${money(row.amount)}</div>
+              </div>
+              <div class="feed-meta">Score ${score.toFixed(1)} · Hour ${row.hour ?? '--'} · ID ${row.transaction_id || 'n/a'}</div>
+              <div class="pill-row">
+                <span class="pill" style="border-color:${eyeColor}44; color:${eyeColor}">${riskLevel}</span>
+                <span class="pill">${row.is_anomaly ? 'flagged' : 'safe'}</span>
+              </div>
+            </div>
+            <div class="flip-back">
+              <div class="eyebrow" style="color:var(--teal); margin-bottom:10px">Why Flagged?</div>
+              <div style="font-size: 0.72rem; color: var(--muted); line-height: 1.5; margin-bottom: 12px;">${kannadaReasons[riskLevel] || ''}</div>
+              <div class="shap-mini-list">
+                ${top4Features.map(f => {
+                  const width = Math.min(100, Math.max(12, Number(f.impact || 0) * 100));
+                  const fColor = f.direction === 'increases' ? 'var(--danger)' : 'var(--safe)';
+                  return `
+                    <div style="display:flex; justify-content:space-between; font-size:0.58rem; color:var(--faint); margin-bottom:2px">
+                      <span>${f.feature}</span>
+                      <span>${Number(f.value || 0).toFixed(1)}</span>
+                    </div>
+                    <div class="shap-mini-bar"><div class="shap-mini-fill" style="width:${width}%; background:${fColor}"></div></div>
+                  `;
+                }).join('')}
+              </div>
+              <div class="feed-meta" style="margin-top:auto; font-size:0.5rem; text-align:right; opacity:0.5">PROOF: ${proofId}</div>
+            </div>
+          </div>
+        `;
+
+        const inner = card.querySelector('.flip-inner');
+        
+        card.addEventListener('mousemove', e => {
+          if (inner.style.transform.includes('180deg')) return;
+          const r = card.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width - 0.5;
+          const y = (e.clientY - r.top) / r.height - 0.5;
+          inner.style.transform = `rotateX(${y * -15}deg) rotateY(${x * 15}deg)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          if (inner.style.transform.includes('180deg')) return;
+          inner.style.transform = '';
+        });
+
+        card.addEventListener('click', () => {
+          const isFlipped = inner.style.transform.includes('180deg');
+          inner.style.transform = isFlipped ? '' : 'rotateY(180deg)';
+          inner.style.transition = 'transform 0.6s cubic-bezier(.16,1,.3,1)';
+        });
+
+        feed.appendChild(card);
+      });
+    }
+
+    function renderFingerprint(fingerprint, modelCard) {
+      const hourMin = Number(fingerprint?.hour_min ?? 8);
+      const hourMax = Number(fingerprint?.hour_max ?? 21);
+      const peakHour = Number(fingerprint?.peak_hour ?? 12);
+      const amtP95 = Number(fingerprint?.amt_p95 ?? 1500);
+      el('fpHours').textContent = `${hourMin.toFixed(0)}:00 - ${hourMax.toFixed(0)}:00`;
+      el('fpPeak').textContent = `${peakHour.toFixed(0)}:00`;
+      el('fpAmount').textContent = money(amtP95);
+      el('fingerMerchant').textContent = 'Merchant fingerprint';
+
+      if (modelCard) {
+        el('mcId').textContent = modelCard.model_id || 'N/A';
+        el('mcSamples').textContent = Number(modelCard.training_samples || 0).toLocaleString();
+        el('modelCardInfo').style.display = 'block';
+      } else {
+        el('modelCardInfo').style.display = 'none';
+      }
+    }
+
+    function renderExplanation(explanation) {
+      if (!explanation || !explanation.length) {
+        shapList.innerHTML = '<div class="status-box">No SHAP explanation available for this transaction.</div>';
+        el('explanationText').textContent = 'No feature explanation was returned.';
+        return;
+      }
+
+      shapList.innerHTML = explanation.map((item) => {
+        const width = Math.min(100, Math.max(8, Number(item.impact || 0) * 100));
+        const safeClass = item.direction === 'decreases' ? 'safe' : '';
+        return `
+          <div class="shap-item">
+            <div class="shap-label">${item.feature}</div>
+            <div class="shap-track"><div class="shap-fill ${safeClass}" style="width:${width}%"></div></div>
+            <div class="feed-meta">${Number(item.value || 0).toFixed(2)}</div>
+          </div>
+        `;
+      }).join('');
+
+      const first = explanation[0];
+      el('explanationText').textContent = `${first.feature} ${first.direction} the risk score with a value of ${Number(first.value || 0).toFixed(2)}.`;
+    }
+
+    window._tlData = [];
+    window._tlIdx = 0;
+    let _tlPlaying = false, _tlTimer = null;
+
+    function renderTimeline(rows) {
+      if (!rows || !rows.length) {
+        el('tl-progress-text').textContent = 'Timeline will appear after analysis.';
+        return;
+      }
+      window._tlData = rows;
+      window._tlIdx = 0;
+      const svg = document.getElementById('tl-svg');
+      svg.innerHTML = '';
+      
+      const trackWrap = el('tl-track-wrap');
+      const W = trackWrap.offsetWidth || 500;
+      const maxTotal = Math.max(...rows.map(r => Number(r.total || 0)), 1);
+      const maxSusp = Math.max(...rows.map(r => Number(r.suspicious || 0)), 1);
+
+      rows.forEach((row, i) => {
+        const x = (i / (rows.length - 1)) * W;
+        const segW = Math.max(2, W / rows.length - 2);
+        
+        // Background bar
+        const totalH = (Number(row.total || 0) / maxTotal) * 40;
+        const barEl = document.createElementNS('http://www.w3.org/2000/svg','rect');
+        barEl.setAttribute('x', x - segW/2); barEl.setAttribute('y', 60 - totalH);
+        barEl.setAttribute('width', segW); barEl.setAttribute('height', totalH);
+        barEl.setAttribute('fill', 'rgba(0,245,212,0.1)');
+        barEl.setAttribute('rx', '2');
+        svg.appendChild(barEl);
+
+        // Fraud spike
+        if (row.suspicious > 0) {
+          const spikeH = (Number(row.suspicious || 0) / maxSusp) * 35;
+          const tri = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+          const cx = x;
+          const ty = 60 - totalH - spikeH;
+          tri.setAttribute('points', `${cx},${ty} ${cx - segW},${60 - totalH} ${cx + segW},${60 - totalH}`);
+          tri.setAttribute('fill', row.suspicious > 2 ? 'var(--danger)' : 'var(--gold)');
+          tri.setAttribute('style', 'cursor:pointer; transition: transform 0.2s');
+          tri.addEventListener('mouseenter', () => seekTimeline(i));
+          svg.appendChild(tri);
+        }
+      });
+
+      // Draggable logic
+      trackWrap.onclick = (e) => {
+        const r = trackWrap.getBoundingClientRect();
+        const pct = (e.clientX - r.left) / r.width;
+        const idx = Math.round(pct * (window._tlData.length - 1));
+        seekTimeline(Math.max(0, Math.min(idx, window._tlData.length - 1)));
+      };
+
+      seekTimeline(0);
+    }
+
+    function seekTimeline(idx) {
+      if (!window._tlData || !window._tlData[idx]) return;
+      window._tlIdx = idx;
+      const row = window._tlData[idx];
+      const trackWrap = el('tl-track-wrap');
+      const cursor = el('tl-cursor');
+      const W = trackWrap.offsetWidth;
+      const x = (idx / (window._tlData.length - 1)) * W;
+      cursor.style.left = `${x}px`;
+
+      // Date: DD MMM 'YY
+      const dateObj = new Date(row.date);
+      const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+      const formattedDate = `${String(dateObj.getDate()).padStart(2, '0')} ${months[dateObj.getMonth()]} '${String(dateObj.getFullYear()).slice(-2)}`;
+      el('tl-current-date').textContent = formattedDate;
+
+      // Risk amount (approximation if amount not in row)
+      const riskAmt = row.amount || (row.suspicious * 1250);
+      el('tl-risk-amount').textContent = `${money(riskAmt)} at risk`;
+      el('tl-progress-text').textContent = `Day ${idx + 1} of ${window._tlData.length}`;
+
+      // Flash effect
+      const feedEl = el('feed');
+      if (row.suspicious > 0) {
+        feedEl.style.transition = 'none';
+        feedEl.style.background = 'rgba(255, 23, 68, 0.08)';
+        setTimeout(() => {
+          feedEl.style.transition = 'background 0.5s ease';
+          feedEl.style.background = 'transparent';
+        }, 200);
+        
+        if (state.analysis?.anomalies) {
+          const filtered = state.analysis.anomalies.filter(a => a.date === row.date);
+          renderFeed(filtered);
+        }
+      } else {
+        if (state.analysis?.anomalies) renderFeed(state.analysis.anomalies);
+      }
+    }
+
+    function toggleTimelinePlay() {
+      if (!window._tlData.length) return;
+      _tlPlaying = !_tlPlaying;
+      el('tl-play-btn').textContent = _tlPlaying ? '⏸ PAUSE REPLAY' : '▶ PLAY REPLAY';
+      if (_tlPlaying) {
+        _tlTimer = setInterval(() => {
+          const next = (window._tlIdx + 1) % window._tlData.length;
+          seekTimeline(next);
+          if (next === window._tlData.length - 1) {
+            clearInterval(_tlTimer);
+            _tlPlaying = false;
+            el('tl-play-btn').textContent = '▶ PLAY REPLAY';
+          }
+        }, 600);
+      } else {
+        clearInterval(_tlTimer);
+      }
+    }
+
+    let universeInstance = null;
+
+    function renderHeatmap(grid) {
+      if (!grid || !grid.length) return;
+      initUniverseRenderer(grid);
+    }
+
+    function initUniverseRenderer(grid) {
+      const canvas = el('txn-universe');
+      if (!canvas) return;
+
+      const container = el('heatmap');
+      const tooltip = el('universe-tooltip');
+      const rect = container.getBoundingClientRect();
+      const width = rect.width;
+      const height = 320;
+
+      // Cleanup existing
+      if (universeInstance) {
+        universeInstance.stop();
+      }
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x010308);
+
+      const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
+      camera.position.z = 5;
+
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(window.devicePixelRatio);
+
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      scene.add(ambientLight);
+      const pointLight = new THREE.PointLight(0xffffff, 1);
+      pointLight.position.set(5, 5, 5);
+      scene.add(pointLight);
+
+      const particleGroup = new THREE.Group();
+      scene.add(particleGroup);
+
+      const redParticles = [];
+      const allParticles = []; // For raycasting/hover
+
+      const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+      // Particle geometry helpers
+      const tealMat = new THREE.PointsMaterial({ color: 0x00f5d4, size: 0.02, transparent: true, opacity: 0.3 });
+      const goldMat = new THREE.PointsMaterial({ color: 0xffc107, size: 0.05, transparent: true, opacity: 0.7 });
+      const redGeo = new THREE.SphereGeometry(0.08, 16, 16);
+
+      grid.forEach((row, dayIdx) => {
+        row.forEach((value, hour) => {
+          const x = (hour - 12) * 0.4;
+          const y = (dayIdx - 3) * 0.5;
+          const z = value * 0.3;
+
+          let obj;
+          if (value >= 3) {
+            const mat = new THREE.MeshPhongMaterial({ color: 0xff1744, transparent: true, opacity: 1.0, shininess: 100 });
+            obj = new THREE.Mesh(redGeo, mat);
+            obj.position.set(x, y, z);
+            redParticles.push(obj);
+            particleGroup.add(obj);
+          } else {
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.Float32BufferAttribute([x, y, z], 3));
+            obj = new THREE.Points(geo, value > 0 ? goldMat : tealMat);
+            particleGroup.add(obj);
+          }
+
+          allParticles.push({
+            obj,
+            day: days[dayIdx],
+            hour: hour,
+            value: value,
+            pos: new THREE.Vector3(x, y, z)
+          });
+        });
+      });
+
+      // Shockwave helper
+      let shockwave = null;
+      function createShockwave() {
+        if (shockwave) scene.remove(shockwave);
+        const geo = new THREE.RingGeometry(0.1, 0.2, 32);
+        const mat = new THREE.MeshBasicMaterial({ color: 0xff1744, side: THREE.DoubleSide, transparent: true, opacity: 1 });
+        shockwave = new THREE.Mesh(geo, mat);
+        shockwave.rotation.x = Math.PI / 2;
+        scene.add(shockwave);
+      }
+
+      // Interaction
+      let isDragging = false;
+      let previousMouse = { x: 0, y: 0 };
+      
+      container.onmousedown = (e) => { isDragging = true; previousMouse = { x: e.clientX, y: e.clientY }; };
+      window.onmouseup = () => { isDragging = false; };
+      window.onmousemove = (e) => {
+        if (isDragging) {
+          const deltaX = e.clientX - previousMouse.x;
+          const deltaY = e.clientY - previousMouse.y;
+          particleGroup.rotation.y += deltaX * 0.01;
+          particleGroup.rotation.x += deltaY * 0.01;
+          previousMouse = { x: e.clientX, y: e.clientY };
+        }
+
+        // Raycasting for tooltip
+        const rect = canvas.getBoundingClientRect();
+        const mx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        const my = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+        if (mx >= -1 && mx <= 1 && my >= -1 && my <= 1) {
+          const raycaster = new THREE.Raycaster();
+          raycaster.setFromCamera({ x: mx, y: my }, camera);
+          
+          // Simplified distance check since THREE.Points raycasting can be finicky
+          let closest = null;
+          let minDocDist = 50; // pixels
+
+          // Project each particle to screen space to check mouse distance
+          allParticles.forEach(p => {
+            const v = p.pos.clone();
+            v.applyMatrix4(particleGroup.matrixWorld);
+            v.project(camera);
+            const sx = (v.x * 0.5 + 0.5) * rect.width;
+            const sy = (-v.y * 0.5 + 0.5) * rect.height;
+            const dx = sx - (e.clientX - rect.left);
+            const dy = sy - (e.clientY - rect.top);
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            
+            if (dist < minDocDist) {
+              minDocDist = dist;
+              closest = p;
+            }
+          });
+
+          if (closest && minDocDist < 20) {
+            tooltip.style.display = 'block';
+            tooltip.style.left = (e.clientX + 15) + 'px';
+            tooltip.style.top = (e.clientY + 15) + 'px';
+            tooltip.innerHTML = `<strong>Hour ${closest.hour}:00</strong><br>${closest.day}<br><span style="color:var(--danger)">${closest.value} alerts</span>`;
+          } else {
+            tooltip.style.display = 'none';
+          }
+        } else {
+          tooltip.style.display = 'none';
+        }
+      };
+
+      container.onwheel = (e) => {
+        e.preventDefault();
+        camera.position.z += e.deltaY * 0.01;
+        camera.position.z = Math.min(Math.max(camera.position.z, 2), 10);
+      };
+
+      let frame = 0;
+      let running = true;
+
+      function animate() {
+        if (!running) return;
+        requestAnimationFrame(animate);
+        frame += 0.05;
+
+        particleGroup.rotation.y += 0.003;
+
+        // Pulse red spheres
+        const pulse = Math.sin(frame * 3) * 0.3 + 1.0;
+        redParticles.forEach(p => {
+          p.scale.set(pulse, pulse, pulse);
+        });
+
+        // Animate shockwave
+        if (shockwave) {
+          shockwave.scale.multiplyScalar(1.05);
+          shockwave.material.opacity -= 0.02;
+          if (shockwave.material.opacity <= 0) {
+            scene.remove(shockwave);
+            shockwave = null;
+          }
+        }
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+
+      universeInstance = {
+        stop: () => { running = false; },
+        fireShockwave: () => { createShockwave(); }
+      };
+    }
+
+    function renderResults(results) {
+      const summary = results.summary;
+      const anomalies = results.anomalies || [];
+      renderMetrics(summary);
+      renderFeed(anomalies);
+      renderFingerprint(results.fingerprint, results.model_card);
+      renderExplanation(results.explanation);
+      renderTimeline(results.timeline);
+      renderHeatmap(results.heatmap);
+      renderAlert(results.top_transaction, results.alert_text, summary);
+      if (summary.suspicious > 0 && universeInstance) {
+        universeInstance.fireShockwave();
+      }
+      resultsTable.innerHTML = parseRowsFromTable(results.results_preview, results.risk_table_columns);
+      el('metricResilienceLabel').textContent = `${summary.resilience_label} · ${summary.suspicious_ratio}% suspicious`;
+      state.analysis = results;
+      if (el('network-panel').style.display === 'block') {
+        buildSenderGraph(results.results_preview, results.anomalies, results.fingerprint);
+      }
+      if (summary.suspicious > 0) {
+        const badge = document.getElementById('alerts-badge');
+        if (badge) {
+          badge.style.display = 'block';
+          badge.textContent = summary.suspicious;
+        }
+      }
+      setStatus(`Analysis complete for ${results.merchant_name}. ${summary.suspicious} suspicious transactions found.`);
+    }
+
+    async function loadSample() {
+      try {
+        setStatus('Loading sample transactions...');
+        const merchantName = el('merchantName').value.trim() || 'My UPI Store';
+        const response = await fetch(`/api/sample-data?merchant_name=${encodeURIComponent(merchantName)}`);
+        const data = await response.json();
+        state.sampleRows = data.data;
+        state.file = null;
+        el('csvFile').value = '';
+        renderSamplePreview(data);
+      } catch (error) {
+        setStatus(`Sample load failed: ${error.message}`);
+      }
+    }
+
+    async function runAnalysis() {
+      const merchantName = el('merchantName').value.trim() || 'My UPI Store';
+      const language = el('language').value;
+      const sensitivity = el('sensitivity').value;
+      const fileInput = el('csvFile');
+      const selectedFile = fileInput.files && fileInput.files[0];
+
+      try {
+        setStatus('Running anomaly detection...');
+        const useJsonSample = !selectedFile && state.sampleRows;
+
+        let response;
+        if (selectedFile) {
+          const formData = new FormData();
+          formData.append('file', selectedFile);
+          formData.append('merchant_name', merchantName);
+          formData.append('language', language);
+          formData.append('sensitivity', sensitivity);
+          response = await fetch('/api/analyze', { method: 'POST', body: formData });
+        } else if (useJsonSample) {
+          response = await fetch('/api/analyze', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ rows: state.sampleRows, merchant_name: merchantName, language, sensitivity }),
+          });
+        } else {
+          const formData = new FormData();
+          formData.append('merchant_name', merchantName);
+          formData.append('language', language);
+          formData.append('sensitivity', sensitivity);
+          response = await fetch('/api/analyze', { method: 'POST', body: formData });
+        }
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || 'Analysis failed');
+        }
+        renderResults(data);
+      } catch (error) {
+        setStatus(`Analysis error: ${error.message}`);
+      }
+    }
+
+    async function downloadReport() {
+      const merchantName = el('merchantName').value.trim() || 'My UPI Store';
+      const language = el('language').value;
+      const sensitivity = el('sensitivity').value;
+      const fileInput = el('csvFile');
+      const selectedFile = fileInput.files && fileInput.files[0];
+
+      try {
+        setStatus('Preparing PDF report...');
+        let response;
+        if (selectedFile) {
+          const formData = new FormData();
+          formData.append('file', selectedFile);
+          formData.append('merchant_name', merchantName);
+          formData.append('language', language);
+          formData.append('sensitivity', sensitivity);
+          response = await fetch('/api/report', { method: 'POST', body: formData });
+        } else if (state.sampleRows) {
+          response = await fetch('/api/report', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ rows: state.sampleRows, merchant_name: merchantName, language, sensitivity }),
+          });
+        } else {
+          const formData = new FormData();
+          formData.append('merchant_name', merchantName);
+          formData.append('language', language);
+          formData.append('sensitivity', sensitivity);
+          response = await fetch('/api/report', { method: 'POST', body: formData });
+        }
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || 'Report generation failed');
+        }
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `paysentinel_${merchantName.replace(/\s+/g, '_')}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        setStatus('PDF report downloaded.');
+      } catch (error) {
+        setStatus(`Report error: ${error.message}`);
+      }
+    }
+
+    function clearState() {
+      state.sampleRows = null;
+      state.analysis = null;
+      state.file = null;
+      el('csvFile').value = '';
+      samplePreview.innerHTML = '';
+      feed.innerHTML = '';
+      shapList.innerHTML = '';
+      timeline.innerHTML = '';
+      heatmap.innerHTML = '';
+      resultsTable.innerHTML = '';
+      el('gaugeValue').textContent = '0';
+      updateGauge(0);
+      el('metricTotal').textContent = '0';
+      el('metricSuspicious').textContent = '0';
+      el('metricRisk').textContent = '₹0';
+      el('metricResilience').textContent = '100';
+      el('metricResilienceLabel').textContent = 'EXCELLENT';
+      el('alertMessage').textContent = 'No alert yet.';
+      el('alertSummary').textContent = 'The alert copy will follow the selected language.';
+      el('topAlertSummary').textContent = 'Run analysis to see the strongest signal.';
+      el('explanationText').textContent = 'SHAP explanation will appear here after analysis.';
+      const badge = document.getElementById('alerts-badge');
+      if (badge) badge.style.display = 'none';
+      setStatus('State cleared. Load a sample or CSV to begin again.');
+    }
+
+    let gaugeInstance = null;
+    function initLiquidGauge(canvasId) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width, h = canvas.height;
+      const cx = w/2, cy = h/2;
+      const radius = 100;
+
+      let currentScore = 0, targetScore = 0, animStart = 0, startScore = 0;
+      let time = 0;
+      const bubbles = [];
+      for(let i=0; i<30; i++) {
+        bubbles.push({ x: (Math.random()-0.5)*160, y: Math.random()*200, r: Math.random()*3+1, speed: Math.random()*1+0.5 });
+      }
+
+      function easeInOutCubic(t) { return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2, 3)/2; }
+
+      function draw() {
+        ctx.clearRect(0,0,w,h);
+        time += 0.05;
+
+        if (animStart > 0) {
+          const elapsed = performance.now() - animStart;
+          const progress = Math.min(elapsed / 800, 1);
+          currentScore = startScore + (targetScore - startScore) * easeInOutCubic(progress);
+          if (progress >= 1) animStart = 0;
+        }
+
+        const score = currentScore;
+        const color = score < 30 ? 'rgba(0, 245, 212, 0.7)' : (score < 60 ? 'rgba(255, 193, 7, 0.75)' : 'rgba(255, 23, 68, 0.8)');
+
+        // Outer Segments
+        ctx.lineWidth = 8;
+        if (score > 85) ctx.lineWidth = 8 + Math.sin(time*2)*2;
+        
+        const startRad = 210 * Math.PI / 180;
+        const s1 = 246 * Math.PI / 180, s2 = 282 * Math.PI / 180, endRad = 330 * Math.PI / 180;
+
+        ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.strokeStyle = '#00e676'; ctx.arc(cx, cy, radius+25, startRad, s1); ctx.stroke();
+        ctx.beginPath(); ctx.strokeStyle = '#ffc107'; ctx.arc(cx, cy, radius+25, s1, s2); ctx.stroke();
+        ctx.beginPath(); ctx.strokeStyle = '#ff1744'; ctx.arc(cx, cy, radius+25, s2, endRad); ctx.stroke();
+
+        // Liquid Fill
+        ctx.save();
+        ctx.beginPath(); ctx.arc(cx, cy, radius, 0, Math.PI*2); ctx.clip();
+        ctx.fillStyle = 'rgba(255,255,255,0.03)'; ctx.fill();
+
+        const fillHeight = (score/100) * radius * 2;
+        const yBase = cy + radius - fillHeight;
+
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(cx-radius, h);
+        for(let x=cx-radius; x<=cx+radius; x++) {
+          const w1 = Math.sin(x*0.05 + time)*8;
+          const w2 = Math.sin(x*0.08 - time*0.6)*5;
+          ctx.lineTo(x, yBase + w1 + w2);
+        }
+        ctx.lineTo(cx+radius, h); ctx.closePath(); ctx.fill();
+
+        // Bubbles
+        if (score > 30) {
+          const count = Math.floor((score/100)*bubbles.length);
+          ctx.fillStyle = 'rgba(255,255,255,0.2)';
+          for(let i=0; i<count; i++) {
+            const b = bubbles[i];
+            b.y -= b.speed; if(b.y < -radius) b.y = radius;
+            ctx.beginPath(); ctx.arc(cx+b.x, cy+b.y, b.r, 0, Math.PI*2); ctx.fill();
+          }
+        }
+        ctx.restore();
+
+        // Needle
+        const needleAngle = (210 + (score/100)*120) * Math.PI / 180;
+        ctx.save();
+        ctx.translate(cx, cy); ctx.rotate(needleAngle);
+        ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-4, -6); ctx.lineTo(85, 0); ctx.lineTo(-4, 6); ctx.closePath();
+        ctx.fillStyle = 'white'; ctx.shadowBlur = 10; ctx.shadowColor = 'white'; ctx.fill();
+        ctx.restore();
+
+        // Text
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillStyle = 'white'; ctx.font = '56px "Bebas Neue"'; ctx.fillText(Math.round(score), cx, cy - 8);
+        ctx.font = '700 11px "Chakra Petch"'; ctx.fillStyle = 'rgba(220, 231, 247, 0.6)'; ctx.fillText('RISK SCORE', cx, cy + 24);
+
+        requestAnimationFrame(draw);
+      }
+
+      gaugeInstance = { update: (s) => { startScore = currentScore; targetScore = s; animStart = performance.now(); } };
+      draw();
+    }
+
+    function updateGauge(score) { if(gaugeInstance) gaugeInstance.update(score); }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initLiquidGauge('risk-gauge-canvas');
+    });
+
+    function showTableTab() {
+      el('table-panel').style.display = 'block';
+      el('network-panel').style.display = 'none';
+    }
+
+    function showNetworkTab() {
+      el('table-panel').style.display = 'none';
+      el('network-panel').style.display = 'block';
+      if (state.analysis) {
+        buildSenderGraph(state.analysis.results_preview, state.analysis.anomalies, state.analysis.fingerprint);
+      }
+    }
+
+    function buildSenderGraph(results, anomalies, fingerprint) {
+      const svg = d3.select("#sender-graph");
+      svg.selectAll("*").remove();
+      const container = el('sender-graph');
+      const width = container.clientWidth || 500;
+      const height = 420;
+
+      const knownSenders = new Set(fingerprint?.known_senders || []);
+      const anomalyMap = new Map(anomalies.map(a => [a.sender, a]));
+      
+      const senders = d3.groups(results, d => d.sender);
+      const nodes = [{ id: 'MERCHANT', type: 'merchant', r: 22 }];
+      const links = [];
+
+      senders.forEach(([sender, txns]) => {
+        const totalAmount = d3.sum(txns, d => d.amount);
+        const maxScore = d3.max(txns, d => Number(d.anomaly_score || 0));
+        let type = 'unknown';
+        if (knownSenders.has(sender)) type = 'trusted';
+        if (anomalyMap.has(sender)) type = 'flagged';
+        if (maxScore > 85) type = 'critical';
+        nodes.push({ id: sender, type, r: 8 + Math.log1p(txns.length) * 3, txnCount: txns.length, totalAmount, maxScore });
+        links.push({ source: 'MERCHANT', target: sender, value: txns.length, maxScore });
+      });
+
+      const highRiskNodes = nodes.filter(n => n.type === 'critical' || n.type === 'flagged').length;
+      const isolationRisk = ((highRiskNodes / Math.max(1, nodes.length - 1)) * 100).toFixed(1);
+      el('network-stats').innerHTML = `Isolation Risk Score: <span style="color:var(--danger)">${isolationRisk}%</span> of transactions from high-risk senders.`;
+
+      const g = svg.append("g");
+      const simulation = d3.forceSimulation(nodes)
+        .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+        .force("charge", d3.forceManyBody().strength(-200))
+        .force("center", d3.forceCenter(width / 2, height / 2))
+        .force("collide", d3.forceCollide().radius(d => d.r + 10));
+
+      const link = g.append("g").selectAll("line").data(links).join("line")
+        .attr("stroke", d => d.maxScore > 85 ? 'var(--danger)' : (d.maxScore > 60 ? 'var(--gold)' : 'rgba(255,255,255,0.1)'))
+        .attr("stroke-opacity", 0.4)
+        .attr("stroke-width", d => Math.min(6, Math.log1p(d.value) * 2));
+
+      const node = g.append("g").selectAll("circle").data(nodes).join("circle")
+        .attr("r", d => d.r)
+        .attr("fill", d => {
+          if (d.type === 'merchant') return 'var(--teal)';
+          if (d.type === 'trusted') return 'rgba(0,245,212,0.4)';
+          if (d.type === 'flagged') return 'var(--gold)';
+          if (d.type === 'critical') return 'var(--danger)';
+          return 'rgba(255,255,255,0.1)';
+        })
+        .attr("stroke", "#010308").attr("stroke-width", 2)
+        .style("cursor", "pointer")
+        .call(d3.drag().on("start", dragstarted).on("drag", dragged).on("end", dragended));
+
+      node.append("title").text(d => d.type === 'merchant' ? 'PaySentinel Merchant' : `${d.id}\nTxns: ${d.txnCount}\nScore: ${d.maxScore.toFixed(1)}`);
+
+      node.on("click", (e, d) => {
+        if (d.type === 'merchant') renderFeed(anomalies);
+        else renderFeed(anomalies.filter(a => a.sender === d.id));
+      });
+
+      simulation.on("tick", () => {
+        link.attr("x1", d => d.source.x).attr("y1", d => d.source.y).attr("x2", d => d.target.x).attr("y2", d => d.target.y);
+        node.attr("cx", d => d.x).attr("cy", d => d.y);
+      });
+
+      svg.call(d3.zoom().scaleExtent([0.3, 5]).on("zoom", (e) => g.attr("transform", e.transform)));
+      svg.on("dblclick.zoom", () => svg.transition().call(d3.zoom().transform, d3.zoomIdentity));
+
+      function dragstarted(e, d) { if (!e.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; }
+      function dragged(e, d) { d.fx = e.x; d.fy = e.y; }
+      function dragended(e, d) { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }
+    }
+
+    class VoiceWaveform {
+      constructor(canvasId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        this.animFrame = null;
+        this.isPlaying = false;
+      }
+
+      async playText(text, lang) {
+        if (this.isPlaying) window.speechSynthesis.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = lang === 'Kannada' ? 'kn-IN' : lang === 'Hindi' ? 'hi-IN' : 'en-IN';
+        utterance.rate = 0.9;
+        utterance.onstart = () => {
+          this.isPlaying = true;
+          this.drawWaveform();
+        };
+        utterance.onend = () => {
+          this.isPlaying = false;
+          this.freezeWaveform();
+        };
+        window.speechSynthesis.speak(utterance);
+      }
+
+      drawWaveform() {
+        if (!this.isPlaying) return;
+        const W = this.canvas.width = this.canvas.offsetWidth;
+        const H = this.canvas.height = this.canvas.offsetHeight;
+        
+        const draw = () => {
+          if (!this.isPlaying) return;
+          this.animFrame = requestAnimationFrame(draw);
+          this.ctx.clearRect(0, 0, W, H);
+          const t = Date.now() * 0.003;
+          const bars = 48;
+          const bw = W / bars;
+          
+          for (let i = 0; i < bars; i++) {
+            const h = (Math.sin(t + i * 0.3) * 0.5 + 0.5) * 
+                      (Math.sin(t * 1.7 + i * 0.15) * 0.3 + 0.7) * H * 0.7;
+            const ratio = h / (H * 0.7);
+            const r = Math.round(ratio * 255);
+            const g = Math.round((1 - ratio) * 245 + ratio * 23);
+            const b = Math.round((1 - ratio) * 212 + ratio * 68);
+            this.ctx.fillStyle = `rgb(${r},${g},${b})`;
+            this.ctx.fillRect(i * bw + 1, H/2 - h/2, bw - 2, h);
+          }
+        };
+        draw();
+      }
+
+      freezeWaveform() {
+        cancelAnimationFrame(this.animFrame);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.canvas.style.opacity = '0.3';
+        setTimeout(() => this.canvas.style.opacity = '1', 1000);
+      }
+    }
+
+    const voiceWave = new VoiceWaveform('voice-waveform');
+
+    document.querySelectorAll('.lang-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.lang-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        el('language').value = pill.dataset.lang;
+        if (state.analysis?.alert_text) {
+          voiceWave.playText(state.analysis.alert_text.alert, pill.dataset.lang);
+        }
+      });
+    });
+
+    el('sampleBtn').addEventListener('click', loadSample);
+    el('runBtn').addEventListener('click', runAnalysis);
+    el('reportBtn').addEventListener('click', downloadReport);
+    el('clearBtn').addEventListener('click', clearState);
+
+      el('csvFile').addEventListener('change', () => {
+        const file = el('csvFile').files && el('csvFile').files[0];
+        if (file) {
+          state.file = file;
+          state.sampleRows = null;
+          setStatus(`Selected file: ${file.name}. Run analysis when ready.`);
+        }
+      });
+
+      // AI Chat Logic
+      async function sendChat(q) {
+        q = (q || '').trim();
+        if (!q) return;
+        document.getElementById('chat-in').value = '';
+        addMsg(q, 'user');
+        const loadId = 'load_' + Date.now();
+        addMsg('...', 'loading', loadId);
+        
+        const top = state.analysis?.anomalies?.[0] || {};
+        const fp = state.analysis?.fingerprint || {};
+        const lang = document.getElementById('language').value;
+        
+        try {
+          const r = await fetch('/api/explain', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({
+              question: q,
+              language: lang,
+              context: {
+                amount: top.amount || 0,
+                score: top.anomaly_score || 0,
+                risk_level: top.risk_level || 'UNKNOWN',
+                hour: top.hour || 0,
+                sender: top.sender || 'Unknown',
+                flags: top.flags || [],
+                fp
+              }
+            })
+          });
+          const d = await r.json();
+          const loader = document.getElementById(loadId);
+          if (loader) loader.remove();
+          addMsg(d.explanation || d.error || 'Unable to explain.', 'assistant');
+        } catch(e) {
+          const loader = document.getElementById(loadId);
+          if (loader) loader.remove();
+          addMsg('Connection error. Try again.', 'assistant');
+        }
+      }
+
+      function addMsg(text, type, id) {
+        const msgs = document.getElementById('chat-msgs');
+        const d = document.createElement('div');
+        if (id) d.id = id;
+        const isUser = type === 'user';
+        const isLoad = type === 'loading';
+        d.style.cssText = `
+          padding:8px 10px; border-radius:10px; font-size:12px; line-height:1.7;
+          max-width:90%; align-self:${isUser?'flex-end':'flex-start'};
+          background:${isUser?'rgba(255,112,67,.07)':'rgba(0,245,212,.05)'};
+          border:1px solid ${isUser?'rgba(255,112,67,.15)':'rgba(0,245,212,.12)'};
+          color:rgba(220,231,247,.85);
+          ${isLoad?'color:rgba(0,245,212,.5);font-style:italic':''}
+        `;
+        d.textContent = text;
+        msgs.appendChild(d);
+        msgs.scrollTop = msgs.scrollHeight;
+      }
+
+      // Security Check
+      document.getElementById('sec-https').textContent =
+        location.protocol === 'https:' ? '✅ Secure' : '⚠️ HTTP';
+
+      // Pull to Refresh
+      let ptStartY = 0;
+      document.addEventListener('touchstart', e => ptStartY = e.touches[0].clientY, {passive:true});
+      document.addEventListener('touchend', e => {
+        const diff = e.changedTouches[0].clientY - ptStartY;
+        if (diff > 80 && window.scrollY <= 0 && state.sampleRows) {
+          setStatus('Refreshing...');
+          runAnalysis();
+        }
+      }, {passive:true});
+
+      // Tab Switch Logic
+      function navTo(id) {
+        const target = document.getElementById(id);
+        if (target) {
+          target.scrollIntoView({behavior:'smooth'});
+          if(navigator.vibrate) navigator.vibrate(10);
+        }
+        document.querySelectorAll('.tab-btn').forEach(b => b.style.color = 'rgba(220,231,247,.4)');
+        event.currentTarget.style.color = '#00f5d4';
+      }
+
+      async function checkApiStatus() {
+        try {
+          const r = await fetch('/api/status');
+          const d = await r.json();
+          if (d.status === 'operational') {
+            document.querySelector('.status-pill').innerHTML =
+              '<span class="pulse"></span> API ONLINE · READY · v' + d.metrics.version;
+          }
+        } catch(e) {
+          document.querySelector('.status-pill').innerHTML =
+            '<span class="pulse" style="background:var(--danger)"></span> API OFFLINE';
+        }
+      }
+      checkApiStatus();
+      setInterval(checkApiStatus, 30000);  // Check every 30s
+
+      // Intersection Observer for scroll-reveal animations
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.section').forEach(s => revealObserver.observe(s));
+
+      /* ─── SPACE STARFIELD ─── */
+      const starCvs = document.getElementById('starCanvas');
+      const sCtx = starCvs.getContext('2d');
+      let stars = [];
+      function initStars() {
+        starCvs.width = window.innerWidth; starCvs.height = window.innerHeight;
+        stars = [];
+        for(let i=0; i<300; i++) {
+          stars.push({ x: Math.random() * starCvs.width, y: Math.random() * starCvs.height, size: Math.random() * 1.5, opacity: Math.random(), speed: Math.random() * 0.04 });
+        }
+      }
+      function drawStars() {
+        sCtx.clearRect(0, 0, starCvs.width, starCvs.height);
+        stars.forEach(s => { s.y -= s.speed; if(s.y < 0) s.y = starCvs.height; sCtx.fillStyle = `rgba(0, 245, 212, ${s.opacity})`; sCtx.beginPath(); sCtx.arc(s.x, s.y, s.size, 0, Math.PI*2); sCtx.fill(); });
+        requestAnimationFrame(drawStars);
+      }
+      window.addEventListener('resize', initStars);
+      initStars(); drawStars();
+    </script>
+
+    <nav id="mobile-nav" aria-label="Main navigation"
+      style="display:none;position:sticky;bottom:0;z-index:50;
+      background:rgba(5,10,20,.96);backdrop-filter:blur(20px);
+      border-top:1px solid rgba(255,255,255,0.08);
+      padding-bottom:env(safe-area-inset-bottom,0)">
+      <div style="display:flex;justify-content:space-around;padding:10px 0">
+        <button onclick="navTo('upload-panel')" class="tab-btn" style="background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:4px;color:#00f5d4">
+          <span style="font-size:1.2rem">📤</span>
+          <span style="font-family:'Chakra Petch';font-size:.55rem;letter-spacing:.1em">UPLOAD</span>
+        </button>
+        <button onclick="navTo('alerts-panel')" class="tab-btn" style="background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:4px;color:rgba(220,231,247,.4);position:relative">
+          <span style="font-size:1.2rem">🚨</span>
+          <span style="font-family:'Chakra Petch';font-size:.55rem;letter-spacing:.1em">ALERTS</span>
+          <span id="alerts-badge" style="display:none;position:absolute;top:-2px;right:4px;background:var(--danger);color:white;font-size:9px;padding:2px 5px;border-radius:10px;min-width:16px;text-align:center;font-weight:bold;border:1px solid var(--bg1)">0</span>
+        </button>
+        <button onclick="navTo('explain-panel')" class="tab-btn" style="background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:4px;color:rgba(220,231,247,.4)">
+          <span style="font-size:1.2rem">🧠</span>
+          <span style="font-family:'Chakra Petch';font-size:.55rem;letter-spacing:.1em">EXPLAIN</span>
+        </button>
+        <button onclick="navTo('report-panel')" class="tab-btn" style="background:none;border:none;display:flex;flex-direction:column;align-items:center;gap:4px;color:rgba(220,231,247,.4)">
+          <span style="font-size:1.2rem">📄</span>
+          <span style="font-family:'Chakra Petch';font-size:.55rem;letter-spacing:.1em">REPORT</span>
+        </button>
+      </div>
+    </nav>
+</body>
+</html>
