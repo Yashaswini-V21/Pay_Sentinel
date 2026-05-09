@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>PaySentinel — AI-Powered UPI Fraud Protection for Bharat</title>
+<title>PaySentinel — The Neural Fraud Shield for Bharat</title>
 <meta name="description" content="PaySentinel is an enterprise-grade fintech security platform protecting Indian merchants from UPI fraud with real-time AI detection and native regional voice alerts."/>
 <meta name="keywords" content="UPI Fraud, Fintech Security, AI Fraud Detection, Indian Merchants, PaySentinel, Bharat Security"/>
 <meta property="og:title" content="PaySentinel — AI Fraud Shield for Bharat"/>
@@ -15,321 +15,252 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Chakra+Petch:wght@300;400;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@300;400;500;700&family=Exo+2:wght@100;200;300;400;700;900&family=Noto+Sans+Kannada:wght@700&family=Outfit:wght@100;300;400;600;900&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="static/css/global.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
 
 <style>
-/* ─── LOCAL STYLES ──────────────────────── */
-body{
-  background:var(--c0);color:#d9eaf7;
-  font-family:'Outfit', var(--ff-body);
-  overflow-x:hidden;
-  cursor:none;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;overflow-x:hidden}
-
-/* ─── CINEMATIC SPLASH SCREEN ────────────── */
-#loader{
-  position:fixed;inset:0;z-index:9999;
-  background:var(--c0);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  transition:opacity 1s cubic-bezier(.16,1,.3,1), visibility 1s;
-}
-#loader::before {
-  content: ''; position: absolute; inset: 0;
-  background: url('static/spash screen background.png') center/cover no-repeat;
-  opacity: 0.15; filter: contrast(1.2) brightness(0.8);
-  z-index: -1;
-}
-#loader.hide{opacity:0;visibility:hidden}
-
-.loader-content {
-  text-align: center;
-  transform: translateY(-20px);
-  animation: fadeSlideUp 1s ease-out forwards;
+/* ─── ENHANCED SPACE TECH STYLES ────────── */
+:root {
+  --neon-teal: #00f5d4;
+  --neon-saffron: #ff7043;
+  --glass: rgba(1, 3, 8, 0.7);
+  --glass-border: rgba(0, 245, 212, 0.15);
 }
 
-.loader-shield-container {
-  position: relative;
-  width: 120px; height: 130px; margin: 0 auto 3rem;
+body {
+  background: #010308 url('static/space_bg.png') center/cover no-repeat fixed;
+  color: #d9eaf7;
+  font-family: 'Outfit', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
 }
-.loader-shield-container svg {
-  width: 100%; height: 100%;
-  filter: drop-shadow(0 0 30px rgba(0,245,212,0.4));
-  animation: shieldPulse 3s ease-in-out infinite alternate;
-}
-@keyframes shieldPulse {
-  0% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(0,245,212,0.3)); }
-  100% { transform: scale(1.05); filter: drop-shadow(0 0 50px rgba(0,245,212,0.6)); }
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background: rgba(1, 3, 8, 0.85); z-index: 0;
+  backdrop-filter: saturate(1.2);
 }
 
-.loader-title {
-  font-family: var(--ff-display); font-size: 5rem; letter-spacing: 0.2em;
-  background: linear-gradient(135deg, var(--teal), var(--cyan), var(--saffron));
-  background-size: 200%;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ─── ADVANCED CINEMATIC LOADER ────────── */
+#loader {
+  position: fixed; inset: 0; z-index: 10000;
+  background: #010308;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: clip-path 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+  clip-path: circle(150% at 50% 50%);
+}
+#loader.hide { clip-path: circle(0% at 50% 50%); }
+
+.loader-scan-bar {
+  position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--neon-teal), transparent);
+  box-shadow: 0 0 20px var(--neon-teal);
+  animation: scan 3s ease-in-out infinite;
+  z-index: 1;
+}
+@keyframes scan {
+  0% { top: 0%; }
+  50% { top: 100%; }
+  100% { top: 0%; }
+}
+
+.loader-logo-wrap {
+  position: relative; margin-bottom: 2rem;
+  transform: scale(0.8); animation: loaderIn 1s forwards;
+}
+@keyframes loaderIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+
+.loader-ps-text {
+  font-family: var(--ff-display); font-size: 8vw; letter-spacing: 0.3em;
+  background: linear-gradient(135deg, #fff 0%, var(--neon-teal) 50%, var(--neon-saffron) 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  margin-bottom: 0.5rem;
-  animation: gradShift 4s linear infinite;
-}
-
-.loader-bar-wrap {
-  width: 400px; height: 2px; background: rgba(255,255,255,0.05);
-  border-radius: 4px; overflow: hidden; margin: 2rem auto;
-  border: 1px solid rgba(0,245,212,0.1);
-}
-.loader-bar {
-  height: 100%; background: linear-gradient(90deg, var(--teal), var(--cyan), var(--teal));
-  width: 0%; transition: width 0.4s ease-out;
-}
-
-.loader-status {
-  font-family: var(--ff-mono); font-size: 0.6rem; letter-spacing: 0.4em;
-  color: var(--teal); opacity: 0.6; text-transform: uppercase;
+  filter: drop-shadow(0 0 30px rgba(0,245,212,0.3));
 }
 
 /* ─── CURSOR ─────────────────────────────── */
-#cDot,#cRing{position:fixed;pointer-events:none;z-index:9998;border-radius:50%}
-#cDot{width:6px;height:6px;background:var(--teal);transform:translate(-50%,-50%);box-shadow:0 0 15px var(--teal);transition:width .1s,height .1s}
-#cRing{width:40px;height:40px;border:1px solid rgba(0,245,212,.3);transform:translate(-50%,-50%);transition:width .3s cubic-bezier(.34,1.56,.64,1),height .3s cubic-bezier(.34,1.56,.64,1),border-color .3s}
-
-/* ─── SPACE BACKGROUND ───────────────────── */
-#starCanvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-.space-overlay {
-  position: fixed; inset: 0; z-index: 1; pointer-events: none;
-  background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(1,3,8,0.4) 100%);
+#cDot, #cRing { position: fixed; pointer-events: none; z-index: 11000; border-radius: 50%; }
+#cDot { width: 4px; height: 4px; background: #fff; transform: translate(-50%,-50%); box-shadow: 0 0 10px #fff; }
+#cRing { 
+  width: 30px; height: 30px; border: 1px solid rgba(255,255,255,0.2); 
+  transform: translate(-50%,-50%); transition: width 0.2s, height 0.2s, border-color 0.2s;
 }
 
-/* ─── GRID OVERLAY ───────────────────────── */
-.grid-overlay{
-  position:fixed;inset:0;z-index:1;pointer-events:none;
-  background-image:
-    linear-gradient(rgba(0,245,212,.015) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,245,212,.015) 1px,transparent 1px);
-  background-size:80px 80px;
+/* ─── HERO SECTION ───────────────────────── */
+.hero {
+  position: relative; min-height: 100vh; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 0 4rem; z-index: 5;
 }
 
-/* ─── NAV ────────────────────────────────── */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:1000;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:1.2rem 4rem;
-  background:rgba(1,3,8,.4);
-  backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid rgba(0,245,212,.05);
-  transition: 0.4s cubic-bezier(.16,1,.3,1);
-}
-nav.scrolled { padding: 0.8rem 4rem; background: rgba(1,3,8,0.9); border-bottom-color: rgba(0,245,212,0.15); }
-
-.nav-logo{display:flex;align-items:center;gap:.9rem;text-decoration:none}
-.shield-wrap{position:relative;width:40px;height:46px}
-.shield-wrap svg{position:absolute;inset:0;animation:shieldGlow 3s ease-in-out infinite alternate}
-@keyframes shieldGlow{0%{filter:drop-shadow(0 0 4px var(--teal))}100%{filter:drop-shadow(0 0 16px var(--teal)) drop-shadow(0 0 40px rgba(0,245,212,.2))}}
-.nav-wordmark{font-family:var(--ff-display);font-size:1.6rem;letter-spacing:.2em;background:linear-gradient(90deg,var(--teal),var(--saffron));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.nav-links{display:flex;gap:2.5rem}
-.nav-links a{
-  font-family:var(--ff-ui);font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;
-  color:rgba(217,234,247,.35);text-decoration:none;transition:.3s;position:relative;
-}
-.nav-links a::after{content:'';position:absolute;bottom:-3px;left:0;right:0;height:1px;background:var(--teal);transform:scaleX(0);transition:.3s;transform-origin:left}
-.nav-links a:hover{color:var(--teal)}
-.nav-links a:hover::after{transform:scaleX(1)}
-.nav-right{display:flex;align-items:center;gap:1.25rem}
-.nav-ping{display:flex;align-items:center;gap:.5rem;font-family:var(--ff-mono);font-size:.6rem;color:var(--safe);letter-spacing:.1em}
-.ping-dot{width:7px;height:7px;background:var(--safe);border-radius:50%;box-shadow:0 0 0 0 rgba(0,230,118,.4);animation:ping 1.5s ease-in-out infinite}
-.badge-blueprint{
-  padding:.3rem .9rem;
-  font-family:var(--ff-ui);font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;
-  background:linear-gradient(135deg,var(--saffron2),var(--saffron));
-  border-radius:2px;color:white;
-  position:relative;overflow:hidden;
-}
-.badge-blueprint::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:badgeSheen 3s ease-in-out infinite}
-
-/* ─── HERO ───────────────────────────────── */
-.hero{
-  position:relative;z-index:2;
-  min-height:100vh;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  padding:8rem 2rem 5rem;text-align:center;
-}
-.hero-eyebrow{
-  font-family:var(--ff-ui);font-size:.62rem;letter-spacing:.4em;text-transform:uppercase;
-  color:var(--saffron);margin-bottom:2rem;
-  display:flex;align-items:center;gap:1rem;
-  opacity:0;animation:fadeSlideUp 1s 0.3s cubic-bezier(.16,1,.3,1) both;
-}
-.eyebrow-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--saffron));max-width:120px}
-.eyebrow-line.right{background:linear-gradient(90deg,var(--saffron),transparent)}
-/* GLITCH HERO TEXT */
-.hero-h1{
-  font-family:var(--ff-display);
-  font-size:clamp(4rem,11vw,10rem);
-  line-height:.9;letter-spacing:.04em;
-  margin-bottom:1.5rem;
-  opacity:0;animation:fadeSlideUp 1s 0.5s cubic-bezier(.16,1,.3,1) both;
-}
-.h1-line1{display:block;color:#d9eaf7;position:relative}
-.h1-line1.glitch{animation:glitch 4s 2s ease-in-out infinite}
-.h1-line2{
-  display:block;
-  background:linear-gradient(135deg,var(--teal) 0%,var(--cyan) 30%,var(--saffron) 65%,var(--gold) 100%);
-  background-size:200%;
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  animation:gradShift 4s ease-in-out infinite alternate;
-  position:relative;
-}
-.h1-line2::after{
-  content:attr(data-text);position:absolute;left:2px;top:1px;
-  background:linear-gradient(135deg,rgba(0,245,212,.3),rgba(255,112,67,.3));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  animation:chromatic 4s 2s ease-in-out infinite;
-  pointer-events:none;
+#hero-canvas {
+  position: absolute; inset: 0; z-index: 1;
 }
 
-.hero-sub{
-  font-family:'Outfit', var(--ff-body);font-size:1.1rem;color:rgba(217,234,247,.55);
-  max-width:650px;line-height:1.8;margin-bottom:3.5rem;letter-spacing:.02em;
-  opacity:0;animation:fadeSlideUp 1s 0.7s cubic-bezier(.16,1,.3,1) both;
+.hero-content {
+  position: relative; z-index: 10; text-align: center;
+  max-width: 1000px;
 }
-.hero-sub em{color:var(--teal);font-style:normal;font-weight:600}
 
-/* COUNTER STATS */
-.hero-stats{
-  display:flex;gap:0;margin-bottom:4rem;
-  border:1px solid rgba(0,245,212,.1);border-radius:8px;overflow:hidden;
-  opacity:0;animation:fadeSlideUp 1s 0.9s cubic-bezier(.16,1,.3,1) both;
-  backdrop-filter:blur(30px);
+.hero-tagline {
+  font-family: var(--ff-ui); font-size: 0.7rem; letter-spacing: 0.5em;
+  color: var(--neon-saffron); margin-bottom: 2rem; text-transform: uppercase;
+  display: flex; align-items: center; gap: 1.5rem; justify-content: center;
 }
-.stat-item{
-  padding:2rem 3rem;text-align:center;position:relative;
-  border-right:1px solid rgba(0,245,212,.08);
-  background:rgba(0,245,212,.02);
-  transition:.4s;
+.hero-tagline::before, .hero-tagline::after {
+  content: ''; width: 40px; height: 1px; background: var(--neon-saffron); opacity: 0.4;
 }
-.stat-item:last-child{border-right:none}
-.stat-item:hover{background:rgba(0,245,212,.06);transform:translateY(-5px)}
-.stat-num{
-  display:block;
-  font-family:var(--ff-display);font-size:2.8rem;letter-spacing:.05em;
-  background:linear-gradient(135deg,var(--teal),var(--saffron));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  line-height:1;margin-bottom:.4rem;
-}
-.stat-lbl{font-family:var(--ff-ui);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(217,234,247,.3)}
 
-/* MAGNETIC BUTTONS */
-.hero-cta{
-  display:flex;gap:1.5rem;
-  opacity:0;animation:fadeSlideUp 1s 1.1s cubic-bezier(.16,1,.3,1) both;
+.hero-title {
+  font-family: var(--ff-display); font-size: clamp(4rem, 12vw, 12rem);
+  line-height: 0.85; letter-spacing: -0.02em; margin-bottom: 2rem;
+  color: #fff; text-shadow: 0 0 50px rgba(0,245,212,0.2);
 }
-.btn-mag{
-  padding:1.1rem 3.2rem;
-  font-family:var(--ff-ui);font-size:.7rem;font-weight:700;
-  letter-spacing:.3em;text-transform:uppercase;
-  border:none;border-radius:4px;cursor:none;
-  position:relative;overflow:hidden;transition:.4s;
-}
-.btn-primary-mag{
-  background:transparent; border:1px solid var(--teal); color:var(--teal);
-}
-.btn-primary-mag::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,var(--teal),var(--teal2));
-  transform:scaleX(0);transform-origin:left;transition:.4s cubic-bezier(.16,1,.3,1);
-}
-.btn-primary-mag:hover{color:var(--c0);box-shadow:var(--glow-t)}
-.btn-primary-mag:hover::before{transform:scaleX(1)}
-.btn-primary-mag span{position:relative;z-index:1}
 
-.btn-outline-mag{
-  background:transparent; border:1px solid rgba(255,112,67,.35); color:var(--saffron);
+.hero-title span { display: block; }
+.hero-title .outline {
+  -webkit-text-stroke: 1px rgba(255,255,255,0.2);
+  color: transparent;
 }
-.btn-outline-mag:hover{box-shadow:var(--glow-s); background:rgba(255,112,67,0.05)}
 
-/* ─── DATA TICKER ────────────────────────── */
-.ticker-wrap{
-  position:relative;z-index:2;
-  padding:.8rem 0;
-  background:rgba(0,245,212,.04);
-  border-top:1px solid rgba(0,245,212,.1);
-  border-bottom:1px solid rgba(0,245,212,.1);
-  overflow:hidden;
+.hero-desc {
+  font-family: var(--ff-body); font-size: 1.2rem; line-height: 1.6;
+  color: rgba(217, 234, 247, 0.6); max-width: 600px; margin: 0 auto 4rem;
 }
-.ticker-inner{display:flex;gap:6rem;animation:tickRoll 30s linear infinite;white-space:nowrap}
-.tick-item{display:flex;align-items:center;gap:.6rem;font-family:var(--ff-mono);font-size:.65rem;color:rgba(217,234,247,.4)}
 
-/* ─── SECTION REFINEMENTS ────────────────── */
-section{position:relative;z-index:10;padding:10rem 4rem}
-.s-head{text-align:center;margin-bottom:6rem}
-.s-tag{
-  display:inline-flex;align-items:center;gap:.6rem;
-  padding:.4rem 1.2rem;
-  font-family:var(--ff-mono);font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--teal);background:rgba(0,245,212,.08);
-  border:1px solid rgba(0,245,212,.15);border-radius:4px;
-  margin-bottom:1.5rem;
+.hero-cta-group {
+  display: flex; gap: 2rem; justify-content: center;
 }
-.s-title{
-  font-family:var(--ff-display);font-size:clamp(3rem,6vw,6rem);
-  letter-spacing:.05em;margin-bottom:1rem;
-}
-.s-sub{font-size:1.1rem;color:rgba(217,234,247,.45);max-width:600px;margin:0 auto;line-height:1.8}
 
-/* IMAGE CARDS REFINEMENT */
-.image-card {
-  position: relative; border-radius: 12px; overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.08);
-  aspect-ratio: 16/10;
-  transition: 0.6s cubic-bezier(.16,1,.3,1);
+.btn-premium {
+  padding: 1.2rem 3.5rem; font-family: var(--ff-ui); font-size: 0.75rem;
+  font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase;
+  text-decoration: none; position: relative; overflow: hidden;
+  border-radius: 4px; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.image-card img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7) grayscale(0.2); transition: 0.6s; }
-.image-card:hover img { filter: brightness(1) grayscale(0); transform: scale(1.05); }
-.image-card:hover { border-color: var(--teal); box-shadow: 0 40px 80px rgba(0,0,0,0.6); }
 
-/* SCROLL REVEAL */
-.reveal{opacity:0;transform:translateY(40px);transition:1s cubic-bezier(.16,1,.3,1)}
-.reveal.vis{opacity:1;transform:none}
-.reveal-left{opacity:0;transform:translateX(-40px);transition:1s cubic-bezier(.16,1,.3,1)}
-.reveal-left.vis{opacity:1;transform:none}
-.reveal-right{opacity:0;transform:translateX(40px);transition:1s cubic-bezier(.16,1,.3,1)}
-.reveal-right.vis{opacity:1;transform:none}
+.btn-solid {
+  background: var(--neon-teal); color: #010308;
+}
+.btn-solid:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0, 245, 212, 0.3); }
 
-@keyframes glitch{
-  0%,90%,100%{transform:none;clip-path:none}
-  91%{transform:translate(-3px,0) skewX(-5deg);clip-path:polygon(0 20%,100% 20%,100% 40%,0 40%)}
-  93%{transform:translate(3px,0) skewX(5deg);clip-path:polygon(0 60%,100% 60%,100% 80%,0 80%)}
-  95%{transform:none;clip-path:none}
-  97%{transform:translate(-2px,0);clip-path:polygon(0 10%,100% 10%,100% 30%,0 30%)}
-  99%{transform:none;clip-path:none}
+.btn-outline {
+  border: 1px solid rgba(0, 245, 212, 0.3); color: var(--neon-teal);
+  backdrop-filter: blur(10px);
 }
-@keyframes chromatic{
-  0%,90%,100%{opacity:0}
-  91%,99%{opacity:1}
+.btn-outline:hover { background: rgba(0, 245, 212, 0.05); border-color: var(--neon-teal); }
+
+/* ─── NEURAL GRID ───────────────────────── */
+.neural-grid {
+  position: absolute; inset: 0; z-index: 2; opacity: 0.15;
+  background-image: 
+    linear-gradient(rgba(0, 245, 212, 0.2) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 245, 212, 0.2) 1px, transparent 1px);
+  background-size: 50px 50px;
+  mask-image: radial-gradient(circle at 50% 50%, black, transparent 80%);
 }
+
+/* ─── SECTIONS ───────────────────────────── */
+section { position: relative; padding: 12rem 6rem; z-index: 10; }
+
+.section-label {
+  font-family: var(--ff-mono); font-size: 0.6rem; color: var(--neon-teal);
+  letter-spacing: 0.4em; text-transform: uppercase; margin-bottom: 1.5rem;
+  display: block;
+}
+
+.section-title {
+  font-family: var(--ff-display); font-size: clamp(3rem, 7vw, 7rem);
+  margin-bottom: 2rem; line-height: 1;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px; padding: 3rem;
+  transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(0, 245, 212, 0.3);
+  transform: translateY(-10px);
+}
+
+/* ─── SCROLL ANIMATIONS ──────────────────── */
+.reveal-up { opacity: 0; transform: translateY(50px); }
+.reveal-left { opacity: 0; transform: translateX(-50px); }
+.reveal-right { opacity: 0; transform: translateX(50px); }
+
+/* ─── FOOTER ─────────────────────────────── */
+footer {
+  padding: 8rem 6rem 4rem; background: #010308; border-top: 1px solid rgba(255,255,255,0.05);
+  position: relative; overflow: hidden;
+}
+
+.footer-grid {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem;
+  margin-bottom: 6rem;
+}
+
+.footer-brand .logo {
+  font-family: var(--ff-display); font-size: 2.5rem; letter-spacing: 0.2em;
+  margin-bottom: 1.5rem; display: block;
+}
+
+.footer-col h4 {
+  font-family: var(--ff-ui); font-size: 0.7rem; color: #fff;
+  letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 2rem;
+}
+
+.footer-links { list-style: none; }
+.footer-links li { margin-bottom: 1rem; }
+.footer-links a {
+  font-family: var(--ff-body); font-size: 0.9rem; color: rgba(217,234,247,0.4);
+  text-decoration: none; transition: 0.3s;
+}
+.footer-links a:hover { color: var(--neon-teal); }
+
+.footer-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 4rem; border-top: 1px solid rgba(255,255,255,0.05);
+  font-family: var(--ff-mono); font-size: 0.6rem; color: rgba(217,234,247,0.2);
+  text-transform: uppercase; letter-spacing: 0.2em;
+}
+
+/* ─── EXTRA WOW FACTORS ──────────────────── */
+.glitch-hover:hover { animation: glitch 0.3s infinite; }
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
 </style>
 </head>
 <body>
 
 <!-- LOADER -->
 <div id="loader">
-  <div class="loader-content">
-    <div class="loader-shield-container">
-      <svg viewBox="0 0 80 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M40 2L76 16V50C76 68 60 82 40 88C20 82 4 68 4 50V16L40 2Z" fill="none" stroke="url(#lg1)" stroke-width="1.5"/>
-        <path d="M40 12L68 23V50C68 64 56 76 40 82C24 76 12 64 12 50V23L40 12Z" fill="url(#lg2)" fill-opacity=".06"/>
-        <text x="40" y="52" text-anchor="middle" font-family="Bebas Neue" font-size="18" fill="url(#lg1)" letter-spacing="2">PS</text>
-        <defs>
-          <linearGradient id="lg1" x1="4" y1="2" x2="76" y2="88" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#00f5d4"/><stop offset="100%" stop-color="#ff7043"/>
-          </linearGradient>
-          <linearGradient id="lg2" x1="12" y1="12" x2="68" y2="82" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#00f5d4"/><stop offset="100%" stop-color="#ff7043"/>
-          </linearGradient>
-        </defs>
-      </svg>
-    </div>
-    <div class="loader-title">PAYSENTINEL</div>
-    <div class="loader-status" id="loaderTxt">INITIALIZING NEURAL DETECTION ENGINE...</div>
-    <div class="loader-bar-wrap"><div class="loader-bar" id="loaderBar"></div></div>
+  <div class="loader-scan-bar"></div>
+  <div class="loader-logo-wrap">
+    <div class="loader-ps-text">PAYSENTINEL</div>
+  </div>
+  <div style="font-family:var(--ff-mono); font-size:0.6rem; letter-spacing:0.4em; color:var(--neon-teal); opacity:0.6;">
+    NEURAL SCAN IN PROGRESS...
   </div>
 </div>
 
@@ -337,250 +268,184 @@ section{position:relative;z-index:10;padding:10rem 4rem}
 <div id="cDot"></div>
 <div id="cRing"></div>
 
-<!-- BG ELEMENTS -->
-<canvas id="starCanvas"></canvas>
-<div class="space-overlay"></div>
-<div class="grid-overlay"></div>
-
-<!-- ═══ NAV ═══ -->
-<nav id="mainNav">
-  <a class="nav-logo" href="#">
-    <div class="shield-wrap">
-      <svg width="40" height="46" viewBox="0 0 40 46" fill="none">
-        <path d="M20 1L38 8V25C38 35 30 43 20 45C10 43 2 35 2 25V8L20 1Z" fill="none" stroke="url(#nLg)" stroke-width="1.2"/>
-        <path d="M20 7L34 13V25C34 33 28 40 20 43C12 40 6 33 6 25V13L20 7Z" fill="url(#nLg2)" fill-opacity=".08"/>
-        <text x="20" y="28" text-anchor="middle" font-family="Bebas Neue" font-size="10" fill="url(#nLg)" letter-spacing="1">PS</text>
-        <defs>
-          <linearGradient id="nLg" x1="2" y1="1" x2="38" y2="45"><stop offset="0%" stop-color="#00f5d4"/><stop offset="100%" stop-color="#ff7043"/></linearGradient>
-          <linearGradient id="nLg2" x1="6" y1="7" x2="34" y2="43"><stop offset="0%" stop-color="#00f5d4"/><stop offset="100%" stop-color="#ff7043"/></linearGradient>
-        </defs>
-      </svg>
-    </div>
-    <span class="nav-wordmark">PAYSENTINEL</span>
+<!-- NAVIGATION -->
+<nav style="position:fixed; top:0; left:0; width:100%; padding:2.5rem 4rem; display:flex; justify-content:space-between; align-items:center; z-index:1000;">
+  <a href="#" style="text-decoration:none; display:flex; align-items:center; gap:1rem;">
+    <div style="width:30px; height:35px; border:1px solid var(--neon-teal); display:flex; align-items:center; justify-content:center; font-family:var(--ff-display); font-size:0.8rem; color:var(--neon-teal);">PS</div>
+    <span style="font-family:var(--ff-display); font-size:1.4rem; letter-spacing:0.2em; color:#fff;">PAYSENTINEL</span>
   </a>
-  <div class="nav-links">
-    <a href="#about">About</a>
-    <a href="#why">The Blindspot</a>
-    <a href="#how">Protocol</a>
-    <a href="dashboard.html">Demo</a>
+  <div style="display:flex; gap:3rem;">
+    <a href="#about" class="nav-link" style="font-family:var(--ff-ui); font-size:0.65rem; letter-spacing:0.2em; color:rgba(255,255,255,0.4); text-decoration:none; text-transform:uppercase;">Protocol</a>
+    <a href="#vision" class="nav-link" style="font-family:var(--ff-ui); font-size:0.65rem; letter-spacing:0.2em; color:rgba(255,255,255,0.4); text-decoration:none; text-transform:uppercase;">Vision</a>
+    <a href="dashboard.html" class="nav-link" style="font-family:var(--ff-ui); font-size:0.65rem; letter-spacing:0.2em; color:var(--neon-teal); text-decoration:none; text-transform:uppercase;">Live Demo</a>
   </div>
-  <div class="nav-right">
-    <div class="nav-ping"><div class="ping-dot"></div><span id="navTps">1,247</span> txn/sec</div>
-    <div class="badge-blueprint">BLUEPRINT 2026</div>
+  <div style="font-family:var(--ff-mono); font-size:0.55rem; color:var(--neon-saffron); border:1px solid var(--neon-saffron); padding:0.4rem 1rem; border-radius:100px;">
+    BHARAT // 2026
   </div>
 </nav>
 
-<!-- ═══ HERO ═══ -->
-<section class="hero" id="hero">
-  <div class="hero-eyebrow">
-    <div class="eyebrow-line"></div>
-    AI MERCHANT FRAUD SHIELD · BUILT FOR BHARAT · EST. 2026
-    <div class="eyebrow-line right"></div>
-  </div>
-  <h1 class="hero-h1">
-    <span class="h1-line1 glitch">DETECT.</span>
-    <span class="h1-line2" data-text="PROTECT.">PROTECT.</span>
-  </h1>
-  <p class="hero-sub">
-    The world's first fraud detection system that speaks <em>Kannada</em>.
-    Protecting <strong>₹4,000 Crore</strong> of small business dreams with sub-100ms AI precision.
-  </p>
-  <div class="hero-stats">
-    <div class="stat-item"><span class="stat-num" id="s1">0</span><div class="stat-lbl">Latency (ms)</div></div>
-    <div class="stat-item"><span class="stat-num" id="s2">0</span><div class="stat-lbl">ML Features</div></div>
-    <div class="stat-item"><span class="stat-num" id="s3">0M</span><div class="stat-lbl">Merchants at Risk</div></div>
-    <div class="stat-item"><span class="stat-num" id="s4">₹0</span><div class="stat-lbl">Annual UPI Fraud</div></div>
-  </div>
-  <div class="hero-cta">
-    <a href="dashboard.html" class="btn-mag btn-primary-mag" style="text-decoration:none"><span>⚡ TRY NOW — LIVE DEMO</span></a>
-    <a href="#how" class="btn-mag btn-outline-mag" style="text-decoration:none"><span>THE PROTOCOL</span></a>
-  </div>
-  <div class="scroll-down">
-    <div class="mouse-frame"><div class="mouse-wheel"></div></div>
-    EXPLORE
+<!-- HERO -->
+<section class="hero">
+  <div class="neural-grid"></div>
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-tagline">The Enterprise Standard for UPI Security</div>
+    <h1 class="hero-title">
+      <span class="reveal-up">THE NEURAL</span>
+      <span class="outline reveal-up">FRAUD SHIELD</span>
+    </h1>
+    <p class="hero-desc reveal-up">
+      Sub-100ms fraud detection for the next billion digital merchants. 
+      Natively localized with <em>Kannada</em> voice alerts.
+    </p>
+    <div class="hero-cta-group reveal-up">
+      <a href="dashboard.html" class="btn-premium btn-solid">Enter Command Center</a>
+      <a href="#about" class="btn-premium btn-outline">Review Protocol</a>
+    </div>
+
+    <!-- STATS OVERLAY -->
+    <div style="margin-top:6rem; display:flex; gap:4rem; justify-content:center;" class="reveal-up">
+      <div style="text-align:center;">
+        <span style="display:block; font-family:var(--ff-display); font-size:3rem; color:#fff; line-height:1;">&lt;100ms</span>
+        <span style="font-family:var(--ff-ui); font-size:0.6rem; color:var(--neon-teal); letter-spacing:0.3em; text-transform:uppercase;">Inference</span>
+      </div>
+      <div style="text-align:center;">
+        <span style="display:block; font-family:var(--ff-display); font-size:3rem; color:#fff; line-height:1;">99.9%</span>
+        <span style="font-family:var(--ff-ui); font-size:0.6rem; color:var(--neon-teal); letter-spacing:0.3em; text-transform:uppercase;">Uptime</span>
+      </div>
+      <div style="text-align:center;">
+        <span style="display:block; font-family:var(--ff-display); font-size:3rem; color:#fff; line-height:1;">45+</span>
+        <span style="font-family:var(--ff-ui); font-size:0.6rem; color:var(--neon-teal); letter-spacing:0.3em; text-transform:uppercase;">ML Features</span>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- TICKER -->
-<div class="ticker-wrap">
-  <div class="ticker-inner">
-    <span class="tick-item"><span class="tick-danger">◆</span>&nbsp;₹8,200 · anon28731@ibl · HIGH RISK · 89ms</span>
-    <span class="tick-item"><span class="tick-safe">◆</span>&nbsp;₹1,200 · kumar.r@gpay · SAFE · 5ms</span>
-    <span class="tick-item"><span class="tick-warn">◆</span>&nbsp;₹5,000 · mobile293@upi · MEDIUM · 44ms</span>
-    <span class="tick-item"><span class="tick-danger">◆</span>&nbsp;₹15,000 · 7382910@oksbi · CRITICAL · 91ms</span>
-    <span class="tick-item"><span class="tick-safe">◆</span>&nbsp;₹620 · meena.v@gpay · SAFE · 2ms</span>
+<!-- DATA STREAM TICKER -->
+<div style="background:rgba(255,255,255,0.02); border-top:1px solid rgba(255,255,255,0.05); border-bottom:1px solid rgba(255,255,255,0.05); padding:1rem 0; overflow:hidden;">
+  <div id="ticker" style="display:flex; white-space:nowrap; gap:4rem; animation:ticker 40s linear infinite;">
+    <span style="font-family:var(--ff-mono); font-size:0.65rem; color:rgba(255,255,255,0.3);">[ALERT] ₹12,500 TXN BLOCKED // MERCHANT_08 // RISK: HIGH</span>
+    <span style="font-family:var(--ff-mono); font-size:0.65rem; color:rgba(255,255,255,0.3);">[OK] ₹450 TXN VERIFIED // MERCHANT_22 // LATENCY: 12ms</span>
+    <span style="font-family:var(--ff-mono); font-size:0.65rem; color:rgba(255,255,255,0.3);">[SYSTEM] NEURAL MODEL RETRAINED // VERSION: 2.1.0-STABLE</span>
+    <span style="font-family:var(--ff-mono); font-size:0.65rem; color:rgba(255,255,255,0.3);">[ALERT] PROBE ATTACK DETECTED // IP: 182.16.0.4 // NULLIFIED</span>
+    <!-- Repeat for seamless loop -->
+    <span style="font-family:var(--ff-mono); font-size:0.65rem; color:rgba(255,255,255,0.3);">[ALERT] ₹12,500 TXN BLOCKED // MERCHANT_08 // RISK: HIGH</span>
+    <span style="font-family:var(--ff-mono); font-size:0.65rem; color:rgba(255,255,255,0.3);">[OK] ₹450 TXN VERIFIED // MERCHANT_22 // LATENCY: 12ms</span>
+    <span style="font-family:var(--ff-mono); font-size:0.65rem; color:rgba(255,255,255,0.3);">[SYSTEM] NEURAL MODEL RETRAINED // VERSION: 2.1.0-STABLE</span>
+    <span style="font-family:var(--ff-mono); font-size:0.65rem; color:rgba(255,255,255,0.3);">[ALERT] PROBE ATTACK DETECTED // IP: 182.16.0.4 // NULLIFIED</span>
   </div>
 </div>
+<style> @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } } </style>
 
-<!-- ═══ ABOUT US ═══ -->
-<section id="about" style="background:var(--c1)">
-  <div class="s-head reveal">
-    <div class="s-tag">mission</div>
-    <h2 class="s-title">GUARDIANS OF BHARAT</h2>
-    <p class="s-sub">Enterprise-grade AI security shouldn't be a luxury. We built it for every chai-wala and kirana owner.</p>
-  </div>
-  <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:6rem;max-width:1400px;margin:0 auto;align-items:center">
-    <div class="reveal-left">
-      <div class="image-card" style="aspect-ratio: 16/9; margin-bottom: 2rem;">
-        <img src="static/intro.png" alt="PaySentinel Mission">
-        <div style="position:absolute; top:30px; left:30px; background:rgba(0,245,212,0.1); backdrop-filter:blur(10px); border:1px solid var(--teal); padding:10px 20px; border-radius:4px; font-family:var(--ff-ui); font-size:0.6rem; color:var(--teal); font-weight:700; letter-spacing:0.2em;">SYSTEM_ACTIVE // V2.0</div>
+<!-- PROTOCOL SECTION -->
+<section id="about">
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:8rem; align-items:center;">
+    <div>
+      <span class="section-label">01 // THE PROTOCOL</span>
+      <h2 class="section-title">ENGINEERED FOR <span style="color:var(--neon-teal);">PRECISION.</span></h2>
+      <p style="font-size:1.1rem; line-height:1.8; color:rgba(217,234,247,0.5); margin-bottom:3rem;">
+        Traditional banking systems alert you after the money is gone. 
+        PaySentinel analyzes the digital pulse of every transaction <em>while</em> it happens.
+      </p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem;">
+        <div class="glass-card">
+          <h4 style="font-family:var(--ff-ui); font-size:0.7rem; color:var(--neon-teal); margin-bottom:1rem; letter-spacing:0.1em;">ENSEMBLE AI</h4>
+          <p style="font-size:0.85rem; color:rgba(255,255,255,0.3); line-height:1.6;">Triple-layer verification using Isolation Forest, One-Class SVM, and LOF.</p>
+        </div>
+        <div class="glass-card">
+          <h4 style="font-family:var(--ff-ui); font-size:0.7rem; color:var(--neon-saffron); margin-bottom:1rem; letter-spacing:0.1em;">SHAP EXPLAINER</h4>
+          <p style="font-size:0.85rem; color:rgba(255,255,255,0.3); line-height:1.6;">Every decision is backed by mathematical evidence for police reports.</p>
+        </div>
       </div>
-      <p style="font-size:1.3rem; line-height:1.7; color:#fff; margin-bottom:2rem; font-family:var(--ff-head)">Protecting the digital heartbeat of India.</p>
-      <p style="font-size:1rem; line-height:1.9; color:rgba(217,234,247,0.45); margin-bottom:2rem">As India races toward a cashless economy with 10 Billion+ UPI transactions per month, the small shopkeeper remains the primary target for sophisticated digital scammers. PaySentinel is the shield they deserve.</p>
     </div>
-    <div class="reveal-right">
-      <div style="display:flex; flex-direction:column; gap:1.5rem">
-        <div class="g-card" style="padding:2.5rem; border-left:4px solid var(--teal)">
-          <div style="font-family:var(--ff-ui); font-size:0.8rem; color:var(--teal); margin-bottom:0.8rem; letter-spacing:0.1em; font-weight:700">01 // DEMOCRATIZING SECURITY</div>
-          <p style="font-size:0.9rem; line-height:1.8; color:rgba(217,234,247,0.4)">We bring the same fraud detection technology used by billion-dollar banks to local merchants — for free.</p>
-        </div>
-        <div class="g-card" style="padding:2.5rem; border-left:4px solid var(--saffron)">
-          <div style="font-family:var(--ff-ui); font-size:0.8rem; color:var(--saffron); margin-bottom:0.8rem; letter-spacing:0.1em; font-weight:700">02 // LINGUISTIC INCLUSION</div>
-          <p style="font-size:0.9rem; line-height:1.8; color:rgba(217,234,247,0.4)">Language shouldn't be a barrier to security. Our system speaks Kannada, Hindi, and English natively.</p>
-        </div>
-        <div class="g-card" style="padding:2.5rem; border-left:4px solid var(--gold)">
-          <div style="font-family:var(--ff-ui); font-size:0.8rem; color:var(--gold); margin-bottom:0.8rem; letter-spacing:0.1em; font-weight:700">03 // EDGE PERFORMANCE</div>
-          <p style="font-size:0.9rem; line-height:1.8; color:rgba(217,234,247,0.4)">Sub-100ms detection means you're alerted while the customer is still at the counter. Speed is safety.</p>
-        </div>
-      </div>
+    <div style="position:relative;">
+      <div style="position:absolute; inset:0; background:radial-gradient(circle at 50% 50%, var(--neon-teal), transparent 70%); opacity:0.1; filter:blur(60px);"></div>
+      <img src="static/hero_shield.png" style="width:100%; border-radius:24px; box-shadow:0 40px 80px rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.05);" class="reveal-right">
     </div>
   </div>
 </section>
 
-<!-- ═══ WHY WE BUILT ═══ -->
-<section id="why" style="background:var(--c0)">
-  <div class="s-head reveal">
-    <div class="s-tag">market gap</div>
-    <h2 class="s-title">THE BLINDSPOT</h2>
-    <p class="s-sub">Traditional banking alerts are too slow. We built PaySentinel for real-time commerce.</p>
+<!-- VISION SECTION -->
+<section id="vision" style="background:var(--c1);">
+  <div style="text-align:center; max-width:800px; margin:0 auto;">
+    <span class="section-label">02 // THE VISION</span>
+    <h2 class="section-title">PROTECTING THE NEXT BILLION</h2>
+    <p style="font-size:1.2rem; line-height:1.8; color:rgba(217,234,247,0.5); margin-bottom:4rem;">
+      We believe linguistic barriers shouldn't be security vulnerabilities. 
+      PaySentinel bridges the gap between high-tech fraud detection and rural commerce.
+    </p>
   </div>
-  <div style="display:grid; grid-template-columns:1fr 1.5fr; gap:5rem; max-width:1400px; margin:0 auto; align-items:center">
-    <div class="reveal-left">
-      <div class="g-card" style="padding:0; margin-bottom:2rem">
-        <div class="bench-table">
-          <table>
-            <thead><tr><th>Metric</th><th>Bank Alerts</th><th>PaySentinel</th></tr></thead>
-            <tbody>
-              <tr><td>Latency</td><td class="bench-avg">~15-30 min</td><td class="bench-val">&lt;100 ms</td></tr>
-              <tr><td>Regional Voice</td><td class="bench-avg">None</td><td class="bench-val">Native Support</td></tr>
-              <tr><td>Explanability</td><td class="bench-avg">Generic</td><td class="bench-val">SHAP Evidence</td></tr>
-              <tr><td>Merchant Context</td><td class="bench-avg">Low</td><td class="bench-val">Full Fingerprint</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <p style="font-size:0.95rem; line-height:1.8; color:rgba(217,234,247,0.4)">Banks protect their balance sheets. PaySentinel protects your inventory. When a scammer uses a fake screenshot or a probe attack, the bank sees a successful transaction. We see the patterns they miss.</p>
+  <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:2rem; max-width:1400px; margin:0 auto;">
+    <div class="glass-card reveal-up">
+      <div style="font-size:2rem; margin-bottom:1.5rem;"></div>
+      <h3 style="font-family:var(--ff-head); font-size:1.4rem; margin-bottom:1rem;">Native Alerts</h3>
+      <p style="font-size:0.95rem; color:rgba(255,255,255,0.4); line-height:1.7;">Industry-first Kannada voice alerts ensure shopkeepers understand the risk instantly without looking at a screen.</p>
     </div>
-    <div class="reveal-right">
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem">
-        <div class="image-card"><img src="static/5.jpg" alt="UPI Security"></div>
-        <div class="image-card"><img src="static/6.jpg" alt="Merchant Protection"></div>
-      </div>
-      <div style="margin-top:2.5rem; display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem">
-        <div class="stat-item" style="padding:1.5rem; background:rgba(255,23,68,0.03)"><span class="stat-num" style="font-size:1.8rem; color:var(--danger)">₹4k Cr</span><div class="stat-lbl">ANNUAL LOSS</div></div>
-        <div class="stat-item" style="padding:1.5rem"><span class="stat-num" style="font-size:1.8rem">10B+</span><div class="stat-lbl">TXN / MO</div></div>
-        <div class="stat-item" style="padding:1.5rem"><span class="stat-num" style="font-size:1.8rem">20+</span><div class="stat-lbl">SCAM PATTERNS</div></div>
-        <div class="stat-item" style="padding:1.5rem"><span class="stat-num" style="font-size:1.8rem">5</span><div class="stat-lbl">LANGUAGES</div></div>
-      </div>
+    <div class="glass-card reveal-up" style="transition-delay:0.1s;">
+      <div style="font-size:2rem; margin-bottom:1.5rem;">⚡</div>
+      <h3 style="font-family:var(--ff-head); font-size:1.4rem; margin-bottom:1rem;">Sub-100ms Loop</h3>
+      <p style="font-size:0.95rem; color:rgba(255,255,255,0.4); line-height:1.7;">Proprietary feature engineering pipeline optimized for Python and Rust for ultra-low latency inference.</p>
+    </div>
+    <div class="glass-card reveal-up" style="transition-delay:0.2s;">
+      <div style="font-size:2rem; margin-bottom:1.5rem;"></div>
+      <h3 style="font-family:var(--ff-head); font-size:1.4rem; margin-bottom:1rem;">Forensic Ready</h3>
+      <p style="font-size:0.95rem; color:rgba(255,255,255,0.4); line-height:1.7;">Generate automated PDF certificates with SHAP evidence for immediate submission to the National Cyber Crime portal.</p>
     </div>
   </div>
 </section>
-
-<!-- ═══ HOW IT WORKS ═══ -->
-<section id="how" style="background:var(--c2)">
-  <div class="s-head reveal">
-    <div class="s-tag">protocol</div>
-    <h2 class="s-title">THE SENTINEL PIPELINE</h2>
-    <p class="s-sub">A zero-setup, enterprise-grade detection loop running entirely on your local infrastructure.</p>
-  </div>
-  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:2.5rem; max-width:1400px; margin:0 auto">
-    <div class="g-card reveal" style="padding:0">
-       <div class="image-card" style="height:250px; border-radius:12px 12px 0 0"><img src="static/2.jpg" alt="Ingestion"></div>
-       <div style="padding:2.5rem">
-         <div style="font-family:var(--ff-head); font-size:1.4rem; color:#fff; margin-bottom:1rem">01 // Ingestion</div>
-         <p style="font-size:0.9rem; color:rgba(217,234,247,0.4); line-height:1.8">Secure streaming via Apache Kafka or batch upload via forensic CSV. Your merchant data is parsed and encrypted in-memory.</p>
-       </div>
-    </div>
-    <div class="g-card reveal" style="padding:0" style="transition-delay:0.2s">
-       <div class="image-card" style="height:250px; border-radius:12px 12px 0 0"><img src="static/3.jpg" alt="Analysis"></div>
-       <div style="padding:2.5rem">
-         <div style="font-family:var(--ff-head); font-size:1.4rem; color:#fff; margin-bottom:1rem">02 // Ensemble Engine</div>
-         <p style="font-size:0.9rem; color:rgba(217,234,247,0.4); line-height:1.8">Triple-model validation (IsolationForest + SVM + LOF) cross-checks your unique merchant fingerprint against 45 engineered features.</p>
-       </div>
-    </div>
-    <div class="g-card reveal" style="padding:0" style="transition-delay:0.4s">
-       <div class="image-card" style="height:250px; border-radius:12px 12px 0 0"><img src="static/4.jpg" alt="Response"></div>
-       <div style="padding:2.5rem">
-         <div style="font-family:var(--ff-head); font-size:1.4rem; color:#fff; margin-bottom:1rem">03 // Sentinel Output</div>
-         <p style="font-size:0.9rem; color:rgba(217,234,247,0.4); line-height:1.8">Instant Kannada voice alert for high-risk flags. SHAP-based evidence reports with QR-coded forensic certificates for police action.</p>
-       </div>
-    </div>
-  </div>
-</section>
-
-<!-- EMERGENCY -->
-<div class="emergency reveal">
-  <div class="em-label">National Cyber Crime Resources</div>
-  <div class="em-num">1930</div>
-  <div style="font-family:var(--ff-ui); font-size:0.6rem; color:rgba(217,234,247,0.2); letter-spacing:0.3em; text-transform:uppercase; margin-top:0.5rem">Official Helpline · cybercrime.gov.in</div>
-</div>
 
 <!-- FOOTER -->
-<footer style="background: url('static/landing page footer.png') center/cover no-repeat; position: relative;">
-  <div style="position:absolute; inset:0; background:rgba(1,3,8,0.92); z-index:-1"></div>
-  <div class="ft-logo">PAYSENTINEL</div>
-  <div class="ft-sub">// AI Merchant Fraud Shield for Bharat · BLUEPRINT 2026 · MIT License</div>
-  <div class="ft-links">
-    <a href="https://github.com/Yashaswini-V21/Pay_Sentinel">GitHub</a>
-    <a href="docs/ARCHITECTURE.md">Documentation</a>
-    <a href="dashboard.html">Demo</a>
-    <a href="SECURITY.md">Security</a>
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="logo">PAYSENTINEL</span>
+      <p style="font-size:1rem; color:rgba(217,234,247,0.4); line-height:1.7; max-width:350px;">
+        Empowering Bharat's digital economy through elite-grade AI security.
+      </p>
+    </div>
+    <div class="footer-col">
+      <h4>Protocol</h4>
+      <ul class="footer-links">
+        <li><a href="#about">Neural Engine</a></li>
+        <li><a href="#vision">Voice Alerts</a></li>
+        <li><a href="docs/ARCHITECTURE.md">Whitepaper</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Platform</h4>
+      <ul class="footer-links">
+        <li><a href="dashboard.html">Live Dashboard</a></li>
+        <li><a href="docs/USER_GUIDE.md">User Guide</a></li>
+        <li><a href="https://github.com/Yashaswini-V21/Pay_Sentinel">Source Code</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Security</h4>
+      <ul class="footer-links">
+        <li><a href="SECURITY.md">Security Policy</a></li>
+        <li><a href="LICENSE">License</a></li>
+        <li><a href="https://cybercrime.gov.in">Report Fraud</a></li>
+      </ul>
+    </div>
   </div>
-  <div class="ft-copy">
-    Made with ❤️ for Indian Merchants Who Deserve Better<br/>
-    Kannada · Hindi · Tamil · Telugu · English<br/>
-    🟢 Production Ready — May 2026
+  <div class="footer-bottom">
+    <span>&copy; 2026 PaySentinel. Built for Blueprint 2026 Hackathon.</span>
+    <span>ENCRYPTED // SHIELD_LEVEL_5</span>
   </div>
 </footer>
 
 <script>
 /* ─── LOADER LOGIC ──────────────────────── */
-const loaderTxt = document.getElementById('loaderTxt');
-const loaderBar = document.getElementById('loaderBar');
-const messages = [
-  'INITIALIZING NEURAL DETECTION ENGINE...',
-  'CALIBRATING ISOLATION FOREST ENSEMBLE...',
-  'LOADING BHARAT-SPECIFIC FRAUD PATTERNS...',
-  'SYNCING REGIONAL VOICE MODULES...',
-  'PAYSENTINEL IS ARMED.'
-];
-let progress = 0;
-let msgIndex = 0;
-
-function updateLoader() {
-  progress += Math.random() * 15;
-  if(progress >= 100) {
-    progress = 100;
-    loaderBar.style.width = '100%';
-    loaderTxt.textContent = messages[messages.length - 1];
-    setTimeout(() => {
-      document.getElementById('loader').classList.add('hide');
-      startCounters();
-    }, 800);
-    return;
-  }
-  loaderBar.style.width = progress + '%';
-  if(progress > (msgIndex + 1) * 20 && msgIndex < messages.length - 1) {
-    msgIndex++;
-    loaderTxt.textContent = messages[msgIndex];
-  }
-  setTimeout(updateLoader, 200 + Math.random() * 400);
-}
-updateLoader();
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hide');
+    initAnimations();
+  }, 2500);
+});
 
 /* ─── CURSOR LOGIC ──────────────────────── */
 const cDot = document.getElementById('cDot'), cRing = document.getElementById('cRing');
-let cx=0,cy=0,rx=0,ry=0;
+let cx=0, cy=0, rx=0, ry=0;
 document.addEventListener('mousemove', e => { cx = e.clientX; cy = e.clientY; cDot.style.left = cx + 'px'; cDot.style.top = cy + 'px'; });
 function animateCursor() {
   rx += (cx - rx) * 0.15; ry += (cy - ry) * 0.15;
@@ -589,77 +454,102 @@ function animateCursor() {
 }
 animateCursor();
 
-/* ─── SPACE STARFIELD ────────────────────── */
-const starCvs = document.getElementById('starCanvas');
-const sCtx = starCvs.getContext('2d');
-let stars = [];
-function initStars() {
-  starCvs.width = window.innerWidth; starCvs.height = window.innerHeight;
-  stars = [];
-  for(let i=0; i<400; i++) {
-    stars.push({
-      x: Math.random() * starCvs.width,
-      y: Math.random() * starCvs.height,
-      size: Math.random() * 1.5,
-      opacity: Math.random(),
-      speed: Math.random() * 0.05
-    });
-  }
-}
-function drawStars() {
-  sCtx.clearRect(0, 0, starCvs.width, starCvs.height);
-  stars.forEach(s => {
-    s.y -= s.speed;
-    if(s.y < 0) s.y = starCvs.height;
-    sCtx.fillStyle = `rgba(0, 245, 212, ${s.opacity})`;
-    sCtx.beginPath();
-    sCtx.arc(s.x, s.y, s.size, 0, Math.PI*2);
-    sCtx.fill();
-  });
-  requestAnimationFrame(drawStars);
-}
-window.addEventListener('resize', initStars);
-initStars(); drawStars();
+/* ─── THREE.JS HERO BACKGROUND ──────────── */
+const canvas = document.getElementById('hero-canvas');
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
 
-/* ─── COUNTERS ──────────────────────────── */
-function startCounters() {
-  const ctrs = [
-    {id:'s1', target:100, prefix:'<', suffix:'ms'},
-    {id:'s2', target:45, prefix:'', suffix:''},
-    {id:'s3', target:60, prefix:'', suffix:'M'},
-    {id:'s4', target:4000, prefix:'₹', suffix:'Cr'}
-  ];
-  ctrs.forEach(c => {
-    const el = document.getElementById(c.id);
-    let current = 0;
-    const duration = 2000;
-    const start = performance.now();
-    function count(now) {
-      const p = Math.min((now - start) / duration, 1);
-      const ease = 1 - Math.pow(1-p, 3);
-      current = Math.floor(ease * c.target);
-      el.textContent = c.prefix + (current >= 1000 ? current.toLocaleString() : current) + c.suffix;
-      if(p < 1) requestAnimationFrame(count);
-    }
-    requestAnimationFrame(count);
-  });
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = 5;
+
+// Starfield
+const starGeometry = new THREE.BufferGeometry();
+const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.015, transparent: true, opacity: 0.8 });
+const starVertices = [];
+for (let i = 0; i < 15000; i++) {
+  const x = (Math.random() - 0.5) * 20;
+  const y = (Math.random() - 0.5) * 20;
+  const z = (Math.random() - 0.5) * 20;
+  starVertices.push(x, y, z);
 }
+starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+const stars = new THREE.Points(starGeometry, starMaterial);
+scene.add(stars);
 
-/* ─── SCROLL REVEAL ─────────────────────── */
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('vis'); });
-}, { threshold: 0.1 });
-document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => obs.observe(el));
+// Nebula Particles
+const nebGeometry = new THREE.BufferGeometry();
+const nebMaterial = new THREE.PointsMaterial({ color: 0x00f5d4, size: 0.05, transparent: true, opacity: 0.2 });
+const nebVertices = [];
+for (let i = 0; i < 500; i++) {
+  const x = (Math.random() - 0.5) * 10;
+  const y = (Math.random() - 0.5) * 10;
+  const z = (Math.random() - 0.5) * 10;
+  nebVertices.push(x, y, z);
+}
+nebGeometry.setAttribute('position', new THREE.Float32BufferAttribute(nebVertices, 3));
+const nebula = new THREE.Points(nebGeometry, nebMaterial);
+scene.add(nebula);
 
-/* ─── NAV SCROLL ────────────────────────── */
-window.addEventListener('scroll', () => {
-  const nav = document.getElementById('mainNav');
-  if(window.scrollY > 100) nav.classList.add('scrolled');
-  else nav.classList.remove('scrolled');
+function animate() {
+  requestAnimationFrame(animate);
+  stars.rotation.y += 0.0002;
+  stars.rotation.x += 0.0001;
+  nebula.rotation.y -= 0.001;
+  
+  // Interaction with scroll
+  stars.position.z = window.scrollY * 0.005;
+  
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
+/* ─── GSAP ANIMATIONS ────────────────────── */
+function initAnimations() {
+  gsap.registerPlugin(ScrollTrigger);
+
+  gsap.utils.toArray('.reveal-up').forEach(el => {
+    gsap.to(el, {
+      scrollTrigger: el,
+      opacity: 1, y: 0,
+      duration: 1.5, ease: "expo.out",
+      stagger: 0.2
+    });
+  });
+
+  gsap.to('.reveal-left', {
+    scrollTrigger: '.reveal-left',
+    opacity: 1, x: 0,
+    duration: 1.5, ease: "expo.out"
+  });
+
+  gsap.to('.reveal-right', {
+    scrollTrigger: '.reveal-right',
+    opacity: 1, x: 0,
+    duration: 1.5, ease: "expo.out"
+  });
+
+  // Hero Parallax
+  gsap.to('.hero-title', {
+    scrollTrigger: {
+      trigger: '.hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: true
+    },
+    y: 200,
+    opacity: 0
+  });
+}
+
 /* ─── MAGNETIC BUTTONS ──────────────────── */
-document.querySelectorAll('.btn-mag').forEach(btn => {
+document.querySelectorAll('.btn-premium').forEach(btn => {
   btn.addEventListener('mousemove', e => {
     const r = btn.getBoundingClientRect();
     const x = (e.clientX - r.left - r.width/2) * 0.3;
@@ -668,6 +558,7 @@ document.querySelectorAll('.btn-mag').forEach(btn => {
   });
   btn.addEventListener('mouseleave', () => btn.style.transform = '');
 });
+
 </script>
 </body>
 </html>
