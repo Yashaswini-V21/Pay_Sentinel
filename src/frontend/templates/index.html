@@ -1,0 +1,3726 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>PaySentinel — AI Fraud Shield for Bharat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Chakra+Petch:wght@300;400;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@300;400;500;700&family=Exo+2:wght@100;200;300;400;700;900&family=Syne:wght@400;600;700;800&family=Noto+Sans+Kannada:wght@400;700&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    /* ═══════════════════════════════════════════
+   ROOT TOKENS
+═══════════════════════════════════════════ */
+    :root {
+      --c0: #010308;
+      --c1: #040912;
+      --c2: #080f1e;
+      --c3: #0e1828;
+      --teal: #00f5d4;
+      --teal2: #00c4aa;
+      --teal3: rgba(0, 245, 212, .1);
+      --saffron: #ff7043;
+      --saffron2: #ff4f1a;
+      --gold: #ffc107;
+      --danger: #ff1744;
+      --safe: #00e676;
+      --cyan: #18ffff;
+      --violet: #7c4dff;
+      --glow-t: 0 0 20px rgba(0, 245, 212, .5), 0 0 60px rgba(0, 245, 212, .15);
+      --glow-s: 0 0 20px rgba(255, 112, 67, .5), 0 0 60px rgba(255, 112, 67, .15);
+      --glow-d: 0 0 20px rgba(255, 23, 68, .5), 0 0 60px rgba(255, 23, 68, .15);
+      --ff-display: 'Bebas Neue', sans-serif;
+      --ff-hero: 'Bebas Neue', sans-serif;
+      --ff-kn: 'Noto Sans Kannada', sans-serif;
+      --ff-head: 'Exo 2', sans-serif;
+      --ff-body: 'DM Sans', sans-serif;
+      --ff-mono: 'JetBrains Mono', monospace;
+      --ff-ui: 'Chakra Petch', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden
+    }
+
+    body {
+      background: var(--c0) url('static/images/space_bg.png') center/cover fixed;
+      background-blend-mode: overlay;
+      color: #d9eaf7;
+      font-family: var(--ff-body);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* HUD CORNERS */
+    .hud-corner {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border: 2px solid rgba(0, 245, 212, 0.2);
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .hud-tl {
+      top: 40px;
+      left: 40px;
+      border-right: 0;
+      border-bottom: 0;
+    }
+
+    .hud-tr {
+      top: 40px;
+      right: 40px;
+      border-left: 0;
+      border-bottom: 0;
+    }
+
+    .hud-bl {
+      bottom: 40px;
+      left: 40px;
+      border-right: 0;
+      border-top: 0;
+    }
+
+    .hud-br {
+      bottom: 40px;
+      right: 40px;
+      border-left: 0;
+      border-top: 0;
+    }
+
+    .hud-corner::before {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: var(--teal);
+      box-shadow: 0 0 10px var(--teal);
+    }
+
+    .hud-tl::before {
+      top: -4px;
+      left: -4px;
+    }
+
+    .hud-tr::before {
+      top: -4px;
+      right: -4px;
+    }
+
+    .hud-bl::before {
+      bottom: -4px;
+      left: -4px;
+    }
+
+    .hud-br::before {
+      bottom: -4px;
+      right: -4px;
+    }
+
+    /* ═══════════════════════ SPLASH SCREEN ═══════════════════════ */
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--c0) url('static/images/splash_screen_bg.png') center/cover no-repeat;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 1s ease, visibility 1s ease;
+    }
+
+    #splash::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(1, 3, 8, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: -1;
+    }
+
+    #splash.gone {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none
+    }
+
+    .splash-shield {
+      width: 100px;
+      height: 114px;
+      position: relative;
+      margin-bottom: 2.5rem;
+      animation: shieldFloat 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes shieldFloat {
+      0% {
+        transform: translateY(0) scale(1)
+      }
+
+      100% {
+        transform: translateY(-12px) scale(1.04)
+      }
+    }
+
+    .splash-shield svg {
+      filter: drop-shadow(0 0 30px rgba(0, 245, 212, .7)) drop-shadow(0 0 80px rgba(0, 245, 212, .2));
+      animation: shieldPulse 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes shieldPulse {
+      0% {
+        filter: drop-shadow(0 0 20px rgba(0, 245, 212, .5)) drop-shadow(0 0 60px rgba(0, 245, 212, .15))
+      }
+
+      100% {
+        filter: drop-shadow(0 0 50px rgba(0, 245, 212, 1)) drop-shadow(0 0 120px rgba(0, 245, 212, .4))
+      }
+    }
+
+    .splash-wordmark {
+      font-family: var(--ff-hero);
+      font-size: 3.8rem;
+      letter-spacing: .25em;
+      background: linear-gradient(135deg, var(--teal), #80ffee 40%, var(--saffron));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: .4rem;
+      opacity: 0;
+      animation: wordmarkIn .8s .4s cubic-bezier(.16, 1, .3, 1) forwards;
+    }
+
+    @keyframes wordmarkIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px) scale(.95)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .splash-kn {
+      font-family: var(--ff-kn);
+      font-size: 1rem;
+      color: rgba(0, 245, 212, .5);
+      letter-spacing: .1em;
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: wordmarkIn .8s .7s cubic-bezier(.16, 1, .3, 1) forwards;
+    }
+
+    .splash-bar-wrap {
+      width: 320px;
+      height: 2px;
+      background: rgba(255, 255, 255, .06);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: wordmarkIn .5s 1s forwards;
+    }
+
+    .splash-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--teal), var(--saffron), var(--teal));
+      background-size: 200%;
+      border-radius: 2px;
+      animation: barFill 2.5s 1.1s cubic-bezier(.4, 0, .2, 1) forwards,
+        shimmer 1.5s 1.1s linear infinite;
+    }
+
+    @keyframes barFill {
+      to {
+        width: 100%
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: 200%
+      }
+
+      100% {
+        background-position: -200%
+      }
+    }
+
+    .splash-status {
+      font-family: var(--ff-mono);
+      font-size: .65rem;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: rgba(0, 245, 212, .4);
+      opacity: 0;
+      animation: wordmarkIn .5s 1.2s forwards;
+      min-height: 1.2em;
+    }
+
+    /* ─── MODALITY PODS ───────── */
+    .mod-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .mod-pod {
+      background: rgba(255, 255, 255, .02);
+      border-radius: 40px;
+      padding: 3rem;
+      border: 1px solid rgba(0, 245, 212, .05);
+      position: relative;
+      overflow: hidden;
+      transition: .5s;
+    }
+
+    .mod-pod:hover {
+      background: rgba(0, 245, 212, .05);
+      transform: scale(1.02)
+    }
+
+    .mod-pod-ico {
+      font-size: 3rem;
+      margin-bottom: 2rem;
+      display: block;
+      filter: drop-shadow(0 0 10px var(--teal));
+    }
+
+    /* ─── SYNAPSE FLOW (HOW IT WORKS) ───────── */
+    .synapse-wrap {
+      position: relative;
+      padding: 5rem 0
+    }
+
+    .synapse-path {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(transparent, var(--teal), transparent);
+    }
+
+    .synapse-pulse {
+      position: absolute;
+      left: 50%;
+      width: 10px;
+      height: 10px;
+      background: white;
+      border-radius: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 20px var(--teal);
+      animation: synapseTravel 3s infinite;
+    }
+
+    @keyframes synapseTravel {
+      0% {
+        top: 0%
+      }
+
+      100% {
+        top: 100%
+      }
+    }
+
+    /* Biometric Scan Line */
+    .loader-scan {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--teal), transparent);
+      box-shadow: 0 0 15px var(--teal), 0 0 30px var(--teal);
+      z-index: 10000;
+      animation: scanMove 3s ease-in-out infinite;
+      opacity: 0.8;
+    }
+
+    @keyframes scanMove {
+      0% {
+        top: 10%;
+        opacity: 0;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        top: 90%;
+        opacity: 0;
+      }
+    }
+
+    /* ─── CURSOR ─────────────────────────────── */
+    #cDot,
+    #cRing {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      border-radius: 50%
+    }
+
+    #cDot {
+      width: 6px;
+      height: 6px;
+      background: var(--teal);
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px var(--teal), 0 0 20px rgba(0, 245, 212, .4);
+      transition: width .1s, height .1s, background .2s
+    }
+
+    #cRing {
+      width: 36px;
+      height: 36px;
+      border: 1px solid rgba(0, 245, 212, .4);
+      transform: translate(-50%, -50%);
+      transition: width .25s cubic-bezier(.34, 1.56, .64, 1), height .25s cubic-bezier(.34, 1.56, .64, 1), border-color .3s, background .3s;
+      background: transparent
+    }
+
+    body:has(a:hover) #cRing,
+    body:has(button:hover) #cRing {
+      width: 52px;
+      height: 52px;
+      border-color: var(--saffron);
+      background: rgba(255, 112, 67, .04)
+    }
+
+    /* ─── BACKGROUNDS ────────────────────────── */
+    #bgCanvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .orb1 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(0, 245, 212, .07), transparent 70%);
+      top: -200px;
+      right: -100px;
+      animation: orbFloat1 15s ease-in-out infinite alternate
+    }
+
+    .orb2 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(255, 112, 67, .06), transparent 70%);
+      bottom: -150px;
+      left: -100px;
+      animation: orbFloat2 18s ease-in-out infinite alternate
+    }
+
+    .orb3 {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(124, 77, 255, .05), transparent 70%);
+      top: 40%;
+      left: 30%;
+      animation: orbFloat3 12s ease-in-out infinite alternate
+    }
+
+    @keyframes orbFloat1 {
+      0% {
+        transform: translate(0, 0) scale(1)
+      }
+
+      100% {
+        transform: translate(-80px, 60px) scale(1.2)
+      }
+    }
+
+    @keyframes orbFloat2 {
+      0% {
+        transform: translate(0, 0) scale(1)
+      }
+
+      100% {
+        transform: translate(60px, -80px) scale(1.15)
+      }
+    }
+
+    @keyframes orbFloat3 {
+      0% {
+        transform: translate(0, 0)
+      }
+
+      100% {
+        transform: translate(40px, 40px)
+      }
+    }
+
+    /* noise grain */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      opacity: .6;
+    }
+
+    /* scanline */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0, 0, 0, .025) 3px, rgba(0, 0, 0, .025) 4px)
+    }
+
+    /* ─── GRID OVERLAY ───────────────────────── */
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0, 245, 212, .025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 245, 212, .025) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    }
+
+    /* ─── NAV ────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .9rem 3rem;
+      background: rgba(1, 3, 8, .7);
+      border-bottom: 1px solid rgba(0, 245, 212, .08);
+      backdrop-filter: blur(30px) saturate(180%);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+      text-decoration: none
+    }
+
+    .shield-wrap {
+      position: relative;
+      width: 40px;
+      height: 46px
+    }
+
+    .shield-wrap svg {
+      position: absolute;
+      inset: 0;
+      animation: shieldGlow 3s ease-in-out infinite alternate
+    }
+
+    @keyframes shieldGlow {
+      0% {
+        filter: drop-shadow(0 0 4px var(--teal))
+      }
+
+      100% {
+        filter: drop-shadow(0 0 16px var(--teal)) drop-shadow(0 0 40px rgba(0, 245, 212, .2))
+      }
+    }
+
+    .nav-wordmark {
+      font-family: var(--ff-display);
+      font-size: 1.6rem;
+      letter-spacing: .2em;
+      background: linear-gradient(90deg, var(--teal), var(--saffron));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem
+    }
+
+    .nav-links a {
+      font-family: var(--ff-ui);
+      font-size: .65rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: rgba(217, 234, 247, .35);
+      text-decoration: none;
+      transition: .3s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--teal);
+      transform: scaleX(0);
+      transition: .3s;
+      transform-origin: left
+    }
+
+    .nav-links a:hover {
+      color: var(--teal)
+    }
+
+    .nav-links a:hover::after {
+      transform: scaleX(1)
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem
+    }
+
+    .nav-ping {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-family: var(--ff-mono);
+      font-size: .6rem;
+      color: var(--safe);
+      letter-spacing: .1em
+    }
+
+    .ping-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--safe);
+      border-radius: 50%;
+      box-shadow: 0 0 0 0 rgba(0, 230, 118, .4);
+      animation: ping 1.5s ease-in-out infinite
+    }
+
+    @keyframes ping {
+      0% {
+        box-shadow: 0 0 0 0 rgba(0, 230, 118, .4)
+      }
+
+      70% {
+        box-shadow: 0 0 0 8px rgba(0, 230, 118, 0)
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(0, 230, 118, 0)
+      }
+    }
+
+    .badge-blueprint {
+      padding: .3rem .9rem;
+      font-family: var(--ff-ui);
+      font-size: .55rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--saffron2), var(--saffron));
+      border-radius: 2px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .badge-blueprint::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .25), transparent);
+      animation: badgeSheen 3s ease-in-out infinite
+    }
+
+    @keyframes badgeSheen {
+      0% {
+        left: -100%
+      }
+
+      50%,
+      100% {
+        left: 150%
+      }
+    }
+
+    /* ─── HERO ───────────────────────────────── */
+    .hero {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8rem 2rem 5rem;
+      text-align: center;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(1, 3, 8, .75) 0%, rgba(1, 3, 8, .4) 40%, rgba(1, 3, 8, .9) 100%);
+      z-index: -1;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--ff-ui);
+      font-size: .62rem;
+      letter-spacing: .4em;
+      text-transform: uppercase;
+      color: var(--saffron);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      opacity: 0;
+      animation: riseIn .9s .3s cubic-bezier(.16, 1, .3, 1) forwards;
+    }
+
+    .eyebrow-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--saffron));
+      max-width: 120px
+    }
+
+    .eyebrow-line.right {
+      background: linear-gradient(90deg, var(--saffron), transparent)
+    }
+
+    /* GLITCH HERO TEXT */
+    .hero-h1 {
+      font-family: var(--ff-display);
+      font-size: clamp(4rem, 11vw, 10rem);
+      line-height: .9;
+      letter-spacing: .04em;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: riseIn .9s .5s cubic-bezier(.16, 1, .3, 1) forwards;
+    }
+
+    .h1-line1 {
+      display: block;
+      color: #d9eaf7;
+      position: relative
+    }
+
+    .h1-line1.glitch {
+      animation: glitch 4s 2s ease-in-out infinite
+    }
+
+    .h1-line2 {
+      display: block;
+      background: linear-gradient(135deg, var(--teal) 0%, var(--cyan) 30%, var(--saffron) 65%, var(--gold) 100%);
+      background-size: 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradShift 4s ease-in-out infinite alternate;
+      position: relative;
+    }
+
+    .h1-line2::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 2px;
+      top: 1px;
+      background: linear-gradient(135deg, rgba(0, 245, 212, .3), rgba(255, 112, 67, .3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: chromatic 4s 2s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes glitch {
+
+      0%,
+      90%,
+      100% {
+        transform: none;
+        clip-path: none
+      }
+
+      91% {
+        transform: translate(-3px, 0) skewX(-5deg);
+        clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%)
+      }
+
+      93% {
+        transform: translate(3px, 0) skewX(5deg);
+        clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%)
+      }
+
+      95% {
+        transform: none;
+        clip-path: none
+      }
+
+      97% {
+        transform: translate(-2px, 0);
+        clip-path: polygon(0 10%, 100% 10%, 100% 30%, 0 30%)
+      }
+
+      99% {
+        transform: none;
+        clip-path: none
+      }
+    }
+
+    @keyframes chromatic {
+
+      0%,
+      90%,
+      100% {
+        opacity: 0
+      }
+
+      91%,
+      99% {
+        opacity: 1
+      }
+    }
+
+    @keyframes gradShift {
+      0% {
+        background-position: 0%
+      }
+
+      100% {
+        background-position: 100%
+      }
+    }
+
+    @keyframes riseIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    .hero-sub {
+      font-family: var(--ff-body);
+      font-size: 1.05rem;
+      color: rgba(217, 234, 247, .45);
+      max-width: 560px;
+      line-height: 1.85;
+      margin-bottom: 3rem;
+      letter-spacing: .01em;
+      opacity: 0;
+      animation: riseIn .9s .7s cubic-bezier(.16, 1, .3, 1) forwards;
+    }
+
+    .hero-sub em {
+      color: var(--teal);
+      font-style: normal;
+      font-weight: 500
+    }
+
+    .hero-sub strong {
+      -webkit-text-fill-color: initial;
+      font-weight: 600
+    }
+
+    /* COUNTER STATS */
+    .hero-stats {
+      display: flex;
+      gap: 0;
+      margin-bottom: 3.5rem;
+      border: 1px solid rgba(0, 245, 212, .1);
+      border-radius: 4px;
+      overflow: hidden;
+      opacity: 0;
+      animation: riseIn .9s .9s cubic-bezier(.16, 1, .3, 1) forwards;
+      backdrop-filter: blur(20px);
+    }
+
+    .stat-item {
+      padding: 1.5rem 2.5rem;
+      text-align: center;
+      position: relative;
+      border-right: 1px solid rgba(0, 245, 212, .08);
+      background: rgba(0, 245, 212, .02);
+      transition: .4s;
+    }
+
+    .stat-item:last-child {
+      border-right: none
+    }
+
+    .stat-item:hover {
+      background: rgba(0, 245, 212, .06)
+    }
+
+    .stat-num {
+      display: block;
+      font-family: var(--ff-display);
+      font-size: 2.2rem;
+      letter-spacing: .05em;
+      background: linear-gradient(135deg, var(--teal), var(--saffron));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: .4rem;
+    }
+
+    .stat-lbl {
+      font-family: var(--ff-ui);
+      font-size: .55rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: rgba(217, 234, 247, .3)
+    }
+
+    /* MAGNETIC BUTTONS */
+    .hero-cta {
+      display: flex;
+      gap: 1.25rem;
+      opacity: 0;
+      animation: riseIn .9s 1.1s cubic-bezier(.16, 1, .3, 1) forwards;
+    }
+
+    .btn-mag {
+      padding: .9rem 2.8rem;
+      font-family: var(--ff-ui);
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 3px;
+      cursor: none;
+      position: relative;
+      overflow: hidden;
+      transition: .4s;
+    }
+
+    .btn-primary-mag {
+      background: transparent;
+      border: 1px solid var(--teal);
+      color: var(--teal);
+    }
+
+    .btn-primary-mag::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--teal), var(--teal2));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: .4s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .btn-primary-mag:hover {
+      color: var(--c0);
+      box-shadow: var(--glow-t)
+    }
+
+    .btn-primary-mag:hover::before {
+      transform: scaleX(1)
+    }
+
+    .btn-primary-mag span {
+      position: relative;
+      z-index: 1
+    }
+
+    .btn-outline-mag {
+      background: transparent;
+      border: 1px solid rgba(255, 112, 67, .35);
+      color: var(--saffron);
+    }
+
+    .btn-outline-mag::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 112, 67, .12), rgba(255, 79, 26, .08));
+      opacity: 0;
+      transition: .3s;
+    }
+
+    .btn-outline-mag:hover {
+      box-shadow: var(--glow-s)
+    }
+
+    .btn-outline-mag:hover::before {
+      opacity: 1
+    }
+
+    .btn-outline-mag span {
+      position: relative;
+      z-index: 1
+    }
+
+    /* SCROLL INDICATOR */
+    .scroll-down {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .7rem;
+      opacity: 0;
+      animation: riseIn .9s 1.3s ease forwards;
+      color: rgba(217, 234, 247, .2);
+      font-family: var(--ff-ui);
+      font-size: .55rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+    }
+
+    .mouse-frame {
+      width: 24px;
+      height: 40px;
+      border: 1px solid rgba(217, 234, 247, .15);
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      padding-top: 7px;
+    }
+
+    .mouse-wheel {
+      width: 3px;
+      height: 7px;
+      background: var(--teal);
+      border-radius: 2px;
+      animation: mouseScroll 2s cubic-bezier(.37, 0, .63, 1) infinite;
+      box-shadow: 0 0 6px var(--teal);
+    }
+
+    @keyframes mouseScroll {
+      0% {
+        transform: translateY(0);
+        opacity: 1
+      }
+
+      80% {
+        transform: translateY(14px);
+        opacity: 0
+      }
+
+      81% {
+        transform: translateY(0);
+        opacity: 0
+      }
+
+      100% {
+        transform: translateY(0);
+        opacity: 1
+      }
+    }
+
+    /* ─── DATA TICKER ────────────────────────── */
+    .ticker-wrap {
+      position: relative;
+      z-index: 2;
+      padding: .65rem 0;
+      background: rgba(0, 245, 212, .03);
+      border-top: 1px solid rgba(0, 245, 212, .07);
+      border-bottom: 1px solid rgba(0, 245, 212, .07);
+      overflow: hidden;
+    }
+
+    .ticker-inner {
+      display: flex;
+      gap: 5rem;
+      animation: tickRoll 25s linear infinite;
+      white-space: nowrap
+    }
+
+    .tick-item {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-family: var(--ff-mono);
+      font-size: .65rem;
+      color: rgba(217, 234, 247, .35)
+    }
+
+    .tick-safe {
+      color: var(--safe)
+    }
+
+    .tick-warn {
+      color: var(--gold)
+    }
+
+    .tick-danger {
+      color: var(--danger);
+      animation: tickDanger 1s ease-in-out infinite alternate
+    }
+
+    @keyframes tickDanger {
+      from {
+        text-shadow: none
+      }
+
+      to {
+        text-shadow: 0 0 8px var(--danger)
+      }
+    }
+
+    @keyframes tickRoll {
+      0% {
+        transform: translateX(0)
+      }
+
+      100% {
+        transform: translateX(-50%)
+      }
+    }
+
+    /* ─── SECTION STRUCTURE ──────────────────── */
+    section {
+      position: relative;
+      z-index: 2;
+      padding: 6rem 3rem
+    }
+
+    .s-head {
+      text-align: center;
+      margin-bottom: 4.5rem
+    }
+
+    .s-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .3rem 1rem;
+      font-family: var(--ff-mono);
+      font-size: .6rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--teal);
+      background: rgba(0, 245, 212, .06);
+      border: 1px solid rgba(0, 245, 212, .12);
+      border-radius: 2px;
+      margin-bottom: 1.2rem;
+    }
+
+    .s-tag::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--teal);
+      border-radius: 50%;
+      animation: ping 1.5s ease-in-out infinite;
+      box-shadow: 0 0 6px var(--teal)
+    }
+
+    .s-title {
+      font-family: var(--ff-display);
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      letter-spacing: .04em;
+      margin-bottom: .75rem;
+      background: linear-gradient(135deg, #d9eaf7 40%, rgba(217, 234, 247, .4));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .s-sub {
+      font-size: .95rem;
+      color: rgba(217, 234, 247, .35);
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.8;
+      letter-spacing: .01em
+    }
+
+    /* GLASS CARD SYSTEM */
+    .g-card {
+      background: rgba(255, 255, 255, .02);
+      border: 1px solid rgba(255, 255, 255, .06);
+      border-radius: 6px;
+      padding: 1.75rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform .5s cubic-bezier(.16, 1, .3, 1), box-shadow .5s, border-color .5s, background .5s;
+      transform-style: preserve-3d;
+    }
+
+
+
+    .g-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--teal) 50%, transparent 100%);
+      opacity: 0;
+      transition: .5s;
+    }
+
+    .g-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 6px;
+      background: linear-gradient(135deg, rgba(0, 245, 212, .03) 0%, transparent 60%);
+      opacity: 0;
+      transition: .5s;
+    }
+
+    .g-card:hover {
+      transform: translateY(-6px) rotateX(1deg) rotateY(-1deg);
+      border-color: rgba(0, 245, 212, .2);
+      background: rgba(0, 245, 212, .03);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, .5), 0 0 60px rgba(0, 245, 212, .04), inset 0 1px 0 rgba(0, 245, 212, .1);
+    }
+
+    .g-card:hover::before {
+      opacity: .8
+    }
+
+    .g-card:hover::after {
+      opacity: 1
+    }
+
+    .g-card.danger-card:hover {
+      border-color: rgba(255, 23, 68, .25);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, .5), 0 0 60px rgba(255, 23, 68, .05)
+    }
+
+    .g-card.danger-card::before {
+      background: linear-gradient(90deg, transparent, var(--danger), transparent)
+    }
+
+    .c-label {
+      font-family: var(--ff-mono);
+      font-size: .58rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: rgba(217, 234, 247, .25);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .c-label::before {
+      content: '//';
+      color: var(--teal);
+      margin-right: .2rem
+    }
+
+    /* ─── DASHBOARD SECTION ──────────────────── */
+    .dash-sec {
+      background: transparent;
+      border-top: 1px solid rgba(0, 245, 212, .06)
+    }
+
+    /* CARD GLOW SCAN */
+    .g-card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(from 0deg, transparent, rgba(0, 245, 212, 0.1), transparent 25%);
+      animation: cardRotate 10s linear infinite;
+      opacity: 0;
+      transition: opacity 0.5s;
+      pointer-events: none;
+    }
+
+    .g-card:hover::after {
+      opacity: 1;
+    }
+
+    @keyframes cardRotate {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Holographic Sweep */
+    .hero-sweep {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 245, 212, 0.05), transparent);
+      transform: skewX(-25deg);
+      pointer-events: none;
+      z-index: 1;
+      animation: sweepMove 6s infinite;
+    }
+
+    @keyframes sweepMove {
+      0% {
+        left: -100%;
+      }
+
+      50% {
+        left: 150%;
+      }
+
+      100% {
+        left: 150%;
+      }
+    }
+
+    /* Metric row */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      max-width: 1300px;
+      margin: 0 auto 2rem;
+    }
+
+    .m-card {
+      background: rgba(255, 255, 255, .015);
+      border: 1px solid rgba(255, 255, 255, .05);
+      border-radius: 6px;
+      padding: 1.4rem 1.6rem;
+      position: relative;
+      overflow: hidden;
+      transition: .4s;
+    }
+
+    .m-card:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, .03)
+    }
+
+    .m-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, .02), transparent 60%)
+    }
+
+    .m-icon {
+      position: absolute;
+      right: 1.2rem;
+      top: 1.2rem;
+      font-size: 1.5rem;
+      opacity: .06;
+      filter: grayscale(1)
+    }
+
+    .m-val {
+      font-family: var(--ff-display);
+      font-size: 2.2rem;
+      letter-spacing: .03em;
+      line-height: 1;
+      margin-bottom: .4rem;
+      display: block;
+    }
+
+    .m-lbl {
+      font-family: var(--ff-ui);
+      font-size: .55rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(217, 234, 247, .3);
+      margin-bottom: .4rem
+    }
+
+    .m-delta {
+      font-family: var(--ff-mono);
+      font-size: .62rem
+    }
+
+    .delta-up {
+      color: var(--safe)
+    }
+
+    .delta-down {
+      color: var(--danger)
+    }
+
+    /* 3-col dashboard */
+    .dash-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr 1fr;
+      gap: 1.25rem;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    /* LIVE FEED */
+    .feed {
+      display: flex;
+      flex-direction: column;
+      gap: .55rem;
+      max-height: 380px;
+      overflow: hidden
+    }
+
+    .txn {
+      display: grid;
+      grid-template-columns: 28px 1fr auto;
+      gap: .65rem;
+      align-items: center;
+      padding: .65rem .9rem;
+      background: rgba(255, 255, 255, .018);
+      border-radius: 4px;
+      border-left: 2px solid;
+      font-size: .78rem;
+      animation: txnSlide .4s cubic-bezier(.16, 1, .3, 1) both;
+      transition: .25s;
+    }
+
+    .txn:hover {
+      background: rgba(255, 255, 255, .04)
+    }
+
+    @keyframes txnSlide {
+      from {
+        opacity: 0;
+        transform: translateX(-16px) scale(.98)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .txn-safe {
+      border-left-color: var(--safe)
+    }
+
+    .txn-warn {
+      border-left-color: var(--gold)
+    }
+
+    .txn-danger {
+      border-left-color: var(--danger)
+    }
+
+    .txn-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .tdot-s {
+      background: rgba(0, 230, 118, .1);
+      color: var(--safe);
+      box-shadow: 0 0 0 1px rgba(0, 230, 118, .2)
+    }
+
+    .tdot-w {
+      background: rgba(255, 193, 7, .08);
+      color: var(--gold);
+      box-shadow: 0 0 0 1px rgba(255, 193, 7, .2)
+    }
+
+    .tdot-d {
+      background: rgba(255, 23, 68, .1);
+      color: var(--danger);
+      box-shadow: 0 0 0 1px rgba(255, 23, 68, .2);
+      animation: tdotPulse .8s ease-in-out infinite alternate
+    }
+
+    @keyframes tdotPulse {
+      from {
+        box-shadow: 0 0 0 1px rgba(255, 23, 68, .2)
+      }
+
+      to {
+        box-shadow: 0 0 8px rgba(255, 23, 68, .5), 0 0 0 2px rgba(255, 23, 68, .3)
+      }
+    }
+
+    .txn-name {
+      font-family: var(--ff-body);
+      font-size: .72rem;
+      font-weight: 500;
+      color: rgba(217, 234, 247, .75);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap
+    }
+
+    .txn-note {
+      font-family: var(--ff-mono);
+      font-size: .55rem;
+      color: rgba(217, 234, 247, .25);
+      margin-top: 1px
+    }
+
+    .txn-right {
+      text-align: right
+    }
+
+    .txn-amt {
+      font-family: var(--ff-display);
+      font-size: .95rem;
+      letter-spacing: .03em
+    }
+
+    .txn-score {
+      font-family: var(--ff-mono);
+      font-size: .55rem;
+      margin-top: 1px
+    }
+
+    /* GAUGE */
+    .gauge-center {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem
+    }
+
+    .gauge-card {
+      background: rgba(255, 255, 255, .015);
+      border: 1px solid rgba(255, 255, 255, .06);
+      border-radius: 6px;
+      padding: 1.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gauge-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--teal), transparent);
+      opacity: .5
+    }
+
+    .gauge-ring-wrap {
+      position: relative;
+      width: 200px;
+      height: 110px;
+      margin: 0 auto
+    }
+
+    .gauge-big-num {
+      font-family: var(--ff-display);
+      font-size: 3.2rem;
+      letter-spacing: .05em;
+      line-height: 1;
+      margin-top: -.3rem;
+    }
+
+    .gauge-level-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .25rem .9rem;
+      border-radius: 2px;
+      margin-top: .6rem;
+      font-family: var(--ff-ui);
+      font-size: .58rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .glvl-low {
+      background: rgba(0, 230, 118, .08);
+      color: var(--safe);
+      border: 1px solid rgba(0, 230, 118, .2)
+    }
+
+    .glvl-med {
+      background: rgba(255, 193, 7, .07);
+      color: var(--gold);
+      border: 1px solid rgba(255, 193, 7, .2)
+    }
+
+    .glvl-high {
+      background: rgba(255, 23, 68, .08);
+      color: var(--danger);
+      border: 1px solid rgba(255, 23, 68, .2)
+    }
+
+    .glvl-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: ping 1.2s ease-in-out infinite
+    }
+
+    /* MINI BAR CHART */
+    .vol-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 100px;
+      padding-top: .5rem
+    }
+
+    .vol-bar {
+      flex: 1;
+      border-radius: 2px 2px 0 0;
+      min-height: 3px;
+      position: relative;
+      transition: height 1.2s cubic-bezier(.16, 1, .3, 1), opacity .25s;
+      cursor: default;
+    }
+
+    .vol-bar:hover {
+      opacity: .75
+    }
+
+    .vol-normal {
+      background: linear-gradient(180deg, rgba(0, 245, 212, .55), rgba(0, 245, 212, .2))
+    }
+
+    .vol-suspect {
+      background: linear-gradient(180deg, rgba(255, 23, 68, .75), rgba(255, 23, 68, .25))
+    }
+
+    /* ALERT + SHAP COLUMN */
+    .right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem
+    }
+
+    /* ALERT BOX */
+    .alert-box {
+      background: rgba(255, 23, 68, .04);
+      border: 1px solid rgba(255, 23, 68, .15);
+      border-radius: 6px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .alert-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--danger), transparent);
+      animation: alertSweep 2s ease-in-out infinite
+    }
+
+    @keyframes alertSweep {
+
+      0%,
+      100% {
+        opacity: .3
+      }
+
+      50% {
+        opacity: 1
+      }
+    }
+
+    .alert-box.firing {
+      animation: alertBoom .6s ease-in-out
+    }
+
+    @keyframes alertBoom {
+
+      0%,
+      100% {
+        box-shadow: none
+      }
+
+      50% {
+        box-shadow: 0 0 60px rgba(255, 23, 68, .25), inset 0 0 40px rgba(255, 23, 68, .06)
+      }
+    }
+
+    .alert-head {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin-bottom: 1.1rem
+    }
+
+    .alert-ico {
+      width: 34px;
+      height: 34px;
+      background: rgba(255, 23, 68, .12);
+      border: 1px solid rgba(255, 23, 68, .25);
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      animation: alertIco 1.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes alertIco {
+      from {
+        transform: scale(1)
+      }
+
+      to {
+        transform: scale(1.1);
+        box-shadow: 0 0 12px rgba(255, 23, 68, .4)
+      }
+    }
+
+    .alert-ttl {
+      font-family: var(--ff-ui);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--danger)
+    }
+
+    .alert-sub {
+      font-family: var(--ff-mono);
+      font-size: .57rem;
+      color: rgba(217, 234, 247, .3);
+      margin-top: 2px
+    }
+
+    .kannada-box {
+      background: rgba(255, 23, 68, .05);
+      border: 1px solid rgba(255, 23, 68, .1);
+      border-radius: 4px;
+      padding: .9rem 1rem;
+      margin-bottom: .9rem;
+    }
+
+    .kn-text {
+      font-size: 1.15rem;
+      line-height: 1.65;
+      color: rgba(217, 234, 247, .9);
+      margin-bottom: .35rem;
+      font-family: var(--ff-body);
+    }
+
+    .kn-en {
+      font-size: .68rem;
+      color: rgba(217, 234, 247, .35);
+      line-height: 1.6;
+      font-family: var(--ff-mono)
+    }
+
+    .alert-tags {
+      display: flex;
+      gap: .45rem;
+      flex-wrap: wrap
+    }
+
+    .a-tag {
+      padding: .22rem .65rem;
+      border-radius: 2px;
+      font-family: var(--ff-ui);
+      font-size: .55rem;
+      letter-spacing: .12em;
+      text-transform: uppercase
+    }
+
+    .tag-r {
+      background: rgba(255, 23, 68, .1);
+      color: var(--danger);
+      border: 1px solid rgba(255, 23, 68, .18)
+    }
+
+    .tag-a {
+      background: rgba(255, 193, 7, .07);
+      color: var(--gold);
+      border: 1px solid rgba(255, 193, 7, .18)
+    }
+
+    /* SHAP */
+    .shap-rows {
+      display: flex;
+      flex-direction: column;
+      gap: .65rem;
+      margin-top: .25rem
+    }
+
+    .shap-r {
+      display: flex;
+      align-items: center;
+      gap: .65rem
+    }
+
+    .shap-lbl {
+      font-family: var(--ff-mono);
+      font-size: .6rem;
+      width: 120px;
+      flex-shrink: 0;
+      color: rgba(217, 234, 247, .45);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap
+    }
+
+    .shap-track {
+      flex: 1;
+      height: 16px;
+      background: rgba(255, 255, 255, .03);
+      border-radius: 2px;
+      overflow: hidden
+    }
+
+    .shap-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 1.5s cubic-bezier(.16, 1, .3, 1);
+      display: flex;
+      align-items: center;
+      padding: 0 .3rem;
+      min-width: 2px
+    }
+
+    .sf-risk {
+      background: linear-gradient(90deg, rgba(255, 23, 68, .7), rgba(255, 23, 68, .3))
+    }
+
+    .sf-safe {
+      background: linear-gradient(90deg, rgba(0, 230, 118, .55), rgba(0, 230, 118, .2))
+    }
+
+    .shap-v {
+      font-family: var(--ff-mono);
+      font-size: .55rem;
+      flex-shrink: 0;
+      margin-left: .3rem;
+      width: 36px;
+      text-align: right
+    }
+
+    /* ─── PIPELINE ───────────────────────────── */
+    .pipe-sec {
+      background: var(--c0)
+    }
+
+    .pipeline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 1000px;
+      margin: 0 auto;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+
+    .pipe-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex: 1;
+      min-width: 130px;
+      position: relative;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: .6s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .pipe-step.vis {
+      opacity: 1;
+      transform: none
+    }
+
+    .pipe-step+.pipe-step::before {
+      content: '──▶';
+      position: absolute;
+      left: -22px;
+      top: 30px;
+      font-family: var(--ff-mono);
+      font-size: .7rem;
+      color: rgba(0, 245, 212, .2);
+    }
+
+    .pipe-node {
+      width: 64px;
+      height: 64px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, .02);
+      border: 1px solid rgba(255, 255, 255, .07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: .9rem;
+      position: relative;
+      overflow: hidden;
+      transition: .5s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .pipe-node::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--teal), var(--saffron));
+      transform: scaleX(0);
+      transition: .4s;
+      transform-origin: left;
+    }
+
+    .pipe-step:hover .pipe-node {
+      border-color: var(--teal);
+      background: rgba(0, 245, 212, .07);
+      box-shadow: 0 0 40px rgba(0, 245, 212, .1), inset 0 1px 0 rgba(0, 245, 212, .15);
+      transform: scale(1.08) translateY(-4px);
+    }
+
+    .pipe-step:hover .pipe-node::after {
+      transform: scaleX(1)
+    }
+
+    .pipe-lbl {
+      font-family: var(--ff-ui);
+      font-size: .62rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(217, 234, 247, .55);
+      margin-bottom: .25rem
+    }
+
+    .pipe-sub {
+      font-family: var(--ff-mono);
+      font-size: .55rem;
+      color: rgba(217, 234, 247, .25)
+    }
+
+    .pipe-ms {
+      font-family: var(--ff-display);
+      font-size: .75rem;
+      color: var(--teal);
+      margin-top: .3rem;
+      letter-spacing: .05em
+    }
+
+    /* HEATMAP */
+    .hmap {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .hmap-col {
+      display: flex;
+      flex-direction: column;
+      gap: 4px
+    }
+
+    .hmap-cell {
+      height: 22px;
+      border-radius: 3px;
+      transition: .25s;
+      cursor: default;
+      position: relative;
+    }
+
+    .hmap-cell:hover {
+      transform: scale(1.25);
+      z-index: 2;
+      border-radius: 2px
+    }
+
+    /* ─── REDESIGNED CORE PILLARS SECTION ───────── */
+    .pillars-redesign {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      padding: 5rem 0;
+    }
+
+    .pillar-list {
+      display: flex;
+      flex-direction: column;
+      gap: 3rem
+    }
+
+    .p-item {
+      position: relative;
+      padding-left: 2.5rem;
+      transition: .4s
+    }
+
+    .p-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 12px;
+      height: 12px;
+      background: var(--teal);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--teal)
+    }
+
+    .p-item h4 {
+      font-family: var(--ff-display);
+      font-size: 2.2rem;
+      letter-spacing: .05em;
+      color: var(--teal);
+      margin-bottom: .5rem
+    }
+
+    .p-item p {
+      font-size: .9rem;
+      color: rgba(217, 234, 247, .4);
+      line-height: 1.7
+    }
+
+    .central-core {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .core-sphere {
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle at 30% 30%, rgba(0, 245, 212, .2), transparent);
+      border: 1px solid rgba(0, 245, 212, .3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: corePulse 4s ease-in-out infinite alternate;
+      box-shadow: 0 0 80px rgba(0, 245, 212, .1);
+    }
+
+    @keyframes corePulse {
+      from {
+        transform: scale(1);
+        box-shadow: 0 0 80px rgba(0, 245, 212, .1)
+      }
+
+      to {
+        transform: scale(1.05);
+        box-shadow: 0 0 120px rgba(0, 245, 212, .2)
+      }
+    }
+
+    .core-shield {
+      width: 80px;
+      height: auto;
+      filter: drop-shadow(0 0 20px var(--teal))
+    }
+
+    .core-ring-anim {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 1px dashed rgba(0, 245, 212, .1);
+      border-radius: 50%;
+      animation: rotate 20s linear infinite;
+    }
+
+    /* ─── ROADMAP REDESIGN (CIRCUIT) ───────── */
+    .roadmap-circuit {
+      position: relative;
+      padding-left: 100px;
+      margin-top: 4rem
+    }
+
+    .roadmap-line {
+      position: absolute;
+      left: 40px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: rgba(255, 255, 255, .05);
+    }
+
+    .roadmap-line-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      background: var(--teal);
+      box-shadow: 0 0 15px var(--teal);
+      transition: height .5s ease;
+    }
+
+    .road-step {
+      position: relative;
+      margin-bottom: 8rem;
+      opacity: 0.3;
+      transition: .8s
+    }
+
+    .road-step.active {
+      opacity: 1;
+      transform: translateX(20px)
+    }
+
+    .road-node {
+      position: absolute;
+      left: -70px;
+      top: 10px;
+      width: 60px;
+      height: 60px;
+      background: var(--c1);
+      border: 2px solid rgba(0, 245, 212, .2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+      /* ═══════════════════════ VOICE HIGHLIGHT ═══════════════════════ */
+      .voice-sec {
+        background: linear-gradient(135deg, rgba(255, 112, 67, .04), rgba(0, 245, 212, .03));
+        border-top: 1px solid rgba(0, 245, 212, .06);
+        border-bottom: 1px solid rgba(0, 245, 212, .06);
+      }
+
+      .voice-hero {
+        max-width: 840px;
+        margin: 0 auto;
+        text-align: center;
+        background: rgba(255, 255, 255, .015);
+        border: 1px solid rgba(255, 255, 255, .06);
+        border-radius: 12px;
+        padding: 4.5rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .voice-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, var(--saffron), var(--gold), var(--teal), transparent);
+      }
+
+      .voice-hero::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 12px;
+        background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255, 112, 67, .05), transparent);
+        pointer-events: none;
+      }
+
+      .kn-script {
+        font-family: var(--ff-kn);
+        font-size: 3.2rem;
+        line-height: 1.5;
+        margin-bottom: 1.2rem;
+        background: linear-gradient(135deg, var(--saffron), var(--gold), var(--saffron));
+        background-size: 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradFlow 4s ease-in-out infinite alternate;
+        filter: drop-shadow(0 0 25px rgba(255, 112, 67, .2));
+      }
+
+      @keyframes gradFlow {
+        0% {
+          background-position: 0%
+        }
+
+        100% {
+          background-position: 100%
+        }
+      }
+
+      .kn-english {
+        font-size: .9rem;
+        color: rgba(180, 210, 240, .4);
+        line-height: 1.9;
+        max-width: 480px;
+        margin: 0 auto 2rem
+      }
+
+      .lang-row {
+        display: flex;
+        gap: .6rem;
+        justify-content: center;
+        flex-wrap: wrap
+      }
+
+      .lb {
+        padding: .28rem .8rem;
+        border-radius: 3px;
+        font-family: var(--ff-mono);
+        font-size: .56rem;
+        letter-spacing: .15em;
+        text-transform: uppercase;
+      }
+
+      .lb-on {
+        background: rgba(0, 245, 212, .08);
+        color: var(--teal);
+        border: 1px solid rgba(0, 245, 212, .2)
+      }
+
+      .lb-soon {
+        background: rgba(255, 255, 255, .03);
+        color: rgba(180, 210, 240, .25);
+        border: 1px solid rgba(255, 255, 255, .06)
+      }
+
+      /* ═══════════════════════ TECH STACK ═══════════════════════ */
+      .tech-sec {
+        background: var(--c0)
+      }
+
+      .tech-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        max-width: 1100px;
+        margin: 0 auto
+      }
+
+      .tech-card {
+        background: rgba(255, 255, 255, .015);
+        border: 1px solid rgba(255, 255, 255, .05);
+        border-radius: 8px;
+        padding: 2.5rem 2rem;
+        text-align: center;
+        transition: .4s;
+      }
+
+      .tech-card:hover {
+        transform: translateY(-6px);
+        border-color: rgba(0, 245, 212, .15);
+        background: rgba(0, 245, 212, .03)
+      }
+
+      .tc-icon {
+        font-size: 2.8rem;
+        margin-bottom: 1.2rem
+      }
+
+      .tc-title {
+        font-family: 'Syne', sans-serif;
+        font-size: .82rem;
+        font-weight: 700;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        margin-bottom: .6rem;
+      }
+
+      .tc1 {
+        color: var(--teal)
+      }
+
+      .tc2 {
+        color: var(--saffron)
+      }
+
+      .tc3 {
+        color: var(--gold)
+      }
+
+      .tc-desc {
+        font-size: .8rem;
+        color: rgba(180, 210, 240, .35);
+        line-height: 1.75
+      }
+
+      /* ═══════════════════════ EMERGENCY ═══════════════════════ */
+      .emergency {
+        position: relative;
+        z-index: 2;
+        padding: 2.5rem 3rem;
+        text-align: center;
+        background: rgba(255, 23, 68, .03);
+        border-top: 1px solid rgba(255, 23, 68, .12);
+        border-bottom: 1px solid rgba(255, 23, 68, .12);
+      }
+
+      .em-n {
+        font-family: var(--ff-hero);
+        font-size: 3.2rem;
+        letter-spacing: .1em;
+        color: var(--danger);
+        text-shadow: 0 0 30px rgba(255, 23, 68, .5), 0 0 80px rgba(255, 23, 68, .15);
+      }
+
+      .em-l {
+        font-family: var(--ff-mono);
+        font-size: .58rem;
+        letter-spacing: .3em;
+        text-transform: uppercase;
+        color: rgba(180, 210, 240, .3);
+        margin-bottom: .4rem
+      }
+
+      /* ═══════════════════════ FOOTER ═══════════════════════ */
+      footer {
+        position: relative;
+        z-index: 2;
+        background: var(--c1);
+        border-top: 1px solid rgba(255, 255, 255, .04);
+        padding: 4rem 3rem;
+        text-align: center;
+      }
+
+      .ft-logo {
+        font-family: var(--ff-hero);
+        font-size: 2.2rem;
+        letter-spacing: .22em;
+        background: linear-gradient(135deg, var(--teal), var(--saffron));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        display: inline-block;
+        margin-bottom: .7rem;
+      }
+
+      .ft-sub {
+        font-family: var(--ff-mono);
+        font-size: .6rem;
+        color: rgba(180, 210, 240, .2);
+        margin-bottom: 2.5rem;
+        letter-spacing: .12em
+      }
+
+      .ft-links {
+        display: flex;
+        gap: 3rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 2.5rem
+      }
+
+      .ft-links a {
+        font-family: 'Syne', sans-serif;
+        font-size: .62rem;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+        color: rgba(180, 210, 240, .25);
+        text-decoration: none;
+        transition: .3s;
+      }
+
+      .ft-links a:hover {
+        color: var(--teal)
+      }
+
+      .ft-copy {
+        font-family: var(--ff-mono);
+        font-size: .58rem;
+        color: rgba(180, 210, 240, .12);
+        line-height: 2.2
+      }
+
+      @media(max-width:768px) {
+        .tech-grid {
+          grid-template-columns: 1fr
+        }
+
+        .voice-hero {
+          padding: 2.5rem 1.5rem
+        }
+
+        /* Roadmap stacks on mobile */
+        #roadmap {
+          grid-template-columns: 1fr !important;
+          gap: 2rem !important;
+        }
+
+        /* Gallery stacks on mobile */
+        #roadmap + section div[style*="grid-template-columns"] {
+          grid-template-columns: 1fr !important;
+        }
+
+        .hero-stats {
+          flex-wrap: wrap;
+        }
+
+        .stat-item {
+          padding: 1rem 1.5rem;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        .flip-grid {
+          grid-template-columns: 1fr !important;
+        }
+
+        .flip-card {
+          height: 350px !important;
+        }
+
+        section {
+          padding: 4rem 1.5rem;
+        }
+      }
+
+    /* SCROLL REVEAL */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: .85s cubic-bezier(.16, 1, .3, 1)
+    }
+
+    .reveal.vis {
+      opacity: 1;
+      transform: none
+    }
+
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-28px);
+      transition: .85s cubic-bezier(.16, 1, .3, 1)
+    }
+
+    .reveal-left.vis {
+      opacity: 1;
+      transform: none
+    }
+
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(28px);
+      transition: .85s cubic-bezier(.16, 1, .3, 1)
+    }
+
+    .reveal-right.vis {
+      opacity: 1;
+      transform: none
+    }
+
+    @keyframes gradShift {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════════════
+     SPLASH SCREEN
+═══════════════════════════════════════════ -->
+  <div id="splash">
+    <div class="splash-shield">
+      <svg width="100" height="114" viewBox="0 0 100 114" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="sg1" x1="5" y1="2" x2="95" y2="112" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#00f5d4" />
+            <stop offset="100%" stop-color="#ff7043" />
+          </linearGradient>
+          <linearGradient id="sg2" x1="15" y1="14" x2="85" y2="100" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#00f5d4" />
+            <stop offset="100%" stop-color="#ff7043" />
+          </linearGradient>
+          <filter id="glowF">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        <path d="M50 3L95 20V62C95 86 75 103 50 111C25 103 5 86 5 62V20L50 3Z" fill="none" stroke="url(#sg1)"
+          stroke-width="1.5" filter="url(#glowF)" />
+        <path d="M50 14L84 28V62C84 81 70 97 50 104C30 97 16 81 16 62V28L50 14Z" fill="url(#sg2)" fill-opacity=".06" />
+        <circle cx="50" cy="57" r="22" stroke="rgba(0,245,212,0.2)" stroke-width="1" stroke-dasharray="8 4">
+          <animateTransform attributeName="transform" type="rotate" from="0 50 57" to="360 50 57" dur="6s"
+            repeatCount="indefinite" />
+        </circle>
+        <text x="50" y="66" text-anchor="middle" font-family="Bebas Neue" font-size="22" fill="url(#sg1)"
+          letter-spacing="3" filter="url(#glowF)">PS</text>
+        <line x1="5" y1="20" x2="18" y2="20" stroke="rgba(0,245,212,0.4)" stroke-width="1" />
+        <line x1="82" y1="20" x2="95" y2="20" stroke="rgba(255,112,67,0.4)" stroke-width="1" />
+      </svg>
+    </div>
+
+    <div class="splash-wordmark">PAYSENTINEL</div>
+    <div class="splash-kn">ಪೇ ಸೆಂಟಿನೆಲ್ · पे सेंटिनल</div>
+
+    <div class="splash-bar-wrap">
+      <div class="splash-bar"></div>
+    </div>
+    <div class="splash-status" id="splash-status">INITIALIZING NEURAL DETECTION ENGINE...</div>
+  </div>
+
+  <!-- CURSOR -->
+  <div id="cDot"></div>
+  <div id="cRing"></div>
+
+  <!-- BG ELEMENTS -->
+  <canvas id="bgCanvas"></canvas>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="grid-overlay"></div>
+
+  <!-- ═══ NAV ═══ -->
+  <nav id="mainNav">
+    <a class="nav-logo" href="#">
+      <div class="shield-wrap">
+        <svg width="40" height="46" viewBox="0 0 40 46" fill="none">
+          <path d="M20 1L38 8V25C38 35 30 43 20 45C10 43 2 35 2 25V8L20 1Z" fill="none" stroke="url(#nLg)"
+            stroke-width="1.2" />
+          <path d="M20 7L34 13V25C34 33 28 40 20 43C12 40 6 33 6 25V13L20 7Z" fill="url(#nLg2)" fill-opacity=".08" />
+          <text x="20" y="28" text-anchor="middle" font-family="Bebas Neue" font-size="10" fill="url(#nLg)"
+            letter-spacing="1">PS</text>
+          <defs>
+            <linearGradient id="nLg" x1="2" y1="1" x2="38" y2="45">
+              <stop offset="0%" stop-color="#00f5d4" />
+              <stop offset="100%" stop-color="#ff7043" />
+            </linearGradient>
+            <linearGradient id="nLg2" x1="6" y1="7" x2="34" y2="43">
+              <stop offset="0%" stop-color="#00f5d4" />
+              <stop offset="100%" stop-color="#ff7043" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <span class="nav-wordmark">PAYSENTINEL</span>
+    </a>
+    <div class="nav-links">
+      <a href="/dashboard" target="_blank">Try App</a>
+      <a href="#why">Why?</a>
+      <a href="#dash">Monitor</a>
+      <a href="#features">Features</a>
+      <a href="#roadmap">How it Works</a>
+    </div>
+    <div class="nav-right">
+      <div class="nav-ping">
+        <div class="ping-dot"></div>LIVE · <span id="navTps">1,247</span> txn/sec
+      </div>
+      <div class="badge-blueprint">BLUEPRINT 2026</div>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero" id="hero">
+    <div class="hero-sweep"></div>
+    <!-- HUD ELEMENTS -->
+    <div class="hud-corner hud-tl"></div>
+    <div class="hud-corner hud-tr"></div>
+    <div class="hud-corner hud-bl"></div>
+    <div class="hud-corner hud-br"></div>
+    <!-- Forensic Animated Background -->
+    <div style="position:absolute;inset:0;overflow:hidden;z-index:-1;pointer-events:none">
+      <img src="static/images/hero_shield.png"
+        style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:70vw;max-width:600px;opacity:.06;filter:grayscale(1) contrast(1.5) blur(3px);animation:shieldForensic 10s ease-in-out infinite alternate"
+        alt="">
+      <!-- Ghost Modalities -->
+      <img src="static/images/1.jpg"
+        style="position:absolute;left:15%;top:25%;width:180px;opacity:.02;filter:grayscale(1);transform:rotate(-15deg)"
+        alt="">
+      <img src="static/images/4.jpg"
+        style="position:absolute;right:15%;bottom:25%;width:180px;opacity:.02;filter:grayscale(1);transform:rotate(15deg)"
+        alt="">
+    </div>
+
+    <style>
+      @keyframes shieldForensic {
+        0% {
+          transform: translate(-50%, -50%) scale(0.98);
+          opacity: 0.05;
+        }
+
+        100% {
+          transform: translate(-50%, -50%) scale(1.02);
+          opacity: 0.12;
+        }
+      }
+    </style>
+
+    <div class="hero-eyebrow">
+      <div class="eyebrow-line"></div>
+      AI MERCHANT FRAUD SHIELD · BUILT FOR BHARAT · EST. 2026
+      <div class="eyebrow-line right"></div>
+    </div>
+    <h1 class="hero-h1" style="font-size:clamp(4rem, 9vw, 8rem);line-height:0.9">
+      <span class="h1-line1 glitch" data-text="DETECT.">DETECT.</span>
+      <span class="h1-line2" data-text="PROTECT.">PROTECT.</span>
+    </h1>
+    <p class="hero-sub" style="max-width:800px;font-size:1.2rem">
+      India's <em>60 million small merchants</em> lose <strong>₹4,000 Crore</strong> every year to digital fraud.<br />
+      Banks take 15–30 minutes to flag a threat. We do it in <em>&lt;100ms</em> using hybrid ML ensembles.<br />
+      The world's first AI fraud detection protocol that speaks <em>Kannada</em>.
+    </p>
+
+    <!-- KANNADA LIVE TICKER & ML PIPELINE STATUS -->
+    <div
+      style="display:flex;flex-wrap:wrap;justify-content:center;gap:1.5rem;margin-bottom:3rem;opacity:0;animation:riseIn .9s .8s forwards">
+      <!-- Ticker -->
+      <div
+        style="display:inline-flex;align-items:center;gap:1rem;padding:.8rem 2rem;border-radius:100px;background:rgba(255,112,67,.05);border:1px solid rgba(255,112,67,.15)">
+        <div
+          style="width:10px;height:10px;background:var(--saffron);border-radius:50%;animation:ping 1.5s ease-in-out infinite">
+        </div>
+        <span id="knHero" style="font-size:1rem;color:var(--saffron);font-weight:500;letter-spacing:.05em">ಎಚ್ಚರಿಕೆ!
+          ತುರ್ತು ಅಪಾಯ.</span>
+      </div>
+      <!-- ML Status -->
+      <div
+        style="display:inline-flex;align-items:center;gap:1rem;padding:.8rem 2rem;border-radius:100px;background:rgba(0,245,212,.05);border:1px solid rgba(0,245,212,.15)">
+        <div
+          style="width:10px;height:10px;background:var(--teal);border-radius:50%;animation:ping 1.5s ease-in-out infinite 0.5s">
+        </div>
+        <span style="font-family:var(--ff-mono);font-size:.8rem;color:var(--teal);letter-spacing:.1em">ENSEMBLE ML :
+          ACTIVE</span>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-item"><span class="stat-num" id="s1">0</span>
+        <div class="stat-lbl">Latency (ms)</div>
+      </div>
+      <div class="stat-item"><span class="stat-num" id="s2">0</span>
+        <div class="stat-lbl">ML Features</div>
+      </div>
+      <div class="stat-item"><span class="stat-num" id="s3">0M</span>
+        <div class="stat-lbl">Merchants Unprotected</div>
+      </div>
+      <div class="stat-item"><span class="stat-num" id="s4">₹0</span>
+        <div class="stat-lbl">Annual UPI Fraud</div>
+      </div>
+    </div>
+    <div class="hero-cta" style="margin-top:2rem">
+      <button class="btn-mag btn-primary-mag"
+        onclick="document.getElementById('dash').scrollIntoView({behavior:'smooth'})"><span>⚡ ENTER MONITOR</span></button>
+      <button class="btn-mag btn-outline-mag"
+        onclick="document.getElementById('why').scrollIntoView({behavior:'smooth'})"><span>↗ WHY PAYSENTINEL</span></button>
+    </div>
+    <div class="scroll-down">
+      <div class="mouse-frame">
+        <div class="mouse-wheel"></div>
+      </div>
+      SCROLL TO DEPLOY
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker-inner" id="ticker">
+      <span class="tick-item"><span class="tick-safe">◆</span>&nbsp;₹850 · rajesh.k@oksbi · SAFE · 3ms</span>
+      <span class="tick-item"><span class="tick-warn">◆</span>&nbsp;₹12,500 · unknown@ybl · MEDIUM · 67ms</span>
+      <span class="tick-item"><span class="tick-safe">◆</span>&nbsp;₹340 · priya.m@paytm · SAFE · 2ms</span>
+      <span class="tick-item"><span class="tick-danger">◆</span>&nbsp;₹8,200 · anon28731@ibl · HIGH RISK · 89ms</span>
+      <span class="tick-item"><span class="tick-safe">◆</span>&nbsp;₹1,200 · kumar.r@gpay · SAFE · 5ms</span>
+      <span class="tick-item"><span class="tick-warn">◆</span>&nbsp;₹5,000 · mobile293@upi · MEDIUM · 44ms</span>
+      <span class="tick-item"><span class="tick-danger">◆</span>&nbsp;₹15,000 · 7382910@oksbi · CRITICAL · 91ms</span>
+      <span class="tick-item"><span class="tick-safe">◆</span>&nbsp;₹620 · meena.v@gpay · SAFE · 2ms</span>
+      <span class="tick-item"><span class="tick-safe">◆</span>&nbsp;₹850 · rajesh.k@oksbi · SAFE · 3ms</span>
+      <span class="tick-item"><span class="tick-warn">◆</span>&nbsp;₹12,500 · unknown@ybl · MEDIUM · 67ms</span>
+      <span class="tick-item"><span class="tick-safe">◆</span>&nbsp;₹340 · priya.m@paytm · SAFE · 2ms</span>
+      <span class="tick-item"><span class="tick-danger">◆</span>&nbsp;₹8,200 · anon28731@ibl · HIGH RISK · 89ms</span>
+      <span class="tick-item"><span class="tick-safe">◆</span>&nbsp;₹1,200 · kumar.r@gpay · SAFE · 5ms</span>
+      <span class="tick-item"><span class="tick-warn">◆</span>&nbsp;₹5,000 · mobile293@upi · MEDIUM · 44ms</span>
+      <span class="tick-item"><span class="tick-danger">◆</span>&nbsp;₹15,000 · 7382910@oksbi · CRITICAL · 91ms</span>
+      <span class="tick-item"><span class="tick-safe">◆</span>&nbsp;₹620 · meena.v@gpay · SAFE · 2ms</span>
+    </div>
+  </div>
+
+  <!-- ═══ LIVE THREAT MONITOR ═══ -->
+  <section class="dash-sec" id="dash">
+    <div class="s-head reveal">
+      <div class="s-tag">live threat monitor</div>
+      <h2 class="s-title">REAL-TIME FRAUD DETECTION</h2>
+      <p class="s-sub">Hybrid ML ensemble processing UPI transactions live — Isolation Forest + OneClass SVM + 10 rule
+        heuristics</p>
+    </div>
+
+    <!-- SaaS-Style CTA Banner -->
+    <div class="reveal" style="max-width:900px; margin:0 auto 3.5rem; padding:2px; border-radius:16px; background:linear-gradient(135deg, rgba(0,245,212,0.3), rgba(255,112,67,0.3), rgba(0,245,212,0.3)); background-size:200% 200%; animation:gradShift 4s ease infinite alternate;">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:2rem; padding:2rem 3rem; border-radius:14px; background:rgba(4,9,18,0.95); backdrop-filter:blur(20px); flex-wrap:wrap;">
+        <div style="flex:1; min-width:250px;">
+          <div style="font-family:var(--ff-display); font-size:1.8rem; letter-spacing:.06em; color:#d9eaf7; margin-bottom:.4rem;">LAUNCH FULL DASHBOARD</div>
+          <div style="font-family:var(--ff-body); font-size:.85rem; color:rgba(217,234,247,.4); line-height:1.6;">Upload your merchant CSV → Run analysis → Get SHAP explanations → Download forensic PDF report</div>
+        </div>
+        <a href="/dashboard" target="_blank" style="display:inline-flex; align-items:center; gap:.7rem; padding:.9rem 2.5rem; font-family:var(--ff-ui); font-size:.7rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; text-decoration:none; color:var(--c0); background:linear-gradient(135deg, var(--teal), var(--teal2)); border-radius:8px; transition:all .4s cubic-bezier(.16,1,.3,1); box-shadow:0 4px 20px rgba(0,245,212,.25); white-space:nowrap;" onmouseover="this.style.transform='translateY(-2px) scale(1.02)';this.style.boxShadow='0 8px 32px rgba(0,245,212,.45)'" onmouseout="this.style.transform='none';this.style.boxShadow='0 4px 20px rgba(0,245,212,.25)'">
+          <span style="font-size:1rem;">🚀</span> TRY APP NOW
+        </a>
+      </div>
+    </div>
+
+    <div class="metrics-row reveal">
+      <div class="m-card" style="border-top:1px solid rgba(0,245,212,.2)">
+        <div class="m-icon">📊</div>
+        <span class="m-val" style="color:var(--teal)" id="mT">0</span>
+        <div class="m-lbl">Total Transactions</div>
+        <div class="m-delta delta-up" id="mTd">+0 this session</div>
+      </div>
+      <div class="m-card" style="border-top:1px solid rgba(255,23,68,.2)">
+        <div class="m-icon">🚨</div>
+        <span class="m-val" style="color:var(--danger)" id="mS">0</span>
+        <div class="m-lbl">Suspicious Flagged</div>
+        <div class="m-delta" id="mSd" style="color:var(--gold)">0.0% detection rate</div>
+      </div>
+      <div class="m-card" style="border-top:1px solid rgba(255,193,7,.2)">
+        <div class="m-icon">💰</div>
+        <span class="m-val" style="color:var(--gold)" id="mR">₹0</span>
+        <div class="m-lbl">At-Risk Amount Blocked</div>
+        <div class="m-delta delta-up">↑ merchants protected</div>
+      </div>
+      <div class="m-card" style="border-top:1px solid rgba(0,230,118,.2)">
+        <div class="m-icon">⚡</div>
+        <span class="m-val" style="color:var(--safe)" id="mL">0ms</span>
+        <div class="m-lbl">Avg Detection Latency</div>
+        <div class="m-delta delta-up">18,000× faster than banks</div>
+      </div>
+    </div>
+
+    <div class="dash-grid reveal">
+      <!-- FEED -->
+      <div class="g-card">
+        <div class="c-label">live transaction feed</div>
+        <div class="feed" id="feedEl"></div>
+      </div>
+
+      <!-- CENTER -->
+      <div class="gauge-center">
+        <div class="gauge-card g-card" style="padding-bottom:1.25rem">
+          <div class="c-label">real-time risk gauge</div>
+          <div class="gauge-ring-wrap">
+            <svg width="200" height="110" viewBox="0 0 200 110" style="overflow:visible">
+              <defs>
+                <linearGradient id="gaugeG" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#00e676" />
+                  <stop offset="35%" stop-color="#ffc107" />
+                  <stop offset="70%" stop-color="#ff7043" />
+                  <stop offset="100%" stop-color="#ff1744" />
+                </linearGradient>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="2" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+              <!-- bg track -->
+              <path d="M15 105 A85 85 0 0 1 185 105" fill="none" stroke="rgba(255,255,255,.04)" stroke-width="14"
+                stroke-linecap="round" />
+              <!-- color arc -->
+              <path id="gArc" d="M15 105 A85 85 0 0 1 185 105" fill="none" stroke="url(#gaugeG)" stroke-width="14"
+                stroke-linecap="round" stroke-dasharray="267" stroke-dashoffset="267" filter="url(#glow)" />
+              <!-- tick marks -->
+              <g stroke="rgba(255,255,255,.1)" stroke-width="1">
+                <line x1="15" y1="105" x2="22" y2="105" transform="rotate(-180,100,105)" />
+                <line x1="15" y1="105" x2="22" y2="105" transform="rotate(-135,100,105)" />
+                <line x1="15" y1="105" x2="22" y2="105" transform="rotate(-90,100,105)" />
+                <line x1="15" y1="105" x2="22" y2="105" transform="rotate(-45,100,105)" />
+                <line x1="15" y1="105" x2="22" y2="105" transform="rotate(0,100,105)" />
+              </g>
+              <!-- needle -->
+              <line id="gNeedle" x1="100" y1="105" x2="100" y2="26" stroke="rgba(255,255,255,.85)" stroke-width="1.5"
+                stroke-linecap="round" transform="rotate(-90,100,105)" filter="url(#glow)" />
+              <circle cx="100" cy="105" r="5" fill="rgba(255,255,255,.85)" filter="url(#glow)" />
+              <!-- labels -->
+              <text x="12" y="118" font-size="7.5" fill="rgba(255,255,255,.2)" font-family="JetBrains Mono">0</text>
+              <text x="95" y="14" font-size="7.5" fill="rgba(255,255,255,.2)" font-family="JetBrains Mono">50</text>
+              <text x="183" y="118" font-size="7.5" fill="rgba(255,255,255,.2)" font-family="JetBrains Mono">100</text>
+            </svg>
+          </div>
+          <div class="gauge-big-num" id="gaugeNum" style="color:var(--safe)">0</div>
+          <div
+            style="font-family:'Chakra Petch',sans-serif;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(217,234,247,.2);margin:.2rem 0">
+            RISK SCORE</div>
+          <div class="gauge-level-badge glvl-low" id="gLvl">
+            <div class="glvl-dot"></div><span id="gLvlTxt">LOW RISK</span>
+          </div>
+        </div>
+
+        <!-- VOLUME CHART -->
+        <div class="g-card" style="padding-bottom:1.25rem">
+          <div class="c-label">transaction volume · 24h</div>
+          <div class="vol-chart" id="volChart"></div>
+          <div style="display:flex;justify-content:space-between;margin-top:.4rem">
+            <span
+              style="font-family:'JetBrains Mono',monospace;font-size:.55rem;color:rgba(217,234,247,.18)">00:00</span>
+            <span
+              style="font-family:'JetBrains Mono',monospace;font-size:.55rem;color:rgba(217,234,247,.18)">12:00</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:.55rem;color:rgba(217,234,247,.18)">NOW</span>
+          </div>
+          <div style="display:flex;gap:1.2rem;margin-top:.5rem">
+            <span
+              style="display:flex;align-items:center;gap:.35rem;font-family:'JetBrains Mono',monospace;font-size:.55rem;color:rgba(217,234,247,.25)"><span
+                style="width:8px;height:8px;background:rgba(0,245,212,.4);border-radius:1px;display:inline-block"></span>Normal</span>
+            <span
+              style="display:flex;align-items:center;gap:.35rem;font-family:'JetBrains Mono',monospace;font-size:.55rem;color:rgba(217,234,247,.25)"><span
+                style="width:8px;height:8px;background:rgba(255,23,68,.5);border-radius:1px;display:inline-block"></span>Suspicious</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COL -->
+      <div class="right-col" id="alerts">
+        <!-- ALERT -->
+        <div class="alert-box g-card" id="alertBox">
+          <div class="alert-head">
+            <div class="alert-ico">🚨</div>
+            <div>
+              <div class="alert-ttl">FRAUD ALERT</div>
+              <div class="alert-sub" id="aTime">// 02:17:34 · txn#8291</div>
+            </div>
+          </div>
+          <div class="kannada-box">
+            <div class="kn-text" id="knTxt">ಎಚ್ಚರಿಕೆ! ₹8,200 ಅಸಾಮಾನ್ಯ ವ್ಯವಹಾರ</div>
+            <div class="kn-en" id="knEn">⚠ WARNING! ₹8,200 unusual transaction detected. Please verify before accepting.
+            </div>
+          </div>
+          <div class="alert-tags">
+            <span class="a-tag tag-r">VELOCITY ATTACK</span>
+            <span class="a-tag tag-a">LATE NIGHT</span>
+            <span class="a-tag tag-r">NEW SENDER</span>
+          </div>
+        </div>
+
+        <!-- SHAP -->
+        <div class="g-card">
+          <div class="c-label">shap explainability — why flagged?</div>
+          <div class="shap-rows" id="shapRows">
+            <div class="shap-r">
+              <div class="shap-lbl">is_late_night</div>
+              <div class="shap-track">
+                <div class="shap-fill sf-risk" style="width:88%"></div>
+              </div>
+              <div class="shap-v" style="color:var(--danger)">+0.42</div>
+            </div>
+            <div class="shap-r">
+              <div class="shap-lbl">vel_15m</div>
+              <div class="shap-track">
+                <div class="shap-fill sf-risk" style="width:73%"></div>
+              </div>
+              <div class="shap-v" style="color:var(--danger)">+0.35</div>
+            </div>
+            <div class="shap-r">
+              <div class="shap-lbl">mahalanobis_dist</div>
+              <div class="shap-track">
+                <div class="shap-fill sf-risk" style="width:60%"></div>
+              </div>
+              <div class="shap-v" style="color:var(--danger)">+0.29</div>
+            </div>
+            <div class="shap-r">
+              <div class="shap-lbl">sender_graph_wt</div>
+              <div class="shap-track">
+                <div class="shap-fill sf-safe" style="width:30%"></div>
+              </div>
+              <div class="shap-v" style="color:var(--safe)">−0.14</div>
+            </div>
+            <div class="shap-r">
+              <div class="shap-lbl">amt_ratio_median</div>
+              <div class="shap-track">
+                <div class="shap-fill sf-risk" style="width:52%"></div>
+              </div>
+              <div class="shap-v" style="color:var(--danger)">+0.25</div>
+            </div>
+          </div>
+          <div
+            style="margin-top:1rem;padding-top:.75rem;border-top:1px solid rgba(255,255,255,.04);font-family:'JetBrains Mono',monospace;font-size:.62rem;color:rgba(217,234,247,.25);line-height:1.75"
+            id="shapExpl">
+            → Arrived at 02:17 AM · outside normal 09:00–21:00 window<br />
+            → 5 transactions in last 15 min · velocity burst detected<br />
+            → Amount is 6.3× merchant's median · statistical anomaly
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PIPELINE ═══ -->
+  <section class="pipe-sec" id="pipe">
+    <div class="s-head reveal">
+      <div class="s-tag">inference pipeline</div>
+      <h2 class="s-title">&lt; 100MS END-TO-END</h2>
+      <p class="s-sub">From raw UPI transaction to Kannada voice alert — five precision stages, sub-second response</p>
+    </div>
+    <div class="pipeline" id="pipeEl">
+      <div class="pipe-step">
+        <div class="pipe-node">📡</div>
+        <div class="pipe-lbl">DATA LAYER</div>
+        <div class="pipe-sub">CSV / Kafka</div>
+        <div class="pipe-ms">~5ms</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-node">⚙️</div>
+        <div class="pipe-lbl">FEAT. ENGINE</div>
+        <div class="pipe-sub">11 features</div>
+        <div class="pipe-ms">~15ms</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-node">🧠</div>
+        <div class="pipe-lbl">ML ENSEMBLE</div>
+        <div class="pipe-sub">IsoForest + SVM</div>
+        <div class="pipe-ms">~30ms</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-node">🔬</div>
+        <div class="pipe-lbl">SHAP EXPLAIN</div>
+        <div class="pipe-sub">Why flagged</div>
+        <div class="pipe-ms">~35ms</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-node">🔊</div>
+        <div class="pipe-lbl">KANNADA ALERT</div>
+        <div class="pipe-sub">Voice · gTTS</div>
+        <div class="pipe-ms">&lt;100ms ⚡</div>
+      </div>
+    </div>
+
+    <!-- HEATMAP -->
+    <div class="reveal" style="max-width:720px;margin:5rem auto 0">
+      <div class="s-head" style="margin-bottom:2rem">
+        <div class="s-tag">fraud hour × day heatmap</div>
+        <p class="s-sub" style="font-size:.8rem">When does fraud cluster at your store?</p>
+      </div>
+      <div class="g-card">
+        <div class="c-label">hour × weekday fraud intensity</div>
+        <div style="display:flex;gap:.5rem">
+          <div style="display:flex;flex-direction:column;justify-content:space-between;padding:.3rem 0">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:.55rem;color:rgba(217,234,247,.2)">12am</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:.55rem;color:rgba(217,234,247,.2)">6am</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:.55rem;color:rgba(217,234,247,.2)">12pm</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:.55rem;color:rgba(217,234,247,.2)">6pm</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:.55rem;color:rgba(217,234,247,.2)">11pm</span>
+          </div>
+          <div id="hmapEl" style="flex:1;display:grid;grid-template-columns:repeat(7,1fr);gap:4px"></div>
+        </div>
+        <div style="display:flex;justify-content:space-around;margin-top:.6rem">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:rgba(217,234,247,.2)">Mon</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:rgba(217,234,247,.2)">Tue</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:rgba(217,234,247,.2)">Wed</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:rgba(217,234,247,.2)">Thu</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:rgba(217,234,247,.2)">Fri</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:rgba(217,234,247,.2)">Sat</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:rgba(217,234,247,.2)">Sun</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+     FEATURES & CAPABILITIES (FLIP CARDS)
+═══════════════════════════════════════════ -->
+  <style>
+    .flip-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    .flip-card {
+      background: transparent;
+      height: 400px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d;
+    }
+    .flip-card:hover .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(0,245,212,0.1);
+    }
+    .flip-card-front {
+      background: rgba(1,3,8,0.8);
+      display: flex;
+      flex-direction: column;
+    }
+    .flip-card-front img {
+      width: 100%;
+      height: 60%;
+      object-fit: cover;
+      filter: grayscale(0.8) contrast(1.2);
+      transition: 0.5s;
+    }
+    .flip-card:hover .flip-card-front img {
+      filter: grayscale(0) contrast(1);
+    }
+    .fc-content {
+      padding: 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: linear-gradient(0deg, rgba(0,5,9,1) 0%, rgba(0,5,9,0) 100%);
+    }
+    .flip-card-back {
+      background: linear-gradient(135deg, rgba(0,245,212,0.05), rgba(255,112,67,0.05));
+      transform: rotateY(180deg);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      border-color: rgba(0,245,212,0.3);
+      box-shadow: inset 0 0 50px rgba(0,245,212,0.05);
+    }
+  </style>
+
+  <section id="features" style="max-width:1300px; margin: 0 auto; padding: 5rem 2rem;">
+    <div class="s-head reveal">
+      <div class="s-tag">system capabilities</div>
+      <h2 class="s-title">WHAT MAKES IT UNIQUE</h2>
+      <p class="s-sub">Hover to reveal the neural mechanics powering PaySentinel</p>
+    </div>
+    
+    <div class="flip-grid">
+      <!-- Card 1 -->
+      <div class="flip-card reveal">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="static/images/1.jpg" alt="Hybrid ML">
+            <div class="fc-content">
+              <h3 style="font-family:var(--ff-display); font-size:1.5rem; color:var(--teal); margin:0;">HYBRID ENSEMBLE</h3>
+            </div>
+          </div>
+          <div class="flip-card-back">
+            <div style="font-size:3rem; margin-bottom:1rem;">🧠</div>
+            <h3 style="font-family:var(--ff-display); font-size:1.5rem; color:var(--teal); margin-bottom:1rem;">ISOLATION FOREST + SVM</h3>
+            <p style="color:rgba(217, 234, 247, .6); font-size:.95rem; line-height:1.6;">Our triple-model architecture processes 11 behavioral features simultaneously, identifying novel fraud patterns that simple rules miss.</p>
+          </div>
+        </div>
+      </div>
+      <!-- Card 2 -->
+      <div class="flip-card reveal" style="transition-delay:.1s">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="static/images/2.jpg" alt="Velocity Engine">
+            <div class="fc-content">
+              <h3 style="font-family:var(--ff-display); font-size:1.5rem; color:var(--saffron); margin:0;">&lt; 100MS LATENCY</h3>
+            </div>
+          </div>
+          <div class="flip-card-back">
+            <div style="font-size:3rem; margin-bottom:1rem;">⚡</div>
+            <h3 style="font-family:var(--ff-display); font-size:1.5rem; color:var(--saffron); margin-bottom:1rem;">KAFKA PIPELINE</h3>
+            <p style="color:rgba(217, 234, 247, .6); font-size:.95rem; line-height:1.6;">Built for high-throughput streaming. We detect and alert before the merchant can even hand over the goods.</p>
+          </div>
+        </div>
+      </div>
+      <!-- Card 3 -->
+      <div class="flip-card reveal" style="transition-delay:.2s">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="static/images/5.jpg" alt="Explainability">
+            <div class="fc-content">
+              <h3 style="font-family:var(--ff-display); font-size:1.5rem; color:var(--gold); margin:0;">SHAP EXPLAINABILITY</h3>
+            </div>
+          </div>
+          <div class="flip-card-back">
+            <div style="font-size:3rem; margin-bottom:1rem;">🔬</div>
+            <h3 style="font-family:var(--ff-display); font-size:1.5rem; color:var(--gold); margin-bottom:1rem;">TRANSPARENT AI</h3>
+            <p style="color:rgba(217, 234, 247, .6); font-size:.95rem; line-height:1.6;">We don't just block transactions; we explain exactly why using SHAP values, building trust with the merchant.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+     HOW IT WORKS / PHASES
+═══════════════════════════════════════════ -->
+  <section id="roadmap" style="max-width:1300px; margin: 0 auto; padding: 5rem 2rem; display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center;">
+    <div class="reveal-left">
+      <div class="s-head" style="text-align:left; margin-bottom:2rem;">
+        <div class="s-tag">deployment roadmap</div>
+        <h2 class="s-title" style="margin:0;">HOW IT WORKS</h2>
+      </div>
+      <div class="roadmap-circuit" style="margin-top:0;">
+        <div class="roadmap-line"><div class="roadmap-line-fill" id="roadFill"></div></div>
+        
+        <div class="road-step">
+          <div class="road-node" style="font-family:var(--ff-display); font-size:1.2rem; color:var(--teal);">1</div>
+          <h3 style="font-family:var(--ff-display); font-size:1.5rem; color:var(--teal); margin-bottom:.5rem;">DATA INGESTION</h3>
+          <p style="color:rgba(217, 234, 247, .5); line-height:1.6; font-size:.9rem;">Seamless Kafka connection to UPI endpoints. Raw transaction logs are streamed instantly to the central core.</p>
+        </div>
+
+        <div class="road-step">
+          <div class="road-node" style="font-family:var(--ff-display); font-size:1.2rem; color:var(--teal);">2</div>
+          <h3 style="font-family:var(--ff-display); font-size:1.5rem; color:var(--teal); margin-bottom:.5rem;">NEURAL ANALYSIS</h3>
+          <p style="color:rgba(217, 234, 247, .5); line-height:1.6; font-size:.9rem;">Real-time ML inference processing 11 features including velocity bounds, hour-of-day risks, and graph anomalies.</p>
+        </div>
+
+        <div class="road-step">
+          <div class="road-node" style="font-family:var(--ff-display); font-size:1.2rem; color:var(--teal);">3</div>
+          <h3 style="font-family:var(--ff-display); font-size:1.5rem; color:var(--teal); margin-bottom:.5rem;">INSTANT ALERTING</h3>
+          <p style="color:rgba(217, 234, 247, .5); line-height:1.6; font-size:.9rem;">Voice broadcast via gTTS + visual SHAP explainability on the merchant dashboard.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="reveal-right" style="position:relative;">
+      <div style="position:absolute; inset:-30px; background:radial-gradient(circle at center, rgba(0,245,212,0.15), transparent 70%); z-index:-1; filter:blur(20px);"></div>
+      <img src="static/images/roadmap.png" style="width:100%; border-radius:12px; border:1px solid rgba(0,245,212,0.2); box-shadow:0 0 30px rgba(0,245,212,0.1);" alt="Architecture Roadmap" onerror="this.src='static/images/3.jpg'">
+    </div>
+  </section>
+
+  <style>
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: repeat(2, 320px);
+      gap: 1.5rem;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    .why-card {
+      position: relative;
+      background: rgba(1, 3, 8, 0.4);
+      border: 1px solid rgba(0, 245, 212, 0.08);
+      border-radius: 4px;
+      padding: 2.5rem;
+      overflow: hidden;
+      transition: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .why-card:hover {
+      border-color: rgba(0, 245, 212, 0.3);
+      background: rgba(0, 245, 212, 0.03);
+      transform: translateY(-5px);
+    }
+    .why-card-1 { grid-column: span 5; }
+    .why-card-2 { grid-column: span 7; }
+    .why-card-3 { grid-column: span 7; }
+    .why-card-4 { grid-column: span 5; }
+    
+    .why-img-box {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 120px;
+      height: 120px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.05);
+      opacity: 0.4;
+      transition: 0.5s;
+    }
+    .why-card:hover .why-img-box {
+      opacity: 0.8;
+      transform: scale(1.05) rotate(2deg);
+      border-color: var(--teal);
+    }
+    .why-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(1);
+    }
+    .why-card:hover .why-img-box img {
+      filter: grayscale(0);
+    }
+    
+    .why-hud {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      border: 1px solid var(--teal);
+      opacity: 0.2;
+    }
+    .wh-tl { top: 10px; left: 10px; border-right: 0; border-bottom: 0; }
+    .wh-tr { top: 10px; right: 10px; border-left: 0; border-bottom: 0; }
+    .wh-bl { bottom: 10px; left: 10px; border-right: 0; border-top: 0; }
+    .wh-br { bottom: 10px; right: 10px; border-left: 0; border-top: 0; }
+    
+    .why-card:hover .why-hud {
+      opacity: 0.8;
+      box-shadow: 0 0 5px var(--teal);
+    }
+    
+    .why-stat {
+      font-family: var(--ff-display);
+      font-size: 3.5rem;
+      color: var(--teal);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+      opacity: 0.8;
+    }
+    .why-title {
+      font-family: var(--ff-display);
+      font-size: 1.8rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.8rem;
+      background: linear-gradient(90deg, #fff, rgba(255,255,255,0.5));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .why-desc {
+      font-family: var(--ff-body);
+      font-size: 0.9rem;
+      color: rgba(217, 234, 247, 0.4);
+      line-height: 1.6;
+      max-width: 90%;
+    }
+    
+    .scan-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--teal), transparent);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .why-card:hover .scan-line {
+      animation: verticalScan 3s linear infinite;
+    }
+    @keyframes verticalScan {
+      0% { top: 0%; opacity: 0; }
+      10% { opacity: 0.5; }
+      90% { opacity: 0.5; }
+      100% { top: 100%; opacity: 0; }
+    }
+
+    @media(max-width:992px) {
+      .why-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
+      .why-card { grid-column: span 1 !important; height: auto; min-height: 250px; }
+    }
+  </style>
+  <section id="why" style="max-width:1300px; margin: 10rem auto; padding: 0 2rem;">
+    <div class="s-head reveal" style="margin-bottom:6rem">
+      <div class="s-tag">system comparison</div>
+      <h2 class="s-title">WHY PAYSENTINEL?</h2>
+      <p class="s-sub">Enterprise fraud detection redefined for the Indian merchant. Minimal latency, maximum vernacular support.</p>
+    </div>
+
+    <div class="why-grid">
+      <!-- Card 1: Ensemble -->
+      <div class="why-card why-card-1 reveal">
+        <div class="why-hud wh-tl"></div><div class="why-hud wh-tr"></div><div class="why-hud wh-bl"></div><div class="why-hud wh-br"></div>
+        <div class="scan-line"></div>
+        <div class="why-img-box"><img src="static/images/1.jpg" alt="ML"></div>
+        <div class="why-stat">99.4%</div>
+        <div class="why-title">HYBRID ENSEMBLE</div>
+        <div class="why-desc">Triple-model validation using Isolation Forest, One-Class SVM, and Local Outlier Factor for precision detection.</div>
+      </div>
+
+      <!-- Card 2: Vernacular -->
+      <div class="why-card why-card-2 reveal" style="transition-delay:0.1s">
+        <div class="why-hud wh-tl"></div><div class="why-hud wh-tr"></div><div class="why-hud wh-bl"></div><div class="why-hud wh-br"></div>
+        <div class="scan-line"></div>
+        <div class="why-img-box"><img src="static/images/6.jpg" alt="Languages"></div>
+        <div class="why-stat" style="color:var(--saffron)">VERNACULAR</div>
+        <div class="why-title" style="color:var(--saffron)">KANNADA × HINDI × TAMIL</div>
+        <div class="why-desc">The world's only fraud shield that communicates in native Indian languages, breaking the technical barrier for rural merchants.</div>
+      </div>
+
+      <!-- Card 3: Speed -->
+      <div class="why-card why-card-3 reveal" style="transition-delay:0.15s">
+        <div class="why-hud wh-tl"></div><div class="why-hud wh-tr"></div><div class="why-hud wh-bl"></div><div class="why-hud wh-br"></div>
+        <div class="scan-line"></div>
+        <div class="why-img-box"><img src="static/images/5.jpg" alt="Speed"></div>
+        <div class="why-stat" style="color:var(--gold)">&lt;100MS</div>
+        <div class="why-title">HYPER-LATENCY CORE</div>
+        <div class="why-desc">Engineered on Apache Kafka for real-time inference. We flag threats before the customer can even finish the scan.</div>
+      </div>
+
+      <!-- Card 4: Open Source -->
+      <div class="why-card why-card-4 reveal" style="transition-delay:0.2s">
+        <div class="why-hud wh-tl"></div><div class="why-hud wh-tr"></div><div class="why-hud wh-bl"></div><div class="why-hud wh-br"></div>
+        <div class="scan-line"></div>
+        <div class="why-img-box"><img src="static/images/3.jpg" alt="Community"></div>
+        <div class="why-stat" style="color:var(--safe)">FREE</div>
+        <div class="why-title">OPEN SOURCE MISSION</div>
+        <div class="why-desc">No licenses. No cloud fees. A community-driven protocol to protect India's digital economy for free.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+     TECH STACK
+═══════════════════════════════════════════ -->
+  <section class="tech-sec">
+    <div class="s-head reveal">
+      <div class="s-tag">tech stack</div>
+      <h2 class="s-title">FORGED IN CODE</h2>
+      <p class="s-sub">100% free and open source. Zero paid APIs. Zero cloud credits. Zero signup fees.</p>
+    </div>
+    <div class="tech-grid">
+      <div class="tech-card reveal">
+        <div class="tc-icon">🐍</div>
+        <div class="tc-title tc1">Python + Scikit-Learn</div>
+        <p class="tc-desc">11-feature ML pipeline with IsolationForest, OneClassSVM, and LOF ensemble. SHAP
+          KernelExplainer for interpretability.</p>
+      </div>
+      <div class="tech-card reveal" style="transition-delay:.1s">
+        <div class="tc-icon">📊</div>
+        <div class="tc-title tc2">Flask + HTML5</div>
+        <p class="tc-desc">REST API with rate limiting, security headers, model caching. Premium "Stark Tech" dark
+          dashboard — no framework bloat.</p>
+      </div>
+      <div class="tech-card reveal" style="transition-delay:.2s">
+        <div class="tc-icon">🔊</div>
+        <div class="tc-title tc3">gTTS + Kafka</div>
+        <p class="tc-desc">Regional voice alerts via Google TTS with offline fallback. Apache Kafka pipeline for
+          &lt;100ms live inference at scale.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+     EMERGENCY
+═══════════════════════════════════════════ -->
+  <div class="emergency reveal">
+    <div class="em-l">Emergency Resources · Contact authorities for official action</div>
+    <div class="em-n">1930</div>
+    <div
+      style="font-family:var(--ff-mono);font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:rgba(180,210,240,.25);margin-top:.4rem">
+      CYBER CRIME HELPLINE · cybercrime.gov.in
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════ -->
+  <footer>
+    <div class="ft-logo">PAYSENTINEL</div>
+    <div class="ft-sub">// AI Merchant Fraud Shield for Bharat · BLUEPRINT 2026 · MIT License · Open Source</div>
+    <div class="ft-links">
+      <a href="https://github.com/Yashaswini-V21/Pay_Sentinel" target="_blank">GitHub</a>
+      <a href="#dash">Live Dashboard</a>
+      <a href="#pipe">How It Works</a>
+    </div>
+    <div class="ft-copy">
+      Made with ❤️ for Indian Merchants Who Deserve Better<br />
+      Kannada → Hindi → Tamil → Telugu → Marathi → 800 Million Indians<br />
+      🟢 v2.0 · Actively Developed · May 2026
+    </div>
+  </footer>
+
+
+  <script>
+    /* ═══ CIPHER EFFECT ═══ */
+    function cipherText(el, text, duration = 1000) {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+';
+      let iterations = 0;
+      const interval = setInterval(() => {
+        el.textContent = text.split('')
+          .map((char, index) => {
+            if (index < iterations) return text[index];
+            return chars[Math.floor(Math.random() * chars.length)];
+          })
+          .join('');
+        if (iterations >= text.length) clearInterval(interval);
+        iterations += text.length / (duration / 30);
+      }, 30);
+    }
+
+    /* ─── SPLASH SEQUENCE ─── */
+    const splashMessages = [
+      'INITIALIZING NEURAL DETECTION ENGINE...',
+      'LOADING 45-FEATURE ENGINEERING PIPELINE...',
+      'CALIBRATING ISOLATION FOREST ENSEMBLE...',
+      'ACTIVATING KANNADA VOICE ALERT MODULE...',
+      'PAYSENTINEL IS READY. ✓'
+    ];
+    let msgIdx = 0;
+    const statusEl = document.getElementById('splash-status');
+    const msgInterval = setInterval(() => {
+      msgIdx++;
+      if (msgIdx < splashMessages.length && statusEl) statusEl.textContent = splashMessages[msgIdx];
+      if (msgIdx >= splashMessages.length - 1) {
+        clearInterval(msgInterval);
+        setTimeout(() => {
+          const splashEl = document.getElementById('splash');
+          if (splashEl) splashEl.classList.add('gone');
+          startCounters();
+          const h11 = document.querySelector('.h1-line1');
+          if (h11) cipherText(h11, 'DETECT.', 1000);
+          const h12 = document.querySelector('.h1-line2');
+          if (h12) cipherText(h12, 'PROTECT.', 1500);
+          for (let i = 0; i < 3; i++) setTimeout(addTxn, i * 300);
+        }, 700);
+      }
+    }, 500);
+
+    /* ═══ CURSOR ═══ */
+    const cDot = document.getElementById('cDot'), cRing = document.getElementById('cRing');
+    let cx = 0, cy = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { cx = e.clientX; cy = e.clientY; cDot.style.left = cx + 'px'; cDot.style.top = cy + 'px' });
+    setInterval(() => { rx += (cx - rx) * .12; ry += (cy - ry) * .12; cRing.style.left = rx + 'px'; cRing.style.top = ry + 'px' }, 16);
+    document.querySelectorAll('a,button,.feat-card,.g-card,.m-card').forEach(el => {
+      el.addEventListener('mouseenter', () => { cRing.style.width = '52px'; cRing.style.height = '52px'; cRing.style.borderColor = 'rgba(255,112,67,.6)' });
+      el.addEventListener('mouseleave', () => { cRing.style.width = '36px'; cRing.style.height = '36px'; cRing.style.borderColor = 'rgba(0,245,212,.4)' });
+    });
+
+    /* ═══ NEURAL BG CANVAS ═══ */
+    const cvs = document.getElementById('bgCanvas'), ctx = cvs.getContext('2d');
+    let W, H, pts = [];
+    function resize() { W = cvs.width = window.innerWidth; H = cvs.height = window.innerHeight }
+    resize(); window.addEventListener('resize', resize);
+    class Pt {
+      constructor() {
+        this.x = Math.random() * W;
+        this.y = Math.random() * H;
+        this.vx = (Math.random() - .5) * .3;
+        this.vy = (Math.random() - .5) * .3;
+        this.r = Math.random() * 1.5 + .5;
+        this.ox = this.x;
+        this.oy = this.y;
+      }
+      update() {
+        // Mouse interaction
+        const dx = cx - this.x;
+        const dy = cy - this.y;
+        const dist = Math.hypot(dx, dy);
+        const force = 100;
+
+        if (dist < force) {
+          const angle = Math.atan2(dy, dx);
+          const move = (force - dist) / force;
+          this.x -= Math.cos(angle) * move * 5;
+          this.y -= Math.sin(angle) * move * 5;
+        }
+
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < 0) this.x = W;
+        if (this.x > W) this.x = 0;
+        if (this.y < 0) this.y = H;
+        if (this.y > H) this.y = 0;
+      }
+    }
+    for (let i = 0; i < 120; i++)pts.push(new Pt());
+
+    function drawBg() {
+      ctx.clearRect(0, 0, W, H);
+
+      // Subtle Grid
+      ctx.strokeStyle = 'rgba(0, 245, 212, 0.03)';
+      ctx.lineWidth = 1;
+      const gridSize = 100;
+      for (let x = 0; x < W; x += gridSize) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+      }
+      for (let y = 0; y < H; y += gridSize) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+      }
+
+      pts.forEach(p => p.update());
+      pts.forEach((a, i) => pts.slice(i + 1).forEach(b => {
+        const d = Math.hypot(a.x - b.x, a.y - b.y);
+        if (d < 160) {
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          const opacity = (1 - d / 160) * .15;
+          ctx.strokeStyle = `rgba(0,245,212,${opacity})`;
+          ctx.lineWidth = .5;
+          ctx.stroke();
+        }
+      }));
+      pts.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0,245,212,.4)';
+        ctx.fill();
+        // Glowing core
+        if (Math.random() > 0.98) {
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = 'var(--teal)';
+          ctx.fillStyle = 'white';
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+      });
+      requestAnimationFrame(drawBg);
+    }
+    drawBg();
+
+    /* ═══ 3D CARD TILT ═══ */
+    document.querySelectorAll('.g-card, .p-item').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+        const rx = (y - .5) * -10, ry = (x - .5) * 10;
+        card.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+      });
+    });
+
+    /* ═══ MAGNETIC BUTTONS ═══ */
+    document.querySelectorAll('.btn-mag').forEach(btn => {
+      btn.addEventListener('mousemove', e => {
+        const r = btn.getBoundingClientRect();
+        const x = (e.clientX - r.left - r.width / 2) * .25;
+        const y = (e.clientY - r.top - r.height / 2) * .25;
+        btn.style.transform = `translate(${x}px,${y}px)`;
+      });
+      btn.addEventListener('mouseleave', () => btn.style.transform = '');
+    });
+
+    /* ═══ COUNTERS ═══ */
+    function startCounters() {
+      const counters = [
+        { el: document.getElementById('s1'), target: 100, suffix: 'ms', prefix: '<' },
+        { el: document.getElementById('s2'), target: 11, suffix: '' },
+        { el: document.getElementById('s3'), target: 60, suffix: 'M', prefix: '' },
+        { el: document.getElementById('s4'), target: 4000, suffix: 'Cr', prefix: '₹' },
+      ];
+      counters.forEach(({ el, target, suffix = '', prefix = '' }) => {
+        let start = 0; const dur = 2000; const t0 = performance.now();
+        function step(now) {
+          const p = Math.min((now - t0) / dur, 1); const e = 1 - Math.pow(1 - p, 3);
+          const v = Math.round(e * target);
+          el.textContent = prefix + (v >= 1000 ? v.toLocaleString() : v) + suffix;
+          if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      });
+    }
+
+    /* ═══ NAV TPS TICKER ═══ */
+    setInterval(() => { document.getElementById('navTps').textContent = (1100 + Math.floor(Math.random() * 400)).toLocaleString() }, 2000);
+
+    /* ═══ GAUGE ═══ */
+    function setGauge(score) {
+      const arc = score / 100 * 267;
+      const angle = (score / 100) * 180 - 90;
+      document.getElementById('gArc').style.strokeDashoffset = 267 - arc;
+      document.getElementById('gNeedle').setAttribute('transform', `rotate(${angle},100,105)`);
+      const num = document.getElementById('gaugeNum'); num.textContent = Math.round(score);
+      const lvl = document.getElementById('gLvl'), txt = document.getElementById('gLvlTxt');
+      if (score < 30) { lvl.className = 'gauge-level-badge glvl-low'; txt.textContent = 'LOW RISK'; num.style.color = 'var(--safe)' }
+      else if (score < 60) { lvl.className = 'gauge-level-badge glvl-med'; txt.textContent = 'MEDIUM RISK'; num.style.color = 'var(--gold)' }
+      else if (score < 85) { lvl.className = 'gauge-level-badge glvl-high'; txt.textContent = 'HIGH RISK'; num.style.color = 'var(--danger)' }
+      else { lvl.className = 'gauge-level-badge glvl-high'; txt.textContent = '⚡ CRITICAL'; num.style.color = 'var(--danger)' }
+    }
+
+    /* ═══ LIVE FEED ═══ */
+    const txnData = [
+      { name: 'rajesh.kumar@oksbi', amt: '₹850', risk: 12, lv: 'safe', time: '02:17:31', why: 'Regular customer' },
+      { name: 'priya.mehta@paytm', amt: '₹1,200', risk: 18, lv: 'safe', time: '02:17:33', why: 'Known sender' },
+      { name: 'unknown28731@ibl', amt: '₹8,200', risk: 88, lv: 'danger', time: '02:17:34', why: 'Velocity + late night' },
+      { name: 'mobile2938@ybl', amt: '₹5,000', risk: 55, lv: 'warn', time: '02:17:36', why: 'New sender' },
+      { name: 'meena.v@gpay', amt: '₹340', risk: 8, lv: 'safe', time: '02:17:38', why: 'Regular customer' },
+      { name: 'anon827361@upi', amt: '₹15,000', risk: 94, lv: 'danger', time: '02:17:41', why: 'Probe-test-cashout' },
+      { name: 'suresh.r@oksbi', amt: '₹2,100', risk: 22, lv: 'safe', time: '02:17:44', why: 'Business hours' },
+      { name: 'num8273@ibl', amt: '₹12,500', risk: 71, lv: 'danger', time: '02:17:47', why: 'Amount anomaly' },
+    ];
+    let fi = 0, tot = 0, sus = 0, risk = 0;
+    const feed = document.getElementById('feedEl');
+    const kAlerts = [
+      s => `ಎಚ್ಚರಿಕೆ! ${s} ಅಸಾಮಾನ್ಯ ವ್ಯವಹಾರ`,
+      s => `ಎಚ್ಚರಿಕೆ! ತುರ್ತು ಅಪಾಯ. ${s} ಸಂಶಯಾಸ್ಪದ`,
+      s => `ಗಮನ ಕೊಡಿ! ${s} ಅಪಾಯದ ವ್ಯವಹಾರ`,
+    ];
+    const ico = { safe: '✓', warn: '!', danger: '✕' };
+    const cols = { safe: 'var(--safe)', warn: 'var(--gold)', danger: 'var(--danger)' };
+    function addTxn() {
+      const t = txnData[fi % txnData.length]; fi++; tot++;
+      const amt = parseInt(t.amt.replace(/[₹,]/g, ''));
+      if (t.lv === 'danger') { sus++; risk += amt }
+      const row = document.createElement('div');
+      row.className = `txn txn-${t.lv}`;
+      row.innerHTML = `
+    <div class="txn-dot tdot-${t.lv[0]}">${ico[t.lv]}</div>
+    <div><div class="txn-name">${t.name}</div><div class="txn-note">${t.why} · ${t.time}</div></div>
+    <div class="txn-right">
+      <div class="txn-amt" style="color:${cols[t.lv]}">${t.amt}</div>
+      <div class="txn-score" style="color:${cols[t.lv]}">risk ${t.risk}</div>
+    </div>`;
+      feed.insertBefore(row, feed.firstChild);
+      if (feed.children.length > 6) feed.removeChild(feed.lastChild);
+      setGauge(t.risk);
+      document.getElementById('mT').textContent = tot.toLocaleString();
+      document.getElementById('mTd').textContent = `+${tot} this session`;
+      document.getElementById('mS').textContent = sus;
+      document.getElementById('mSd').textContent = `${((sus / tot) * 100).toFixed(1)}% detection rate`;
+      document.getElementById('mR').textContent = '₹' + (risk / 1000).toFixed(0) + 'K';
+      document.getElementById('mL').textContent = Math.round(18 + Math.random() * 75) + 'ms';
+      if (t.lv === 'danger') {
+        const ab = document.getElementById('alertBox');
+        ab.classList.add('firing'); setTimeout(() => ab.classList.remove('firing'), 700);
+        document.getElementById('knTxt').textContent = kAlerts[Math.floor(Math.random() * 3)](t.amt);
+        document.getElementById('knEn').textContent = `⚠ HIGH RISK! ${t.amt} suspicious — ${t.why}. Verify before accepting.`;
+        document.getElementById('aTime').textContent = `// ${t.time} · txn#${8291 + fi}`;
+      }
+    }
+    setInterval(addTxn, 2000); addTxn();
+
+    /* ═══ VOL CHART ═══ */
+    const vc = document.getElementById('volChart');
+    if (vc) {
+      for (let i = 0; i < 24; i++) {
+        const s = i > 21 || i < 5;
+        const b = document.createElement('div');
+        b.className = `vol-bar ${s ? 'vol-suspect' : 'vol-normal'}`;
+        b.style.height = Math.round(15 + Math.random() * 85) + '%';
+        vc.appendChild(b);
+      }
+    }
+
+    /* ═══ HEATMAP ═══ */
+    const hm = document.getElementById('hmapEl');
+    if (hm) {
+      for (let d = 0; d < 7; d++) {
+        const col = document.createElement('div'); col.style.cssText = 'display:flex;flex-direction:column;gap:4px';
+        for (let h = 0; h < 5; h++) {
+          const night = h === 0 || h === 4, wknd = d >= 5;
+          let v = Math.random();
+          if (night) v = Math.min(1, v * 2.6); if (wknd) v = Math.min(1, v * 1.9);
+          const cell = document.createElement('div');
+          const r = Math.round(255 * v), g = Math.round(30 + 100 * (1 - v)), b2 = Math.round(70 * (1 - v));
+          cell.style.cssText = `height:22px;border-radius:3px;background:rgba(${r},${g},${b2},${.12 + v * .65});transition:.3s;cursor:default`;
+          cell.title = `${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][d]} ${['00-05', '06-11', '12-17', '18-22', '23-24'][h]} — fraud risk: ${Math.round(v * 100)}%`;
+          cell.addEventListener('mouseenter', () => cell.style.transform = 'scale(1.3)');
+          cell.addEventListener('mouseleave', () => cell.style.transform = '');
+          col.appendChild(cell);
+        }
+        hm.appendChild(col);
+      }
+    }
+
+    /* ═══ SCROLL REVEAL ═══ */
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('vis');
+          // Stagger children for specific containers
+          if (e.target.id === 'pipeEl' || e.target.classList.contains('pipeline')) {
+            e.target.querySelectorAll('.pipe-step').forEach((s, i) => {
+              setTimeout(() => s.classList.add('vis'), i * 120);
+            });
+          }
+        }
+      });
+    }, { threshold: .12 });
+    document.querySelectorAll('.reveal,.reveal-left,.reveal-right,#pipeEl').forEach(el => obs.observe(el));
+
+    /* ═══ ROTATING KANNADA PHRASES ═══ */
+    /* ═══ ROTATING MULTILINGUAL PHRASES ═══ */
+    const knPhrases = [
+      { t: 'ಎಚ್ಚರಿಕೆ! ₹15,000 ಅಸಾಮಾನ್ಯ ವ್ಯವಹಾರ.', l: 'KANNADA' },
+      { t: 'सावधान! ₹15,000 असामान्य लेन-देन।', l: 'HINDI' },
+      { t: 'எச்சரிக்கை! ₹15,000 அசாதாரண பரிவர்த்தனை.', l: 'TAMIL' },
+      { t: 'హెచ్చరిక! ₹15,000 అసాధారణ లావాదేవీ.', l: 'TELUGU' },
+      { t: 'सावधान! ₹15,000 असामान्य व्यवहार.', l: 'MARATHI' },
+      { t: 'WARNING! ₹15,000 SUSPICIOUS ACTIVITY.', l: 'ENGLISH' }
+    ];
+    let ki = 0;
+    setInterval(() => {
+      ki = (ki + 1) % knPhrases.length;
+      const el = document.getElementById('knHero');
+      if (el) { 
+        el.style.opacity = '0'; 
+        el.style.transform = 'translateX(-20px)'; 
+        setTimeout(() => { 
+          el.textContent = knPhrases[ki].t; 
+          el.style.opacity = '1'; 
+          el.style.transform = 'none';
+        }, 400); 
+      }
+    }, 3000);
+    if (document.getElementById('knHero')) { document.getElementById('knHero').style.transition = 'all .6s cubic-bezier(.16,1,.3,1)' }
+
+    /* ═══ NAV SCROLL EFFECT ═══ */
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('mainNav');
+      if (window.scrollY > 60) { nav.style.background = 'rgba(1,3,8,.92)'; nav.style.borderBottomColor = 'rgba(0,245,212,.12)' }
+      else { nav.style.background = 'rgba(1,3,8,.7)'; nav.style.borderBottomColor = 'rgba(0,245,212,.08)' }
+
+      // ROADMAP CIRCUIT SCROLL
+      const roadSec = document.getElementById('roadmap');
+      if (roadSec) {
+        const rect = roadSec.getBoundingClientRect();
+        const winH = window.innerHeight;
+        if (rect.top < winH && rect.bottom > 0) {
+          const p = Math.min(1, Math.max(0, (winH - rect.top) / (rect.height + winH * 0.5)));
+          document.getElementById('roadFill').style.height = (p * 100) + '%';
+
+          document.querySelectorAll('.road-step').forEach((step, i) => {
+            const stepTop = step.getBoundingClientRect().top;
+            if (stepTop < winH * 0.7) step.classList.add('active');
+            else step.classList.remove('active');
+          });
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>

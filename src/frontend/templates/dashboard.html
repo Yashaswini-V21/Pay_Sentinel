@@ -2558,6 +2558,10 @@
       }
       window.addEventListener('resize', initStars);
       initStars(); drawStars();
+      // Auto-load sample data on startup to prevent empty state
+      setTimeout(() => {
+        if (!state.sampleRows) loadSample();
+      }, 1500);
     </script>
 
     <nav id="mobile-nav" aria-label="Main navigation"

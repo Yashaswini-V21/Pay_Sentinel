@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PaySentinel | Merchant Fraud Shield</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;700;800&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+
+  <main class="container">
+    <section class="hero reveal">
+      <div class="kicker">Hackathon Build | Merchant-first Fraud AI</div>
+      <h1>PaySentinel Wins</h1>
+      <p class="opening">{{ opening_line }}</p>
+      <p class="moat">Kannada is your moat: 6.5 crore speakers, near-zero localized fraud tooling.</p>
+    </section>
+
+    <section class="panel reveal delay-1">
+      <form method="get" class="controls-grid">
+        <label>
+          Merchant Name
+          <input type="text" name="merchant" value="{{ merchant }}">
+        </label>
+        <label>
+          Voice Language
+          <select name="language">
+            <option value="English" {% if language == 'English' %}selected{% endif %}>English</option>
+            <option value="Kannada" {% if language == 'Kannada' %}selected{% endif %}>Kannada</option>
+          </select>
+        </label>
+        <label>
+          Min Amount (Rs.)
+          <input type="number" name="min_amount" value="{{ selected_min|round|int }}" min="{{ min_amt|round|int }}" max="{{ max_amt|round|int }}" step="1">
+        </label>
+        <label>
+          Max Amount (Rs.)
+          <input type="number" name="max_amount" value="{{ selected_max|round|int }}" min="{{ min_amt|round|int }}" max="{{ max_amt|round|int }}" step="1">
+        </label>
+        <label class="inline-check">
+          <input type="checkbox" name="autoplay" {% if autoplay %}checked{% endif %}>
+          Autoplay top voice alert
+        </label>
+        <button class="btn btn-primary" type="submit">Apply Filters</button>
+      </form>
+
+      <form action="{{ url_for('regenerate') }}" method="post" class="regen-row">
+        <input type="hidden" name="merchant" value="{{ merchant }}">
+        <button class="btn btn-secondary" type="submit">Regenerate 60-Day Sample Data</button>
+        <span>Range: Rs. {{ '%.0f'|format(min_amt) }} - Rs. {{ '%.0f'|format(max_amt) }}</span>
+      </form>
+    </section>
+
+    <section class="stats reveal delay-2">
+      <article class="stat-card">
+        <p>Total Transactions</p>
+        <h2>{{ '{:,}'.format(filtered_count) }}</h2>
+      </article>
+      <article class="stat-card danger">
+        <p>Suspicious Flags</p>
+        <h2>{{ '{:,}'.format(suspicious_count) }}</h2>
+      </article>
+      <article class="stat-card">
+        <p>At Risk (Rs.)</p>
+        <h2>{{ '{:,.0f}'.format(at_risk) }}</h2>
+      </article>
+      <article class="stat-card">
+        <p>Peak Merchant Hour</p>
+        <h2>{{ peak_hour }}:00</h2>
+      </article>
+    </section>
+
+    <section class="grid-2">
+      <article class="panel reveal delay-2">
+        <h3>Behavior Timeline</h3>
+        <div class="chart-wrap">{{ trend_chart|safe }}</div>
+      </article>
+      <article class="panel reveal delay-3">
+        <h3>Highest Risk Transactions</h3>
+        {% if top_bar_chart %}
+          <div class="chart-wrap">{{ top_bar_chart|safe }}</div>
+        {% else %}
+          <p class="empty">No suspicious transactions in this amount range.</p>
+        {% endif %}
+      </article>
+    </section>
+
+    <section class="grid-2">
+      <article class="panel reveal delay-3">
+        <h3>Live Fraud Feed</h3>
+        <div class="feed-list">
+          {% for row in feed %}
+            <div class="feed-bubble {% if row.is_anomaly == 1 %}bubble-risk{% else %}bubble-safe{% endif %}">
+              <div class="bubble-top">
+                <strong>{{ row.transaction_id }}</strong>
+                <span class="chip {{ row.risk_class }}">{{ row.risk_level }}</span>
+              </div>
+              <p>Rs. {{ '{:,.0f}'.format(row.amount) }} | {{ row.hour }}:00 | {{ row.sender }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      </article>
+
+      <article class="panel reveal delay-4">
+        <h3>SHAP Explainability</h3>
+
+        {% if flagged_choices %}
+          <form method="get" class="explain-select">
+            <input type="hidden" name="merchant" value="{{ merchant }}">
+            <input type="hidden" name="language" value="{{ language }}">
+            <input type="hidden" name="min_amount" value="{{ selected_min }}">
+            <input type="hidden" name="max_amount" value="{{ selected_max }}">
+            {% if autoplay %}<input type="hidden" name="autoplay" value="on">{% endif %}
+            <label>
+              Select flagged transaction
+              <select name="selected_tx" onchange="this.form.submit()">
+                {% for tx in flagged_choices %}
+                  {% set txid = tx['transaction_id'] %}
+                  <option value="{{ txid }}" {% if selected_txn and selected_txn.get('transaction_id') == txid %}selected{% endif %}>
+                    {{ txid }} | Rs. {{ '{:,.0f}'.format(tx['amount']) }} | score {{ tx['anomaly_score'] }}
+                  </option>
+                {% endfor %}
+              </select>
+            </label>
+          </form>
+
+          {% if selected_txn %}
+            <div class="selected-summary">
+              <p><strong>{{ selected_txn.transaction_id }}</strong> | Rs. {{ '{:,.0f}'.format(selected_txn.amount) }} | {{ selected_txn.hour }}:00 | {{ selected_txn.risk_level }}</p>
+              <p>Sender: {{ selected_txn.sender }} | Risk score: {{ selected_txn.anomaly_score }}</p>
+            </div>
+          {% endif %}
+
+          <div class="explain-grid">
+            {% for item in explain_items %}
+              <div class="explain-card">
+                <h4>{{ item.feature }}</h4>
+                <p>Value: {{ item.value }}</p>
+                <p>Impact: {{ item.impact }} ({{ item.direction }} anomaly confidence)</p>
+              </div>
+            {% endfor %}
+          </div>
+
+          {% if selected_flags %}
+            <div class="reason-box">
+              <h4>Rule-Based Reasons</h4>
+              <ul>
+                {% for reason in selected_flags %}
+                  <li>{{ reason }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+        {% else %}
+          <p class="empty">No suspicious transactions available for explanation.</p>
+        {% endif %}
+      </article>
+    </section>
+
+    <section class="grid-2">
+      <article class="panel reveal delay-4">
+        <h3>Voice Alert Center</h3>
+        {% if alert_player %}
+          <div class="voice-block">{{ alert_player|safe }}</div>
+          <div class="voice-block">{{ summary_player|safe }}</div>
+        {% else %}
+          <p class="empty">No suspicious transactions to announce.</p>
+        {% endif %}
+      </article>
+
+      <article class="panel reveal delay-4">
+        <h3>Audit Report</h3>
+        <p>Download your Kannada + English fraud report with advisory and cybercrime helpline 1930.</p>
+        <a class="btn btn-primary" href="{{ url_for('download_report', merchant=merchant, min_amount=selected_min, max_amount=selected_max) }}">Download PDF Report</a>
+      </article>
+    </section>
+
+    <section class="panel footer reveal delay-4">
+      <p>Cyber Crime Helpline: 1930 | cybercrime.gov.in</p>
+    </section>
+  </main>
+
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        }
+      });
+    }, { threshold: 0.16 });
+
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+  </script>
+</body>
+</html>

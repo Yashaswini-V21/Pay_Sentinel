@@ -1888,3 +1888,1407 @@ ValueError: Failed to parse CSV file: Amount column has no valid numbers
 2026-05-09 21:58:09,237 - paysentinel.model - INFO - [display:135] [req=67dea104] -   Contamination:  25.0%
 2026-05-09 21:58:09,237 - paysentinel.model - INFO - [display:136] [req=67dea104] -   Data hash:      c4717557d0c3
 2026-05-09 21:58:09,237 - paysentinel.model - INFO - [display:137] [req=67dea104] - ==================================================
+2026-05-09 22:41:34,757 - paysentinel - INFO - [sample_data:733] [req=77c25cff] - [SAMPLE-DATA] merchant=My UPI Store, ip=127.0.0.1
+2026-05-09 22:41:34,877 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=77c25cff] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-09 22:41:34,926 - paysentinel - DEBUG - [sample_data:737] [req=77c25cff] - [SAMPLE-DATA] Generated 610 sample transactions
+2026-05-09 22:42:14,128 - paysentinel - INFO - [sample_data:733] [req=dc22572c] - [SAMPLE-DATA] merchant=My UPI Store, ip=127.0.0.1
+2026-05-09 22:42:14,140 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=dc22572c] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-09 22:42:14,150 - paysentinel - DEBUG - [sample_data:737] [req=dc22572c] - [SAMPLE-DATA] Generated 610 sample transactions
+2026-05-09 22:43:33,621 - paysentinel - INFO - [analyze:786] [req=bec5adcc] - [ANALYZE] START - merchant=My UPI Store, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-09 22:43:33,629 - paysentinel - DEBUG - [analyze:789] [req=bec5adcc] - [ANALYZE] Data loaded - source=sample, rows=12
+2026-05-09 22:43:33,631 - paysentinel - INFO - [_get_cached_detector:341] [req=bec5adcc] - Cache expired for My UPI Store, contamination=0.05
+2026-05-09 22:43:33,632 - paysentinel - INFO - [_run_analysis:575] [req=bec5adcc] - Training new detector for My UPI Store, contamination=0.05
+2026-05-09 22:43:36,517 - paysentinel.model - INFO - [display:129] [req=bec5adcc] - ==================================================
+2026-05-09 22:43:36,517 - paysentinel.model - INFO - [display:130] [req=bec5adcc] - MODEL CARD — PaySentinel v2.0.0
+2026-05-09 22:43:36,518 - paysentinel.model - INFO - [display:131] [req=bec5adcc] -   Model ID:       580b690eeaa2
+2026-05-09 22:43:36,518 - paysentinel.model - INFO - [display:132] [req=bec5adcc] -   Trained:        2026-05-09T17:13:36.511101+00:00
+2026-05-09 22:43:36,518 - paysentinel.model - INFO - [display:133] [req=bec5adcc] -   Training rows:  12
+2026-05-09 22:43:36,518 - paysentinel.model - INFO - [display:134] [req=bec5adcc] -   Features:       11
+2026-05-09 22:43:36,518 - paysentinel.model - INFO - [display:135] [req=bec5adcc] -   Contamination:  5.0%
+2026-05-09 22:43:36,518 - paysentinel.model - INFO - [display:136] [req=bec5adcc] -   Data hash:      08c63f13ee5c
+2026-05-09 22:43:36,518 - paysentinel.model - INFO - [display:137] [req=bec5adcc] - ==================================================
+2026-05-09 22:43:36,531 - paysentinel - INFO - [_save_detector_cache:367] [req=bec5adcc] - Saved detector to cache: My UPI Store, contamination=0.05
+2026-05-09 22:43:36,804 - paysentinel - INFO - [analyze:803] [req=bec5adcc] - [ANALYZE] SUCCESS - merchant=My UPI Store, rows=12, ip=127.0.0.1
+2026-05-09 22:45:05,152 - paysentinel - DEBUG - [_cleanup_rate_limiter:193] [req=-] - [CLEANUP] Removed 1 stale rate limit entries
+2026-05-10 10:42:04,102 - paysentinel - INFO - [sample_data:733] [req=86405e15] - [SAMPLE-DATA] merchant=Test Shop, ip=127.0.0.1
+2026-05-10 10:42:04,122 - paysentinel - DEBUG - [sample_data:737] [req=86405e15] - [SAMPLE-DATA] Generated 1 sample transactions
+2026-05-10 10:42:04,128 - paysentinel - INFO - [sample_data:733] [req=f845556a] - [SAMPLE-DATA] merchant=My UPI Store, ip=127.0.0.1
+2026-05-10 10:42:04,134 - paysentinel - DEBUG - [sample_data:737] [req=f845556a] - [SAMPLE-DATA] Generated 1 sample transactions
+2026-05-10 10:42:04,163 - paysentinel - INFO - [analyze:786] [req=935ea137] - [ANALYZE] START - merchant=Shop X, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,170 - paysentinel - DEBUG - [analyze:789] [req=935ea137] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:04,170 - paysentinel - INFO - [_run_analysis:575] [req=935ea137] - Training new detector for Shop X, contamination=0.05
+2026-05-10 10:42:04,170 - paysentinel - DEBUG - [_save_detector_cache:361] [req=935ea137] - Skipping detector cache save during tests: Shop X, contamination=0.05
+2026-05-10 10:42:04,202 - paysentinel - INFO - [analyze:803] [req=935ea137] - [ANALYZE] SUCCESS - merchant=Shop X, rows=1, ip=127.0.0.1
+2026-05-10 10:42:04,206 - paysentinel - INFO - [analyze:786] [req=fc878c2d] - [ANALYZE] START - merchant=Premium Store, sensitivity=8%, language=Kannada, ip=127.0.0.1
+2026-05-10 10:42:04,211 - paysentinel - DEBUG - [analyze:789] [req=fc878c2d] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:04,211 - paysentinel - INFO - [_run_analysis:575] [req=fc878c2d] - Training new detector for Premium Store, contamination=0.08
+2026-05-10 10:42:04,211 - paysentinel - DEBUG - [_save_detector_cache:361] [req=fc878c2d] - Skipping detector cache save during tests: Premium Store, contamination=0.08
+2026-05-10 10:42:04,259 - paysentinel - INFO - [analyze:803] [req=fc878c2d] - [ANALYZE] SUCCESS - merchant=Premium Store, rows=1, ip=127.0.0.1
+2026-05-10 10:42:04,268 - paysentinel - INFO - [analyze:786] [req=720f7b00] - [ANALYZE] START - merchant=Shop X, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,270 - paysentinel - DEBUG - [analyze:789] [req=720f7b00] - [ANALYZE] Data loaded - source=sample, rows=0
+2026-05-10 10:42:04,270 - paysentinel - ERROR - [analyze:806] [req=720f7b00] - [ANALYZE] ERROR - No transaction rows were provided. Upload a CSV or load sample data first., ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 791, in analyze
+    payload, detector, results = _run_analysis(df, merchant_name, sensitivity, language)
+                                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Pay_Sentinel\src\app.py", line 566, in _run_analysis
+    raise ValueError("No transaction rows were provided. Upload a CSV or load sample data first.")
+ValueError: No transaction rows were provided. Upload a CSV or load sample data first.
+2026-05-10 10:42:04,380 - paysentinel - INFO - [analyze:786] [req=252aed04] - [ANALYZE] START - merchant=File Upload Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,384 - paysentinel - INFO - [_read_dataframe_from_request:480] [req=252aed04] - Uploaded file: test.csv, rows: 1
+2026-05-10 10:42:04,388 - paysentinel - DEBUG - [analyze:789] [req=252aed04] - [ANALYZE] Data loaded - source=test.csv, rows=1
+2026-05-10 10:42:04,388 - paysentinel - INFO - [_run_analysis:575] [req=252aed04] - Training new detector for File Upload Test, contamination=0.05
+2026-05-10 10:42:04,388 - paysentinel - DEBUG - [_save_detector_cache:361] [req=252aed04] - Skipping detector cache save during tests: File Upload Test, contamination=0.05
+2026-05-10 10:42:04,402 - paysentinel - INFO - [analyze:803] [req=252aed04] - [ANALYZE] SUCCESS - merchant=File Upload Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:04,438 - paysentinel - ERROR - [analyze:806] [req=5b2689e1] - [ANALYZE] ERROR - 413 Request Entity Too Large: The data value transmitted exceeds the capacity limit., ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 782, in analyze
+    merchant_name = sanitize_merchant_name(_request_value("merchant_name", "My UPI Store"))
+                                           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Pay_Sentinel\src\app.py", line 450, in _request_value
+    payload = _request_payload()
+  File "C:\Pay_Sentinel\src\app.py", line 446, in _request_payload
+    return request.form.to_dict(flat=True)
+           ^^^^^^^^^^^^
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\utils.py", line 100, in __get__
+    value = self.fget(obj)  # type: ignore
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\wrappers\request.py", line 445, in form
+    self._load_form_data()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\flask\wrappers.py", line 114, in _load_form_data
+    super()._load_form_data()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\wrappers\request.py", line 272, in _load_form_data
+    self._get_stream_for_parsing(),
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\wrappers\request.py", line 299, in _get_stream_for_parsing
+    return self.stream
+           ^^^^^^^^^^^
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\utils.py", line 100, in __get__
+    value = self.fget(obj)  # type: ignore
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\wrappers\request.py", line 351, in stream
+    return get_input_stream(
+        self.environ, max_content_length=self.max_content_length
+    )
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\wsgi.py", line 173, in get_input_stream
+    raise RequestEntityTooLarge()
+werkzeug.exceptions.RequestEntityTooLarge: 413 Request Entity Too Large: The data value transmitted exceeds the capacity limit.
+2026-05-10 10:42:04,581 - paysentinel - INFO - [analyze:786] [req=6237b818] - [ANALYZE] START - merchant=Invalid File Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,583 - paysentinel.security - INFO - [log_sec:128] [req=6237b818] - [WARNING] BAD_FILE_UPLOAD ip=12ca17b49af2 path=/api/analyze file=test.bin reason=Invalid type
+2026-05-10 10:42:04,584 - paysentinel - ERROR - [analyze:806] [req=6237b818] - [ANALYZE] ERROR - File validation failed: Invalid file type. Only CSV files are accepted., ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 788, in analyze
+    df, source = _read_dataframe_from_request()
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Pay_Sentinel\src\app.py", line 473, in _read_dataframe_from_request
+    raise ValueError(f"File validation failed: {error_msg}")
+ValueError: File validation failed: Invalid file type. Only CSV files are accepted.
+2026-05-10 10:42:04,590 - paysentinel - INFO - [analyze:786] [req=190db1f4] - [ANALYZE] START - merchant=My UPI Store, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,591 - paysentinel - DEBUG - [analyze:789] [req=190db1f4] - [ANALYZE] Data loaded - source=sample, rows=0
+2026-05-10 10:42:04,591 - paysentinel - ERROR - [analyze:806] [req=190db1f4] - [ANALYZE] ERROR - No transaction rows were provided. Upload a CSV or load sample data first., ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 791, in analyze
+    payload, detector, results = _run_analysis(df, merchant_name, sensitivity, language)
+                                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Pay_Sentinel\src\app.py", line 566, in _run_analysis
+    raise ValueError("No transaction rows were provided. Upload a CSV or load sample data first.")
+ValueError: No transaction rows were provided. Upload a CSV or load sample data first.
+2026-05-10 10:42:04,596 - paysentinel - INFO - [analyze:786] [req=6dc6b1d2] - [ANALYZE] START - merchant=Field Test Shop, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,601 - paysentinel - DEBUG - [analyze:789] [req=6dc6b1d2] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:04,601 - paysentinel - INFO - [_run_analysis:575] [req=6dc6b1d2] - Training new detector for Field Test Shop, contamination=0.05
+2026-05-10 10:42:04,602 - paysentinel - DEBUG - [_save_detector_cache:361] [req=6dc6b1d2] - Skipping detector cache save during tests: Field Test Shop, contamination=0.05
+2026-05-10 10:42:04,621 - paysentinel - INFO - [analyze:803] [req=6dc6b1d2] - [ANALYZE] SUCCESS - merchant=Field Test Shop, rows=1, ip=127.0.0.1
+2026-05-10 10:42:04,627 - paysentinel - INFO - [report:840] [req=d3a6340c] - [REPORT] START - merchant=Report Test Shop, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,633 - paysentinel - DEBUG - [report:843] [req=d3a6340c] - [REPORT] Data loaded - rows=1
+2026-05-10 10:42:04,633 - paysentinel - INFO - [_run_analysis:575] [req=d3a6340c] - Training new detector for Report Test Shop, contamination=0.05
+2026-05-10 10:42:04,633 - paysentinel - DEBUG - [_save_detector_cache:361] [req=d3a6340c] - Skipping detector cache save during tests: Report Test Shop, contamination=0.05
+2026-05-10 10:42:04,651 - paysentinel - INFO - [report:849] [req=d3a6340c] - [REPORT] SUCCESS - merchant=Report Test Shop, rows=1, pdf_size=3 bytes, ip=127.0.0.1
+2026-05-10 10:42:04,655 - paysentinel - INFO - [report:840] [req=ea8339f8] - [REPORT] START - merchant=Test Merchant Store, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,660 - paysentinel - DEBUG - [report:843] [req=ea8339f8] - [REPORT] Data loaded - rows=1
+2026-05-10 10:42:04,660 - paysentinel - INFO - [_run_analysis:575] [req=ea8339f8] - Training new detector for Test Merchant Store, contamination=0.05
+2026-05-10 10:42:04,660 - paysentinel - DEBUG - [_save_detector_cache:361] [req=ea8339f8] - Skipping detector cache save during tests: Test Merchant Store, contamination=0.05
+2026-05-10 10:42:04,672 - paysentinel - INFO - [report:849] [req=ea8339f8] - [REPORT] SUCCESS - merchant=Test Merchant Store, rows=1, pdf_size=3 bytes, ip=127.0.0.1
+2026-05-10 10:42:04,675 - paysentinel - INFO - [report:840] [req=23457c13] - [REPORT] START - merchant=Empty Report, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,676 - paysentinel - DEBUG - [report:843] [req=23457c13] - [REPORT] Data loaded - rows=0
+2026-05-10 10:42:04,676 - paysentinel - ERROR - [report:858] [req=23457c13] - [REPORT] ERROR - No transaction rows were provided. Upload a CSV or load sample data first., ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 845, in report
+    payload, detector, results = _run_analysis(df, merchant_name, sensitivity, language)
+                                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Pay_Sentinel\src\app.py", line 566, in _run_analysis
+    raise ValueError("No transaction rows were provided. Upload a CSV or load sample data first.")
+ValueError: No transaction rows were provided. Upload a CSV or load sample data first.
+2026-05-10 10:42:04,680 - paysentinel - INFO - [report:840] [req=6639dd0f] - [REPORT] START - merchant=Report Merchant, sensitivity=10%, language=Hindi, ip=127.0.0.1
+2026-05-10 10:42:04,685 - paysentinel - DEBUG - [report:843] [req=6639dd0f] - [REPORT] Data loaded - rows=1
+2026-05-10 10:42:04,686 - paysentinel - INFO - [_run_analysis:575] [req=6639dd0f] - Training new detector for Report Merchant, contamination=0.1
+2026-05-10 10:42:04,686 - paysentinel - DEBUG - [_save_detector_cache:361] [req=6639dd0f] - Skipping detector cache save during tests: Report Merchant, contamination=0.1
+2026-05-10 10:42:04,701 - paysentinel - INFO - [report:849] [req=6639dd0f] - [REPORT] SUCCESS - merchant=Report Merchant, rows=1, pdf_size=3 bytes, ip=127.0.0.1
+2026-05-10 10:42:04,719 - paysentinel - INFO - [analyze:786] [req=4468b6a8] - [ANALYZE] START - merchant=Bad CSV Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,720 - paysentinel.security - INFO - [log_sec:128] [req=4468b6a8] - [WARNING] DEEP_VAL_FAILED ip=12ca17b49af2 path=/api/analyze reason=CSV file is empty
+2026-05-10 10:42:04,720 - paysentinel - ERROR - [_read_dataframe_from_request:483] [req=4468b6a8] - Failed to parse CSV file: CSV file is empty
+2026-05-10 10:42:04,720 - paysentinel - ERROR - [analyze:806] [req=4468b6a8] - [ANALYZE] ERROR - Failed to parse CSV file: CSV file is empty, ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 479, in _read_dataframe_from_request
+    raise ValueError(err)
+ValueError: CSV file is empty
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 788, in analyze
+    df, source = _read_dataframe_from_request()
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Pay_Sentinel\src\app.py", line 484, in _read_dataframe_from_request
+    raise ValueError(f"Failed to parse CSV file: {str(e)}")
+ValueError: Failed to parse CSV file: CSV file is empty
+2026-05-10 10:42:04,726 - paysentinel - INFO - [analyze:786] [req=f25c8ec3] - [ANALYZE] START - merchant=Missing Amount Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,729 - paysentinel.security - INFO - [log_sec:128] [req=f25c8ec3] - [WARNING] DEEP_VAL_FAILED ip=12ca17b49af2 path=/api/analyze reason=CSV must include an 'amount' column
+2026-05-10 10:42:04,729 - paysentinel - ERROR - [_read_dataframe_from_request:483] [req=f25c8ec3] - Failed to parse CSV file: CSV must include an 'amount' column
+2026-05-10 10:42:04,729 - paysentinel - ERROR - [analyze:806] [req=f25c8ec3] - [ANALYZE] ERROR - Failed to parse CSV file: CSV must include an 'amount' column, ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 479, in _read_dataframe_from_request
+    raise ValueError(err)
+ValueError: CSV must include an 'amount' column
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 788, in analyze
+    df, source = _read_dataframe_from_request()
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Pay_Sentinel\src\app.py", line 484, in _read_dataframe_from_request
+    raise ValueError(f"Failed to parse CSV file: {str(e)}")
+ValueError: Failed to parse CSV file: CSV must include an 'amount' column
+2026-05-10 10:42:04,737 - paysentinel - INFO - [sample_data:733] [req=71371912] - [SAMPLE-DATA] merchant=My UPI Store, ip=127.0.0.1
+2026-05-10 10:42:04,745 - paysentinel - DEBUG - [sample_data:737] [req=71371912] - [SAMPLE-DATA] Generated 1 sample transactions
+2026-05-10 10:42:04,751 - paysentinel - INFO - [analyze:786] [req=0bec09d4] - [ANALYZE] START - merchant=Sensitivity Test, sensitivity=15%, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,759 - paysentinel - DEBUG - [analyze:789] [req=0bec09d4] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:04,760 - paysentinel - INFO - [_run_analysis:575] [req=0bec09d4] - Training new detector for Sensitivity Test, contamination=0.15
+2026-05-10 10:42:04,760 - paysentinel - DEBUG - [_save_detector_cache:361] [req=0bec09d4] - Skipping detector cache save during tests: Sensitivity Test, contamination=0.15
+2026-05-10 10:42:04,777 - paysentinel - INFO - [analyze:803] [req=0bec09d4] - [ANALYZE] SUCCESS - merchant=Sensitivity Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:04,782 - paysentinel - INFO - [analyze:786] [req=c5a5b85a] - [ANALYZE] START - merchant=Sensitivity Test, sensitivity=10, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,788 - paysentinel - DEBUG - [analyze:789] [req=c5a5b85a] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:04,789 - paysentinel - INFO - [_run_analysis:575] [req=c5a5b85a] - Training new detector for Sensitivity Test, contamination=0.1
+2026-05-10 10:42:04,789 - paysentinel - DEBUG - [_save_detector_cache:361] [req=c5a5b85a] - Skipping detector cache save during tests: Sensitivity Test, contamination=0.1
+2026-05-10 10:42:04,806 - paysentinel - INFO - [analyze:803] [req=c5a5b85a] - [ANALYZE] SUCCESS - merchant=Sensitivity Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:04,814 - paysentinel - INFO - [explain_fraud:998] [req=56a7a1c9] - [EXPLAIN] source=rule-based, lang=English, score=85.0
+2026-05-10 10:42:04,816 - paysentinel - INFO - [explain_fraud:998] [req=a1232343] - [EXPLAIN] source=rule-based, lang=Kannada, score=70.0
+2026-05-10 10:42:04,819 - paysentinel - INFO - [explain_fraud:998] [req=7f43315e] - [EXPLAIN] source=rule-based, lang=English, score=20.0
+2026-05-10 10:42:04,822 - paysentinel - INFO - [analyze:786] [req=4eb9a02d] - [ANALYZE] START - merchant=alertxssMerchant, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,826 - paysentinel - DEBUG - [analyze:789] [req=4eb9a02d] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:04,827 - paysentinel - INFO - [_run_analysis:575] [req=4eb9a02d] - Training new detector for alertxssMerchant, contamination=0.05
+2026-05-10 10:42:04,827 - paysentinel - DEBUG - [_save_detector_cache:361] [req=4eb9a02d] - Skipping detector cache save during tests: alertxssMerchant, contamination=0.05
+2026-05-10 10:42:04,839 - paysentinel - INFO - [analyze:803] [req=4eb9a02d] - [ANALYZE] SUCCESS - merchant=alertxssMerchant, rows=1, ip=127.0.0.1
+2026-05-10 10:42:04,843 - paysentinel - INFO - [analyze:786] [req=2de09883] - [ANALYZE] START - merchant=' DROP TABLE transactions --, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,847 - paysentinel - DEBUG - [analyze:789] [req=2de09883] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:04,847 - paysentinel - INFO - [_run_analysis:575] [req=2de09883] - Training new detector for ' DROP TABLE transactions --, contamination=0.05
+2026-05-10 10:42:04,848 - paysentinel - DEBUG - [_save_detector_cache:361] [req=2de09883] - Skipping detector cache save during tests: ' DROP TABLE transactions --, contamination=0.05
+2026-05-10 10:42:04,863 - paysentinel - INFO - [analyze:803] [req=2de09883] - [ANALYZE] SUCCESS - merchant=' DROP TABLE transactions --, rows=1, ip=127.0.0.1
+2026-05-10 10:42:04,869 - paysentinel - INFO - [analyze:786] [req=9ec38d4f] - [ANALYZE] START - merchant=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,874 - paysentinel - DEBUG - [analyze:789] [req=9ec38d4f] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:04,874 - paysentinel - INFO - [_run_analysis:575] [req=9ec38d4f] - Training new detector for AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, contamination=0.05
+2026-05-10 10:42:04,875 - paysentinel - DEBUG - [_save_detector_cache:361] [req=9ec38d4f] - Skipping detector cache save during tests: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, contamination=0.05
+2026-05-10 10:42:04,888 - paysentinel - INFO - [analyze:803] [req=9ec38d4f] - [ANALYZE] SUCCESS - merchant=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, rows=1, ip=127.0.0.1
+2026-05-10 10:42:04,891 - paysentinel - INFO - [analyze:786] [req=93cfd189] - [ANALYZE] START - merchant=My UPI Store, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,895 - paysentinel - DEBUG - [analyze:789] [req=93cfd189] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:04,911 - paysentinel - INFO - [_get_cached_detector:341] [req=93cfd189] - Cache expired for My UPI Store, contamination=0.05
+2026-05-10 10:42:04,911 - paysentinel - INFO - [_run_analysis:575] [req=93cfd189] - Training new detector for My UPI Store, contamination=0.05
+2026-05-10 10:42:04,912 - paysentinel - DEBUG - [_save_detector_cache:361] [req=93cfd189] - Skipping detector cache save during tests: My UPI Store, contamination=0.05
+2026-05-10 10:42:04,925 - paysentinel - INFO - [analyze:803] [req=93cfd189] - [ANALYZE] SUCCESS - merchant=My UPI Store, rows=1, ip=127.0.0.1
+2026-05-10 10:42:04,929 - paysentinel - INFO - [analyze:786] [req=63b42ce4] - [ANALYZE] START - merchant=Test, sensitivity=abc, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,933 - paysentinel - DEBUG - [analyze:789] [req=63b42ce4] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:04,934 - paysentinel - INFO - [_run_analysis:575] [req=63b42ce4] - Training new detector for Test, contamination=0.05
+2026-05-10 10:42:04,934 - paysentinel - DEBUG - [_save_detector_cache:361] [req=63b42ce4] - Skipping detector cache save during tests: Test, contamination=0.05
+2026-05-10 10:42:04,951 - paysentinel - INFO - [analyze:803] [req=63b42ce4] - [ANALYZE] SUCCESS - merchant=Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:04,953 - paysentinel - INFO - [analyze:786] [req=61ac2522] - [ANALYZE] START - merchant=Test, sensitivity=-5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,957 - paysentinel - DEBUG - [analyze:789] [req=61ac2522] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:04,957 - paysentinel - INFO - [_run_analysis:575] [req=61ac2522] - Training new detector for Test, contamination=0.01
+2026-05-10 10:42:04,957 - paysentinel - DEBUG - [_save_detector_cache:361] [req=61ac2522] - Skipping detector cache save during tests: Test, contamination=0.01
+2026-05-10 10:42:04,970 - paysentinel - INFO - [analyze:803] [req=61ac2522] - [ANALYZE] SUCCESS - merchant=Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:04,971 - paysentinel - INFO - [analyze:786] [req=4146424e] - [ANALYZE] START - merchant=Test, sensitivity=200%, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,975 - paysentinel - DEBUG - [analyze:789] [req=4146424e] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:04,976 - paysentinel - INFO - [_run_analysis:575] [req=4146424e] - Training new detector for Test, contamination=0.25
+2026-05-10 10:42:04,976 - paysentinel - DEBUG - [_save_detector_cache:361] [req=4146424e] - Skipping detector cache save during tests: Test, contamination=0.25
+2026-05-10 10:42:04,988 - paysentinel - INFO - [analyze:803] [req=4146424e] - [ANALYZE] SUCCESS - merchant=Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:04,989 - paysentinel - INFO - [analyze:786] [req=1d21cb3e] - [ANALYZE] START - merchant=Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:04,993 - paysentinel - DEBUG - [analyze:789] [req=1d21cb3e] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:04,994 - paysentinel - INFO - [_run_analysis:575] [req=1d21cb3e] - Training new detector for Test, contamination=0.05
+2026-05-10 10:42:04,994 - paysentinel - DEBUG - [_save_detector_cache:361] [req=1d21cb3e] - Skipping detector cache save during tests: Test, contamination=0.05
+2026-05-10 10:42:05,005 - paysentinel - INFO - [analyze:803] [req=1d21cb3e] - [ANALYZE] SUCCESS - merchant=Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:05,007 - paysentinel - INFO - [analyze:786] [req=53e86382] - [ANALYZE] START - merchant=Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:05,011 - paysentinel - DEBUG - [analyze:789] [req=53e86382] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:05,012 - paysentinel - INFO - [_run_analysis:575] [req=53e86382] - Training new detector for Test, contamination=0.05
+2026-05-10 10:42:05,012 - paysentinel - DEBUG - [_save_detector_cache:361] [req=53e86382] - Skipping detector cache save during tests: Test, contamination=0.05
+2026-05-10 10:42:05,024 - paysentinel - INFO - [analyze:803] [req=53e86382] - [ANALYZE] SUCCESS - merchant=Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:05,025 - paysentinel - INFO - [analyze:786] [req=088d3a05] - [ANALYZE] START - merchant=Test, sensitivity=0, language=English, ip=127.0.0.1
+2026-05-10 10:42:05,029 - paysentinel - DEBUG - [analyze:789] [req=088d3a05] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:05,029 - paysentinel - INFO - [_run_analysis:575] [req=088d3a05] - Training new detector for Test, contamination=0.01
+2026-05-10 10:42:05,030 - paysentinel - DEBUG - [_save_detector_cache:361] [req=088d3a05] - Skipping detector cache save during tests: Test, contamination=0.01
+2026-05-10 10:42:05,042 - paysentinel - INFO - [analyze:803] [req=088d3a05] - [ANALYZE] SUCCESS - merchant=Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:05,055 - paysentinel - INFO - [analyze:786] [req=09f5801f] - [ANALYZE] START - merchant=Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:05,057 - paysentinel.security - INFO - [log_sec:128] [req=09f5801f] - [WARNING] DEEP_VAL_FAILED ip=12ca17b49af2 path=/api/analyze reason=Amount column contains negative values
+2026-05-10 10:42:05,058 - paysentinel - ERROR - [_read_dataframe_from_request:483] [req=09f5801f] - Failed to parse CSV file: Amount column contains negative values
+2026-05-10 10:42:05,058 - paysentinel - ERROR - [analyze:806] [req=09f5801f] - [ANALYZE] ERROR - Failed to parse CSV file: Amount column contains negative values, ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 479, in _read_dataframe_from_request
+    raise ValueError(err)
+ValueError: Amount column contains negative values
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 788, in analyze
+    df, source = _read_dataframe_from_request()
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Pay_Sentinel\src\app.py", line 484, in _read_dataframe_from_request
+    raise ValueError(f"Failed to parse CSV file: {str(e)}")
+ValueError: Failed to parse CSV file: Amount column contains negative values
+2026-05-10 10:42:05,063 - paysentinel - INFO - [analyze:786] [req=33533914] - [ANALYZE] START - merchant=Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:05,502 - paysentinel - INFO - [analyze:786] [req=0ecda0a6] - [ANALYZE] START - merchant=Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:05,504 - paysentinel.security - INFO - [log_sec:128] [req=0ecda0a6] - [WARNING] DEEP_VAL_FAILED ip=12ca17b49af2 path=/api/analyze reason=Amount column has no valid numbers
+2026-05-10 10:42:05,505 - paysentinel - ERROR - [_read_dataframe_from_request:483] [req=0ecda0a6] - Failed to parse CSV file: Amount column has no valid numbers
+2026-05-10 10:42:05,505 - paysentinel - ERROR - [analyze:806] [req=0ecda0a6] - [ANALYZE] ERROR - Failed to parse CSV file: Amount column has no valid numbers, ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 479, in _read_dataframe_from_request
+    raise ValueError(err)
+ValueError: Amount column has no valid numbers
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 788, in analyze
+    df, source = _read_dataframe_from_request()
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Pay_Sentinel\src\app.py", line 484, in _read_dataframe_from_request
+    raise ValueError(f"Failed to parse CSV file: {str(e)}")
+ValueError: Failed to parse CSV file: Amount column has no valid numbers
+2026-05-10 10:42:05,511 - paysentinel - INFO - [analyze:786] [req=16d0bf4a] - [ANALYZE] START - merchant=Schema Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:05,518 - paysentinel - DEBUG - [analyze:789] [req=16d0bf4a] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:05,518 - paysentinel - INFO - [_run_analysis:575] [req=16d0bf4a] - Training new detector for Schema Test, contamination=0.05
+2026-05-10 10:42:05,518 - paysentinel - DEBUG - [_save_detector_cache:361] [req=16d0bf4a] - Skipping detector cache save during tests: Schema Test, contamination=0.05
+2026-05-10 10:42:05,535 - paysentinel - INFO - [analyze:803] [req=16d0bf4a] - [ANALYZE] SUCCESS - merchant=Schema Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:05,539 - paysentinel - INFO - [analyze:786] [req=82bce7b4] - [ANALYZE] START - merchant=FP Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:05,546 - paysentinel - DEBUG - [analyze:789] [req=82bce7b4] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:05,546 - paysentinel - INFO - [_run_analysis:575] [req=82bce7b4] - Training new detector for FP Test, contamination=0.05
+2026-05-10 10:42:05,546 - paysentinel - DEBUG - [_save_detector_cache:361] [req=82bce7b4] - Skipping detector cache save during tests: FP Test, contamination=0.05
+2026-05-10 10:42:05,567 - paysentinel - INFO - [analyze:803] [req=82bce7b4] - [ANALYZE] SUCCESS - merchant=FP Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:05,573 - paysentinel - INFO - [analyze:786] [req=3d61d199] - [ANALYZE] START - merchant=Heatmap Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:05,579 - paysentinel - DEBUG - [analyze:789] [req=3d61d199] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:05,579 - paysentinel - INFO - [_run_analysis:575] [req=3d61d199] - Training new detector for Heatmap Test, contamination=0.05
+2026-05-10 10:42:05,579 - paysentinel - DEBUG - [_save_detector_cache:361] [req=3d61d199] - Skipping detector cache save during tests: Heatmap Test, contamination=0.05
+2026-05-10 10:42:05,593 - paysentinel - INFO - [analyze:803] [req=3d61d199] - [ANALYZE] SUCCESS - merchant=Heatmap Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:05,636 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:05,659 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:05,678 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:05,699 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:05,726 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:05,755 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:05,983 - paysentinel.model - INFO - [display:129] [req=3d61d199] - ==================================================
+2026-05-10 10:42:05,984 - paysentinel.model - INFO - [display:130] [req=3d61d199] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:05,984 - paysentinel.model - INFO - [display:131] [req=3d61d199] -   Model ID:       2064925a9d30
+2026-05-10 10:42:05,984 - paysentinel.model - INFO - [display:132] [req=3d61d199] -   Trained:        2026-05-10T05:12:05.981159+00:00
+2026-05-10 10:42:05,984 - paysentinel.model - INFO - [display:133] [req=3d61d199] -   Training rows:  610
+2026-05-10 10:42:05,984 - paysentinel.model - INFO - [display:134] [req=3d61d199] -   Features:       11
+2026-05-10 10:42:05,984 - paysentinel.model - INFO - [display:135] [req=3d61d199] -   Contamination:  5.0%
+2026-05-10 10:42:05,984 - paysentinel.model - INFO - [display:136] [req=3d61d199] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:05,984 - paysentinel.model - INFO - [display:137] [req=3d61d199] - ==================================================
+2026-05-10 10:42:06,139 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:06,417 - paysentinel.model - INFO - [display:129] [req=3d61d199] - ==================================================
+2026-05-10 10:42:06,418 - paysentinel.model - INFO - [display:130] [req=3d61d199] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:06,418 - paysentinel.model - INFO - [display:131] [req=3d61d199] -   Model ID:       2064925a9d30
+2026-05-10 10:42:06,418 - paysentinel.model - INFO - [display:132] [req=3d61d199] -   Trained:        2026-05-10T05:12:06.415082+00:00
+2026-05-10 10:42:06,418 - paysentinel.model - INFO - [display:133] [req=3d61d199] -   Training rows:  610
+2026-05-10 10:42:06,418 - paysentinel.model - INFO - [display:134] [req=3d61d199] -   Features:       11
+2026-05-10 10:42:06,419 - paysentinel.model - INFO - [display:135] [req=3d61d199] -   Contamination:  5.0%
+2026-05-10 10:42:06,419 - paysentinel.model - INFO - [display:136] [req=3d61d199] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:06,419 - paysentinel.model - INFO - [display:137] [req=3d61d199] - ==================================================
+2026-05-10 10:42:06,562 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:06,773 - paysentinel.model - INFO - [display:129] [req=3d61d199] - ==================================================
+2026-05-10 10:42:06,774 - paysentinel.model - INFO - [display:130] [req=3d61d199] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:06,774 - paysentinel.model - INFO - [display:131] [req=3d61d199] -   Model ID:       2064925a9d30
+2026-05-10 10:42:06,774 - paysentinel.model - INFO - [display:132] [req=3d61d199] -   Trained:        2026-05-10T05:12:06.772034+00:00
+2026-05-10 10:42:06,774 - paysentinel.model - INFO - [display:133] [req=3d61d199] -   Training rows:  610
+2026-05-10 10:42:06,774 - paysentinel.model - INFO - [display:134] [req=3d61d199] -   Features:       11
+2026-05-10 10:42:06,774 - paysentinel.model - INFO - [display:135] [req=3d61d199] -   Contamination:  5.0%
+2026-05-10 10:42:06,774 - paysentinel.model - INFO - [display:136] [req=3d61d199] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:06,775 - paysentinel.model - INFO - [display:137] [req=3d61d199] - ==================================================
+2026-05-10 10:42:06,939 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:07,129 - paysentinel.model - INFO - [display:129] [req=3d61d199] - ==================================================
+2026-05-10 10:42:07,129 - paysentinel.model - INFO - [display:130] [req=3d61d199] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:07,129 - paysentinel.model - INFO - [display:131] [req=3d61d199] -   Model ID:       2064925a9d30
+2026-05-10 10:42:07,129 - paysentinel.model - INFO - [display:132] [req=3d61d199] -   Trained:        2026-05-10T05:12:07.125412+00:00
+2026-05-10 10:42:07,130 - paysentinel.model - INFO - [display:133] [req=3d61d199] -   Training rows:  610
+2026-05-10 10:42:07,130 - paysentinel.model - INFO - [display:134] [req=3d61d199] -   Features:       11
+2026-05-10 10:42:07,130 - paysentinel.model - INFO - [display:135] [req=3d61d199] -   Contamination:  5.0%
+2026-05-10 10:42:07,130 - paysentinel.model - INFO - [display:136] [req=3d61d199] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:07,130 - paysentinel.model - INFO - [display:137] [req=3d61d199] - ==================================================
+2026-05-10 10:42:07,295 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:07,484 - paysentinel.model - INFO - [display:129] [req=3d61d199] - ==================================================
+2026-05-10 10:42:07,484 - paysentinel.model - INFO - [display:130] [req=3d61d199] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:07,484 - paysentinel.model - INFO - [display:131] [req=3d61d199] -   Model ID:       2064925a9d30
+2026-05-10 10:42:07,485 - paysentinel.model - INFO - [display:132] [req=3d61d199] -   Trained:        2026-05-10T05:12:07.482267+00:00
+2026-05-10 10:42:07,485 - paysentinel.model - INFO - [display:133] [req=3d61d199] -   Training rows:  610
+2026-05-10 10:42:07,485 - paysentinel.model - INFO - [display:134] [req=3d61d199] -   Features:       11
+2026-05-10 10:42:07,485 - paysentinel.model - INFO - [display:135] [req=3d61d199] -   Contamination:  5.0%
+2026-05-10 10:42:07,485 - paysentinel.model - INFO - [display:136] [req=3d61d199] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:07,485 - paysentinel.model - INFO - [display:137] [req=3d61d199] - ==================================================
+2026-05-10 10:42:07,595 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:07,829 - paysentinel.model - INFO - [display:129] [req=3d61d199] - ==================================================
+2026-05-10 10:42:07,830 - paysentinel.model - INFO - [display:130] [req=3d61d199] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:07,830 - paysentinel.model - INFO - [display:131] [req=3d61d199] -   Model ID:       2064925a9d30
+2026-05-10 10:42:07,830 - paysentinel.model - INFO - [display:132] [req=3d61d199] -   Trained:        2026-05-10T05:12:07.828089+00:00
+2026-05-10 10:42:07,830 - paysentinel.model - INFO - [display:133] [req=3d61d199] -   Training rows:  610
+2026-05-10 10:42:07,830 - paysentinel.model - INFO - [display:134] [req=3d61d199] -   Features:       11
+2026-05-10 10:42:07,830 - paysentinel.model - INFO - [display:135] [req=3d61d199] -   Contamination:  5.0%
+2026-05-10 10:42:07,830 - paysentinel.model - INFO - [display:136] [req=3d61d199] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:07,830 - paysentinel.model - INFO - [display:137] [req=3d61d199] - ==================================================
+2026-05-10 10:42:07,949 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:08,116 - paysentinel.model - INFO - [display:129] [req=3d61d199] - ==================================================
+2026-05-10 10:42:08,116 - paysentinel.model - INFO - [display:130] [req=3d61d199] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:08,116 - paysentinel.model - INFO - [display:131] [req=3d61d199] -   Model ID:       2064925a9d30
+2026-05-10 10:42:08,117 - paysentinel.model - INFO - [display:132] [req=3d61d199] -   Trained:        2026-05-10T05:12:08.114886+00:00
+2026-05-10 10:42:08,117 - paysentinel.model - INFO - [display:133] [req=3d61d199] -   Training rows:  610
+2026-05-10 10:42:08,117 - paysentinel.model - INFO - [display:134] [req=3d61d199] -   Features:       11
+2026-05-10 10:42:08,117 - paysentinel.model - INFO - [display:135] [req=3d61d199] -   Contamination:  5.0%
+2026-05-10 10:42:08,117 - paysentinel.model - INFO - [display:136] [req=3d61d199] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:08,117 - paysentinel.model - INFO - [display:137] [req=3d61d199] - ==================================================
+2026-05-10 10:42:08,234 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:08,464 - paysentinel.model - INFO - [display:129] [req=3d61d199] - ==================================================
+2026-05-10 10:42:08,464 - paysentinel.model - INFO - [display:130] [req=3d61d199] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:08,464 - paysentinel.model - INFO - [display:131] [req=3d61d199] -   Model ID:       2064925a9d30
+2026-05-10 10:42:08,464 - paysentinel.model - INFO - [display:132] [req=3d61d199] -   Trained:        2026-05-10T05:12:08.461331+00:00
+2026-05-10 10:42:08,464 - paysentinel.model - INFO - [display:133] [req=3d61d199] -   Training rows:  610
+2026-05-10 10:42:08,464 - paysentinel.model - INFO - [display:134] [req=3d61d199] -   Features:       11
+2026-05-10 10:42:08,464 - paysentinel.model - INFO - [display:135] [req=3d61d199] -   Contamination:  5.0%
+2026-05-10 10:42:08,464 - paysentinel.model - INFO - [display:136] [req=3d61d199] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:08,465 - paysentinel.model - INFO - [display:137] [req=3d61d199] - ==================================================
+2026-05-10 10:42:08,590 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:08,830 - paysentinel.model - INFO - [display:129] [req=3d61d199] - ==================================================
+2026-05-10 10:42:08,830 - paysentinel.model - INFO - [display:130] [req=3d61d199] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:08,830 - paysentinel.model - INFO - [display:131] [req=3d61d199] -   Model ID:       2064925a9d30
+2026-05-10 10:42:08,830 - paysentinel.model - INFO - [display:132] [req=3d61d199] -   Trained:        2026-05-10T05:12:08.828092+00:00
+2026-05-10 10:42:08,830 - paysentinel.model - INFO - [display:133] [req=3d61d199] -   Training rows:  610
+2026-05-10 10:42:08,830 - paysentinel.model - INFO - [display:134] [req=3d61d199] -   Features:       11
+2026-05-10 10:42:08,830 - paysentinel.model - INFO - [display:135] [req=3d61d199] -   Contamination:  5.0%
+2026-05-10 10:42:08,830 - paysentinel.model - INFO - [display:136] [req=3d61d199] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:08,830 - paysentinel.model - INFO - [display:137] [req=3d61d199] - ==================================================
+2026-05-10 10:42:08,842 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:09,038 - paysentinel.model - INFO - [display:129] [req=3d61d199] - ==================================================
+2026-05-10 10:42:09,039 - paysentinel.model - INFO - [display:130] [req=3d61d199] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:09,039 - paysentinel.model - INFO - [display:131] [req=3d61d199] -   Model ID:       2064925a9d30
+2026-05-10 10:42:09,039 - paysentinel.model - INFO - [display:132] [req=3d61d199] -   Trained:        2026-05-10T05:12:09.036614+00:00
+2026-05-10 10:42:09,039 - paysentinel.model - INFO - [display:133] [req=3d61d199] -   Training rows:  610
+2026-05-10 10:42:09,039 - paysentinel.model - INFO - [display:134] [req=3d61d199] -   Features:       11
+2026-05-10 10:42:09,039 - paysentinel.model - INFO - [display:135] [req=3d61d199] -   Contamination:  5.0%
+2026-05-10 10:42:09,039 - paysentinel.model - INFO - [display:136] [req=3d61d199] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:09,039 - paysentinel.model - INFO - [display:137] [req=3d61d199] - ==================================================
+2026-05-10 10:42:09,052 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:09,286 - paysentinel.model - INFO - [display:129] [req=3d61d199] - ==================================================
+2026-05-10 10:42:09,286 - paysentinel.model - INFO - [display:130] [req=3d61d199] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:09,286 - paysentinel.model - INFO - [display:131] [req=3d61d199] -   Model ID:       2064925a9d30
+2026-05-10 10:42:09,286 - paysentinel.model - INFO - [display:132] [req=3d61d199] -   Trained:        2026-05-10T05:12:09.283410+00:00
+2026-05-10 10:42:09,287 - paysentinel.model - INFO - [display:133] [req=3d61d199] -   Training rows:  610
+2026-05-10 10:42:09,287 - paysentinel.model - INFO - [display:134] [req=3d61d199] -   Features:       11
+2026-05-10 10:42:09,287 - paysentinel.model - INFO - [display:135] [req=3d61d199] -   Contamination:  5.0%
+2026-05-10 10:42:09,287 - paysentinel.model - INFO - [display:136] [req=3d61d199] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:09,287 - paysentinel.model - INFO - [display:137] [req=3d61d199] - ==================================================
+2026-05-10 10:42:09,298 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:09,498 - paysentinel.model - INFO - [display:129] [req=3d61d199] - ==================================================
+2026-05-10 10:42:09,499 - paysentinel.model - INFO - [display:130] [req=3d61d199] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:09,499 - paysentinel.model - INFO - [display:131] [req=3d61d199] -   Model ID:       2064925a9d30
+2026-05-10 10:42:09,499 - paysentinel.model - INFO - [display:132] [req=3d61d199] -   Trained:        2026-05-10T05:12:09.496392+00:00
+2026-05-10 10:42:09,499 - paysentinel.model - INFO - [display:133] [req=3d61d199] -   Training rows:  610
+2026-05-10 10:42:09,499 - paysentinel.model - INFO - [display:134] [req=3d61d199] -   Features:       11
+2026-05-10 10:42:09,499 - paysentinel.model - INFO - [display:135] [req=3d61d199] -   Contamination:  5.0%
+2026-05-10 10:42:09,499 - paysentinel.model - INFO - [display:136] [req=3d61d199] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:09,499 - paysentinel.model - INFO - [display:137] [req=3d61d199] - ==================================================
+2026-05-10 10:42:09,513 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:09,699 - paysentinel.model - INFO - [display:129] [req=3d61d199] - ==================================================
+2026-05-10 10:42:09,700 - paysentinel.model - INFO - [display:130] [req=3d61d199] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:09,700 - paysentinel.model - INFO - [display:131] [req=3d61d199] -   Model ID:       2064925a9d30
+2026-05-10 10:42:09,700 - paysentinel.model - INFO - [display:132] [req=3d61d199] -   Trained:        2026-05-10T05:12:09.696811+00:00
+2026-05-10 10:42:09,700 - paysentinel.model - INFO - [display:133] [req=3d61d199] -   Training rows:  610
+2026-05-10 10:42:09,700 - paysentinel.model - INFO - [display:134] [req=3d61d199] -   Features:       11
+2026-05-10 10:42:09,701 - paysentinel.model - INFO - [display:135] [req=3d61d199] -   Contamination:  5.0%
+2026-05-10 10:42:09,701 - paysentinel.model - INFO - [display:136] [req=3d61d199] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:09,701 - paysentinel.model - INFO - [display:137] [req=3d61d199] - ==================================================
+2026-05-10 10:42:09,747 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:09,953 - paysentinel.model - INFO - [display:129] [req=3d61d199] - ==================================================
+2026-05-10 10:42:09,953 - paysentinel.model - INFO - [display:130] [req=3d61d199] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:09,953 - paysentinel.model - INFO - [display:131] [req=3d61d199] -   Model ID:       2064925a9d30
+2026-05-10 10:42:09,953 - paysentinel.model - INFO - [display:132] [req=3d61d199] -   Trained:        2026-05-10T05:12:09.950210+00:00
+2026-05-10 10:42:09,954 - paysentinel.model - INFO - [display:133] [req=3d61d199] -   Training rows:  610
+2026-05-10 10:42:09,954 - paysentinel.model - INFO - [display:134] [req=3d61d199] -   Features:       11
+2026-05-10 10:42:09,954 - paysentinel.model - INFO - [display:135] [req=3d61d199] -   Contamination:  5.0%
+2026-05-10 10:42:09,954 - paysentinel.model - INFO - [display:136] [req=3d61d199] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:09,954 - paysentinel.model - INFO - [display:137] [req=3d61d199] - ==================================================
+2026-05-10 10:42:10,027 - paysentinel.model - INFO - [save:320] [req=3d61d199] - [MODEL] Saved to C:\Users\YASHAS~1\AppData\Local\Temp\tmprqhfbomd\test_model.pkl
+2026-05-10 10:42:10,105 - paysentinel.model - INFO - [load:343] [req=3d61d199] - [MODEL] Loaded from C:\Users\YASHAS~1\AppData\Local\Temp\tmprqhfbomd\test_model.pkl
+2026-05-10 10:42:10,350 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:10,579 - paysentinel.model - INFO - [display:129] [req=3d61d199] - ==================================================
+2026-05-10 10:42:10,579 - paysentinel.model - INFO - [display:130] [req=3d61d199] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:10,579 - paysentinel.model - INFO - [display:131] [req=3d61d199] -   Model ID:       222ee9b7c5aa
+2026-05-10 10:42:10,579 - paysentinel.model - INFO - [display:132] [req=3d61d199] -   Trained:        2026-05-10T05:12:10.576608+00:00
+2026-05-10 10:42:10,579 - paysentinel.model - INFO - [display:133] [req=3d61d199] -   Training rows:  610
+2026-05-10 10:42:10,580 - paysentinel.model - INFO - [display:134] [req=3d61d199] -   Features:       11
+2026-05-10 10:42:10,580 - paysentinel.model - INFO - [display:135] [req=3d61d199] -   Contamination:  1.0%
+2026-05-10 10:42:10,580 - paysentinel.model - INFO - [display:136] [req=3d61d199] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:10,580 - paysentinel.model - INFO - [display:137] [req=3d61d199] - ==================================================
+2026-05-10 10:42:10,807 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:11,071 - paysentinel.model - INFO - [display:129] [req=3d61d199] - ==================================================
+2026-05-10 10:42:11,071 - paysentinel.model - INFO - [display:130] [req=3d61d199] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:11,072 - paysentinel.model - INFO - [display:131] [req=3d61d199] -   Model ID:       2064925a9d30
+2026-05-10 10:42:11,072 - paysentinel.model - INFO - [display:132] [req=3d61d199] -   Trained:        2026-05-10T05:12:11.068109+00:00
+2026-05-10 10:42:11,072 - paysentinel.model - INFO - [display:133] [req=3d61d199] -   Training rows:  610
+2026-05-10 10:42:11,072 - paysentinel.model - INFO - [display:134] [req=3d61d199] -   Features:       11
+2026-05-10 10:42:11,072 - paysentinel.model - INFO - [display:135] [req=3d61d199] -   Contamination:  5.0%
+2026-05-10 10:42:11,072 - paysentinel.model - INFO - [display:136] [req=3d61d199] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:11,072 - paysentinel.model - INFO - [display:137] [req=3d61d199] - ==================================================
+2026-05-10 10:42:11,227 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:11,445 - paysentinel.model - INFO - [display:129] [req=3d61d199] - ==================================================
+2026-05-10 10:42:11,445 - paysentinel.model - INFO - [display:130] [req=3d61d199] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:11,445 - paysentinel.model - INFO - [display:131] [req=3d61d199] -   Model ID:       27c7b1464784
+2026-05-10 10:42:11,445 - paysentinel.model - INFO - [display:132] [req=3d61d199] -   Trained:        2026-05-10T05:12:11.443229+00:00
+2026-05-10 10:42:11,445 - paysentinel.model - INFO - [display:133] [req=3d61d199] -   Training rows:  610
+2026-05-10 10:42:11,445 - paysentinel.model - INFO - [display:134] [req=3d61d199] -   Features:       11
+2026-05-10 10:42:11,445 - paysentinel.model - INFO - [display:135] [req=3d61d199] -   Contamination:  10.0%
+2026-05-10 10:42:11,445 - paysentinel.model - INFO - [display:136] [req=3d61d199] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:11,445 - paysentinel.model - INFO - [display:137] [req=3d61d199] - ==================================================
+2026-05-10 10:42:11,556 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=3d61d199] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:11,739 - paysentinel.model - INFO - [display:129] [req=3d61d199] - ==================================================
+2026-05-10 10:42:11,740 - paysentinel.model - INFO - [display:130] [req=3d61d199] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:11,740 - paysentinel.model - INFO - [display:131] [req=3d61d199] -   Model ID:       b370a5570c7e
+2026-05-10 10:42:11,740 - paysentinel.model - INFO - [display:132] [req=3d61d199] -   Trained:        2026-05-10T05:12:11.737962+00:00
+2026-05-10 10:42:11,740 - paysentinel.model - INFO - [display:133] [req=3d61d199] -   Training rows:  610
+2026-05-10 10:42:11,740 - paysentinel.model - INFO - [display:134] [req=3d61d199] -   Features:       11
+2026-05-10 10:42:11,740 - paysentinel.model - INFO - [display:135] [req=3d61d199] -   Contamination:  15.0%
+2026-05-10 10:42:11,740 - paysentinel.model - INFO - [display:136] [req=3d61d199] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:11,740 - paysentinel.model - INFO - [display:137] [req=3d61d199] - ==================================================
+2026-05-10 10:42:26,486 - paysentinel - INFO - [sample_data:733] [req=a16835bd] - [SAMPLE-DATA] merchant=Test Shop, ip=127.0.0.1
+2026-05-10 10:42:26,493 - paysentinel - DEBUG - [sample_data:737] [req=a16835bd] - [SAMPLE-DATA] Generated 1 sample transactions
+2026-05-10 10:42:26,496 - paysentinel - INFO - [sample_data:733] [req=60bd40fa] - [SAMPLE-DATA] merchant=My UPI Store, ip=127.0.0.1
+2026-05-10 10:42:26,501 - paysentinel - DEBUG - [sample_data:737] [req=60bd40fa] - [SAMPLE-DATA] Generated 1 sample transactions
+2026-05-10 10:42:26,528 - paysentinel - INFO - [analyze:786] [req=e0f8fc00] - [ANALYZE] START - merchant=Shop X, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:26,536 - paysentinel - DEBUG - [analyze:789] [req=e0f8fc00] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:26,536 - paysentinel - INFO - [_run_analysis:575] [req=e0f8fc00] - Training new detector for Shop X, contamination=0.05
+2026-05-10 10:42:26,537 - paysentinel - DEBUG - [_save_detector_cache:361] [req=e0f8fc00] - Skipping detector cache save during tests: Shop X, contamination=0.05
+2026-05-10 10:42:26,559 - paysentinel - INFO - [analyze:803] [req=e0f8fc00] - [ANALYZE] SUCCESS - merchant=Shop X, rows=1, ip=127.0.0.1
+2026-05-10 10:42:26,564 - paysentinel - INFO - [analyze:786] [req=618650ac] - [ANALYZE] START - merchant=Premium Store, sensitivity=8%, language=Kannada, ip=127.0.0.1
+2026-05-10 10:42:26,570 - paysentinel - DEBUG - [analyze:789] [req=618650ac] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:26,570 - paysentinel - INFO - [_run_analysis:575] [req=618650ac] - Training new detector for Premium Store, contamination=0.08
+2026-05-10 10:42:26,570 - paysentinel - DEBUG - [_save_detector_cache:361] [req=618650ac] - Skipping detector cache save during tests: Premium Store, contamination=0.08
+2026-05-10 10:42:26,587 - paysentinel - INFO - [analyze:803] [req=618650ac] - [ANALYZE] SUCCESS - merchant=Premium Store, rows=1, ip=127.0.0.1
+2026-05-10 10:42:26,590 - paysentinel - INFO - [analyze:786] [req=ba292fa5] - [ANALYZE] START - merchant=Shop X, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:26,591 - paysentinel - DEBUG - [analyze:789] [req=ba292fa5] - [ANALYZE] Data loaded - source=sample, rows=0
+2026-05-10 10:42:26,591 - paysentinel - ERROR - [analyze:806] [req=ba292fa5] - [ANALYZE] ERROR - No transaction rows were provided. Upload a CSV or load sample data first., ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 791, in analyze
+    payload, detector, results = _run_analysis(df, merchant_name, sensitivity, language)
+                                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Pay_Sentinel\src\app.py", line 566, in _run_analysis
+    raise ValueError("No transaction rows were provided. Upload a CSV or load sample data first.")
+ValueError: No transaction rows were provided. Upload a CSV or load sample data first.
+2026-05-10 10:42:26,651 - paysentinel - INFO - [analyze:786] [req=4a85f5ce] - [ANALYZE] START - merchant=File Upload Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:26,655 - paysentinel - INFO - [_read_dataframe_from_request:480] [req=4a85f5ce] - Uploaded file: test.csv, rows: 1
+2026-05-10 10:42:26,660 - paysentinel - DEBUG - [analyze:789] [req=4a85f5ce] - [ANALYZE] Data loaded - source=test.csv, rows=1
+2026-05-10 10:42:26,660 - paysentinel - INFO - [_run_analysis:575] [req=4a85f5ce] - Training new detector for File Upload Test, contamination=0.05
+2026-05-10 10:42:26,660 - paysentinel - DEBUG - [_save_detector_cache:361] [req=4a85f5ce] - Skipping detector cache save during tests: File Upload Test, contamination=0.05
+2026-05-10 10:42:26,672 - paysentinel - INFO - [analyze:803] [req=4a85f5ce] - [ANALYZE] SUCCESS - merchant=File Upload Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:26,725 - paysentinel - ERROR - [analyze:806] [req=929d33e9] - [ANALYZE] ERROR - 413 Request Entity Too Large: The data value transmitted exceeds the capacity limit., ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 782, in analyze
+    merchant_name = sanitize_merchant_name(_request_value("merchant_name", "My UPI Store"))
+                                           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Pay_Sentinel\src\app.py", line 450, in _request_value
+    payload = _request_payload()
+  File "C:\Pay_Sentinel\src\app.py", line 446, in _request_payload
+    return request.form.to_dict(flat=True)
+           ^^^^^^^^^^^^
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\utils.py", line 100, in __get__
+    value = self.fget(obj)  # type: ignore
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\wrappers\request.py", line 445, in form
+    self._load_form_data()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\flask\wrappers.py", line 114, in _load_form_data
+    super()._load_form_data()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\wrappers\request.py", line 272, in _load_form_data
+    self._get_stream_for_parsing(),
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\wrappers\request.py", line 299, in _get_stream_for_parsing
+    return self.stream
+           ^^^^^^^^^^^
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\utils.py", line 100, in __get__
+    value = self.fget(obj)  # type: ignore
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\wrappers\request.py", line 351, in stream
+    return get_input_stream(
+        self.environ, max_content_length=self.max_content_length
+    )
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\wsgi.py", line 173, in get_input_stream
+    raise RequestEntityTooLarge()
+werkzeug.exceptions.RequestEntityTooLarge: 413 Request Entity Too Large: The data value transmitted exceeds the capacity limit.
+2026-05-10 10:42:26,738 - paysentinel - INFO - [analyze:786] [req=899857bf] - [ANALYZE] START - merchant=Invalid File Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:26,739 - paysentinel.security - INFO - [log_sec:128] [req=899857bf] - [WARNING] BAD_FILE_UPLOAD ip=12ca17b49af2 path=/api/analyze file=test.bin reason=Invalid type
+2026-05-10 10:42:26,739 - paysentinel - ERROR - [analyze:806] [req=899857bf] - [ANALYZE] ERROR - File validation failed: Invalid file type. Only CSV files are accepted., ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 788, in analyze
+    df, source = _read_dataframe_from_request()
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Pay_Sentinel\src\app.py", line 473, in _read_dataframe_from_request
+    raise ValueError(f"File validation failed: {error_msg}")
+ValueError: File validation failed: Invalid file type. Only CSV files are accepted.
+2026-05-10 10:42:26,746 - paysentinel - INFO - [analyze:786] [req=33d5a3f5] - [ANALYZE] START - merchant=My UPI Store, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:26,747 - paysentinel - DEBUG - [analyze:789] [req=33d5a3f5] - [ANALYZE] Data loaded - source=sample, rows=0
+2026-05-10 10:42:26,748 - paysentinel - ERROR - [analyze:806] [req=33d5a3f5] - [ANALYZE] ERROR - No transaction rows were provided. Upload a CSV or load sample data first., ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 791, in analyze
+    payload, detector, results = _run_analysis(df, merchant_name, sensitivity, language)
+                                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Pay_Sentinel\src\app.py", line 566, in _run_analysis
+    raise ValueError("No transaction rows were provided. Upload a CSV or load sample data first.")
+ValueError: No transaction rows were provided. Upload a CSV or load sample data first.
+2026-05-10 10:42:26,753 - paysentinel - INFO - [analyze:786] [req=7b77338a] - [ANALYZE] START - merchant=Field Test Shop, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:26,760 - paysentinel - DEBUG - [analyze:789] [req=7b77338a] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:26,760 - paysentinel - INFO - [_run_analysis:575] [req=7b77338a] - Training new detector for Field Test Shop, contamination=0.05
+2026-05-10 10:42:26,761 - paysentinel - DEBUG - [_save_detector_cache:361] [req=7b77338a] - Skipping detector cache save during tests: Field Test Shop, contamination=0.05
+2026-05-10 10:42:26,783 - paysentinel - INFO - [analyze:803] [req=7b77338a] - [ANALYZE] SUCCESS - merchant=Field Test Shop, rows=1, ip=127.0.0.1
+2026-05-10 10:42:26,789 - paysentinel - INFO - [report:840] [req=00730cc4] - [REPORT] START - merchant=Report Test Shop, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:26,798 - paysentinel - DEBUG - [report:843] [req=00730cc4] - [REPORT] Data loaded - rows=1
+2026-05-10 10:42:26,798 - paysentinel - INFO - [_run_analysis:575] [req=00730cc4] - Training new detector for Report Test Shop, contamination=0.05
+2026-05-10 10:42:26,799 - paysentinel - DEBUG - [_save_detector_cache:361] [req=00730cc4] - Skipping detector cache save during tests: Report Test Shop, contamination=0.05
+2026-05-10 10:42:26,822 - paysentinel - INFO - [report:849] [req=00730cc4] - [REPORT] SUCCESS - merchant=Report Test Shop, rows=1, pdf_size=3 bytes, ip=127.0.0.1
+2026-05-10 10:42:26,828 - paysentinel - INFO - [report:840] [req=3da62982] - [REPORT] START - merchant=Test Merchant Store, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:26,835 - paysentinel - DEBUG - [report:843] [req=3da62982] - [REPORT] Data loaded - rows=1
+2026-05-10 10:42:26,836 - paysentinel - INFO - [_run_analysis:575] [req=3da62982] - Training new detector for Test Merchant Store, contamination=0.05
+2026-05-10 10:42:26,836 - paysentinel - DEBUG - [_save_detector_cache:361] [req=3da62982] - Skipping detector cache save during tests: Test Merchant Store, contamination=0.05
+2026-05-10 10:42:26,849 - paysentinel - INFO - [report:849] [req=3da62982] - [REPORT] SUCCESS - merchant=Test Merchant Store, rows=1, pdf_size=3 bytes, ip=127.0.0.1
+2026-05-10 10:42:26,852 - paysentinel - INFO - [report:840] [req=bbcc8eab] - [REPORT] START - merchant=Empty Report, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:26,853 - paysentinel - DEBUG - [report:843] [req=bbcc8eab] - [REPORT] Data loaded - rows=0
+2026-05-10 10:42:26,853 - paysentinel - ERROR - [report:858] [req=bbcc8eab] - [REPORT] ERROR - No transaction rows were provided. Upload a CSV or load sample data first., ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 845, in report
+    payload, detector, results = _run_analysis(df, merchant_name, sensitivity, language)
+                                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Pay_Sentinel\src\app.py", line 566, in _run_analysis
+    raise ValueError("No transaction rows were provided. Upload a CSV or load sample data first.")
+ValueError: No transaction rows were provided. Upload a CSV or load sample data first.
+2026-05-10 10:42:26,856 - paysentinel - INFO - [report:840] [req=3e8cd13c] - [REPORT] START - merchant=Report Merchant, sensitivity=10%, language=Hindi, ip=127.0.0.1
+2026-05-10 10:42:26,861 - paysentinel - DEBUG - [report:843] [req=3e8cd13c] - [REPORT] Data loaded - rows=1
+2026-05-10 10:42:26,861 - paysentinel - INFO - [_run_analysis:575] [req=3e8cd13c] - Training new detector for Report Merchant, contamination=0.1
+2026-05-10 10:42:26,861 - paysentinel - DEBUG - [_save_detector_cache:361] [req=3e8cd13c] - Skipping detector cache save during tests: Report Merchant, contamination=0.1
+2026-05-10 10:42:26,878 - paysentinel - INFO - [report:849] [req=3e8cd13c] - [REPORT] SUCCESS - merchant=Report Merchant, rows=1, pdf_size=3 bytes, ip=127.0.0.1
+2026-05-10 10:42:26,893 - paysentinel - INFO - [analyze:786] [req=b7f50194] - [ANALYZE] START - merchant=Bad CSV Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:26,895 - paysentinel.security - INFO - [log_sec:128] [req=b7f50194] - [WARNING] DEEP_VAL_FAILED ip=12ca17b49af2 path=/api/analyze reason=CSV file is empty
+2026-05-10 10:42:26,895 - paysentinel - ERROR - [_read_dataframe_from_request:483] [req=b7f50194] - Failed to parse CSV file: CSV file is empty
+2026-05-10 10:42:26,896 - paysentinel - ERROR - [analyze:806] [req=b7f50194] - [ANALYZE] ERROR - Failed to parse CSV file: CSV file is empty, ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 479, in _read_dataframe_from_request
+    raise ValueError(err)
+ValueError: CSV file is empty
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 788, in analyze
+    df, source = _read_dataframe_from_request()
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Pay_Sentinel\src\app.py", line 484, in _read_dataframe_from_request
+    raise ValueError(f"Failed to parse CSV file: {str(e)}")
+ValueError: Failed to parse CSV file: CSV file is empty
+2026-05-10 10:42:26,903 - paysentinel - INFO - [analyze:786] [req=5aa465bf] - [ANALYZE] START - merchant=Missing Amount Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:26,905 - paysentinel.security - INFO - [log_sec:128] [req=5aa465bf] - [WARNING] DEEP_VAL_FAILED ip=12ca17b49af2 path=/api/analyze reason=CSV must include an 'amount' column
+2026-05-10 10:42:26,905 - paysentinel - ERROR - [_read_dataframe_from_request:483] [req=5aa465bf] - Failed to parse CSV file: CSV must include an 'amount' column
+2026-05-10 10:42:26,905 - paysentinel - ERROR - [analyze:806] [req=5aa465bf] - [ANALYZE] ERROR - Failed to parse CSV file: CSV must include an 'amount' column, ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 479, in _read_dataframe_from_request
+    raise ValueError(err)
+ValueError: CSV must include an 'amount' column
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 788, in analyze
+    df, source = _read_dataframe_from_request()
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Pay_Sentinel\src\app.py", line 484, in _read_dataframe_from_request
+    raise ValueError(f"Failed to parse CSV file: {str(e)}")
+ValueError: Failed to parse CSV file: CSV must include an 'amount' column
+2026-05-10 10:42:26,912 - paysentinel - INFO - [sample_data:733] [req=780aa92f] - [SAMPLE-DATA] merchant=My UPI Store, ip=127.0.0.1
+2026-05-10 10:42:26,916 - paysentinel - DEBUG - [sample_data:737] [req=780aa92f] - [SAMPLE-DATA] Generated 1 sample transactions
+2026-05-10 10:42:26,919 - paysentinel - INFO - [analyze:786] [req=d40bd72e] - [ANALYZE] START - merchant=Sensitivity Test, sensitivity=15%, language=English, ip=127.0.0.1
+2026-05-10 10:42:26,924 - paysentinel - DEBUG - [analyze:789] [req=d40bd72e] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:26,924 - paysentinel - INFO - [_run_analysis:575] [req=d40bd72e] - Training new detector for Sensitivity Test, contamination=0.15
+2026-05-10 10:42:26,924 - paysentinel - DEBUG - [_save_detector_cache:361] [req=d40bd72e] - Skipping detector cache save during tests: Sensitivity Test, contamination=0.15
+2026-05-10 10:42:26,939 - paysentinel - INFO - [analyze:803] [req=d40bd72e] - [ANALYZE] SUCCESS - merchant=Sensitivity Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:26,944 - paysentinel - INFO - [analyze:786] [req=8cff6ebe] - [ANALYZE] START - merchant=Sensitivity Test, sensitivity=10, language=English, ip=127.0.0.1
+2026-05-10 10:42:26,950 - paysentinel - DEBUG - [analyze:789] [req=8cff6ebe] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:26,951 - paysentinel - INFO - [_run_analysis:575] [req=8cff6ebe] - Training new detector for Sensitivity Test, contamination=0.1
+2026-05-10 10:42:26,951 - paysentinel - DEBUG - [_save_detector_cache:361] [req=8cff6ebe] - Skipping detector cache save during tests: Sensitivity Test, contamination=0.1
+2026-05-10 10:42:26,967 - paysentinel - INFO - [analyze:803] [req=8cff6ebe] - [ANALYZE] SUCCESS - merchant=Sensitivity Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:26,974 - paysentinel - INFO - [explain_fraud:998] [req=9777fee5] - [EXPLAIN] source=rule-based, lang=English, score=85.0
+2026-05-10 10:42:26,977 - paysentinel - INFO - [explain_fraud:998] [req=f1149162] - [EXPLAIN] source=rule-based, lang=Kannada, score=70.0
+2026-05-10 10:42:26,981 - paysentinel - INFO - [explain_fraud:998] [req=192b58af] - [EXPLAIN] source=rule-based, lang=English, score=20.0
+2026-05-10 10:42:26,985 - paysentinel - INFO - [analyze:786] [req=d2111c50] - [ANALYZE] START - merchant=alertxssMerchant, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:26,993 - paysentinel - DEBUG - [analyze:789] [req=d2111c50] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:26,993 - paysentinel - INFO - [_run_analysis:575] [req=d2111c50] - Training new detector for alertxssMerchant, contamination=0.05
+2026-05-10 10:42:26,994 - paysentinel - DEBUG - [_save_detector_cache:361] [req=d2111c50] - Skipping detector cache save during tests: alertxssMerchant, contamination=0.05
+2026-05-10 10:42:27,013 - paysentinel - INFO - [analyze:803] [req=d2111c50] - [ANALYZE] SUCCESS - merchant=alertxssMerchant, rows=1, ip=127.0.0.1
+2026-05-10 10:42:27,017 - paysentinel - INFO - [analyze:786] [req=b767b966] - [ANALYZE] START - merchant=' DROP TABLE transactions --, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:27,021 - paysentinel - DEBUG - [analyze:789] [req=b767b966] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:27,021 - paysentinel - INFO - [_run_analysis:575] [req=b767b966] - Training new detector for ' DROP TABLE transactions --, contamination=0.05
+2026-05-10 10:42:27,021 - paysentinel - DEBUG - [_save_detector_cache:361] [req=b767b966] - Skipping detector cache save during tests: ' DROP TABLE transactions --, contamination=0.05
+2026-05-10 10:42:27,034 - paysentinel - INFO - [analyze:803] [req=b767b966] - [ANALYZE] SUCCESS - merchant=' DROP TABLE transactions --, rows=1, ip=127.0.0.1
+2026-05-10 10:42:27,039 - paysentinel - INFO - [analyze:786] [req=8ab0ce8e] - [ANALYZE] START - merchant=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:27,044 - paysentinel - DEBUG - [analyze:789] [req=8ab0ce8e] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:27,044 - paysentinel - INFO - [_run_analysis:575] [req=8ab0ce8e] - Training new detector for AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, contamination=0.05
+2026-05-10 10:42:27,044 - paysentinel - DEBUG - [_save_detector_cache:361] [req=8ab0ce8e] - Skipping detector cache save during tests: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, contamination=0.05
+2026-05-10 10:42:27,055 - paysentinel - INFO - [analyze:803] [req=8ab0ce8e] - [ANALYZE] SUCCESS - merchant=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, rows=1, ip=127.0.0.1
+2026-05-10 10:42:27,058 - paysentinel - INFO - [analyze:786] [req=e6c7182f] - [ANALYZE] START - merchant=My UPI Store, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:27,063 - paysentinel - DEBUG - [analyze:789] [req=e6c7182f] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:27,063 - paysentinel - INFO - [_get_cached_detector:341] [req=e6c7182f] - Cache expired for My UPI Store, contamination=0.05
+2026-05-10 10:42:27,064 - paysentinel - INFO - [_run_analysis:575] [req=e6c7182f] - Training new detector for My UPI Store, contamination=0.05
+2026-05-10 10:42:27,064 - paysentinel - DEBUG - [_save_detector_cache:361] [req=e6c7182f] - Skipping detector cache save during tests: My UPI Store, contamination=0.05
+2026-05-10 10:42:27,081 - paysentinel - INFO - [analyze:803] [req=e6c7182f] - [ANALYZE] SUCCESS - merchant=My UPI Store, rows=1, ip=127.0.0.1
+2026-05-10 10:42:27,085 - paysentinel - INFO - [analyze:786] [req=0833ae88] - [ANALYZE] START - merchant=Test, sensitivity=abc, language=English, ip=127.0.0.1
+2026-05-10 10:42:27,092 - paysentinel - DEBUG - [analyze:789] [req=0833ae88] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:27,092 - paysentinel - INFO - [_run_analysis:575] [req=0833ae88] - Training new detector for Test, contamination=0.05
+2026-05-10 10:42:27,092 - paysentinel - DEBUG - [_save_detector_cache:361] [req=0833ae88] - Skipping detector cache save during tests: Test, contamination=0.05
+2026-05-10 10:42:27,111 - paysentinel - INFO - [analyze:803] [req=0833ae88] - [ANALYZE] SUCCESS - merchant=Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:27,113 - paysentinel - INFO - [analyze:786] [req=b666cf41] - [ANALYZE] START - merchant=Test, sensitivity=-5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:27,119 - paysentinel - DEBUG - [analyze:789] [req=b666cf41] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:27,119 - paysentinel - INFO - [_run_analysis:575] [req=b666cf41] - Training new detector for Test, contamination=0.01
+2026-05-10 10:42:27,119 - paysentinel - DEBUG - [_save_detector_cache:361] [req=b666cf41] - Skipping detector cache save during tests: Test, contamination=0.01
+2026-05-10 10:42:27,138 - paysentinel - INFO - [analyze:803] [req=b666cf41] - [ANALYZE] SUCCESS - merchant=Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:27,139 - paysentinel - INFO - [analyze:786] [req=2b8e1f5b] - [ANALYZE] START - merchant=Test, sensitivity=200%, language=English, ip=127.0.0.1
+2026-05-10 10:42:27,147 - paysentinel - DEBUG - [analyze:789] [req=2b8e1f5b] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:27,147 - paysentinel - INFO - [_run_analysis:575] [req=2b8e1f5b] - Training new detector for Test, contamination=0.25
+2026-05-10 10:42:27,148 - paysentinel - DEBUG - [_save_detector_cache:361] [req=2b8e1f5b] - Skipping detector cache save during tests: Test, contamination=0.25
+2026-05-10 10:42:27,166 - paysentinel - INFO - [analyze:803] [req=2b8e1f5b] - [ANALYZE] SUCCESS - merchant=Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:27,168 - paysentinel - INFO - [analyze:786] [req=59699aac] - [ANALYZE] START - merchant=Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:27,173 - paysentinel - DEBUG - [analyze:789] [req=59699aac] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:27,173 - paysentinel - INFO - [_run_analysis:575] [req=59699aac] - Training new detector for Test, contamination=0.05
+2026-05-10 10:42:27,173 - paysentinel - DEBUG - [_save_detector_cache:361] [req=59699aac] - Skipping detector cache save during tests: Test, contamination=0.05
+2026-05-10 10:42:27,184 - paysentinel - INFO - [analyze:803] [req=59699aac] - [ANALYZE] SUCCESS - merchant=Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:27,186 - paysentinel - INFO - [analyze:786] [req=02e74018] - [ANALYZE] START - merchant=Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:27,189 - paysentinel - DEBUG - [analyze:789] [req=02e74018] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:27,189 - paysentinel - INFO - [_run_analysis:575] [req=02e74018] - Training new detector for Test, contamination=0.05
+2026-05-10 10:42:27,190 - paysentinel - DEBUG - [_save_detector_cache:361] [req=02e74018] - Skipping detector cache save during tests: Test, contamination=0.05
+2026-05-10 10:42:27,201 - paysentinel - INFO - [analyze:803] [req=02e74018] - [ANALYZE] SUCCESS - merchant=Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:27,203 - paysentinel - INFO - [analyze:786] [req=8aba4a1d] - [ANALYZE] START - merchant=Test, sensitivity=0, language=English, ip=127.0.0.1
+2026-05-10 10:42:27,206 - paysentinel - DEBUG - [analyze:789] [req=8aba4a1d] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:27,206 - paysentinel - INFO - [_run_analysis:575] [req=8aba4a1d] - Training new detector for Test, contamination=0.01
+2026-05-10 10:42:27,206 - paysentinel - DEBUG - [_save_detector_cache:361] [req=8aba4a1d] - Skipping detector cache save during tests: Test, contamination=0.01
+2026-05-10 10:42:27,217 - paysentinel - INFO - [analyze:803] [req=8aba4a1d] - [ANALYZE] SUCCESS - merchant=Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:27,234 - paysentinel - INFO - [analyze:786] [req=10d6b6e5] - [ANALYZE] START - merchant=Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:27,236 - paysentinel.security - INFO - [log_sec:128] [req=10d6b6e5] - [WARNING] DEEP_VAL_FAILED ip=12ca17b49af2 path=/api/analyze reason=Amount column contains negative values
+2026-05-10 10:42:27,236 - paysentinel - ERROR - [_read_dataframe_from_request:483] [req=10d6b6e5] - Failed to parse CSV file: Amount column contains negative values
+2026-05-10 10:42:27,236 - paysentinel - ERROR - [analyze:806] [req=10d6b6e5] - [ANALYZE] ERROR - Failed to parse CSV file: Amount column contains negative values, ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 479, in _read_dataframe_from_request
+    raise ValueError(err)
+ValueError: Amount column contains negative values
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 788, in analyze
+    df, source = _read_dataframe_from_request()
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Pay_Sentinel\src\app.py", line 484, in _read_dataframe_from_request
+    raise ValueError(f"Failed to parse CSV file: {str(e)}")
+ValueError: Failed to parse CSV file: Amount column contains negative values
+2026-05-10 10:42:27,240 - paysentinel - INFO - [analyze:786] [req=f4c62533] - [ANALYZE] START - merchant=Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:27,258 - paysentinel - INFO - [analyze:786] [req=9a617317] - [ANALYZE] START - merchant=Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:27,260 - paysentinel.security - INFO - [log_sec:128] [req=9a617317] - [WARNING] DEEP_VAL_FAILED ip=12ca17b49af2 path=/api/analyze reason=Amount column has no valid numbers
+2026-05-10 10:42:27,260 - paysentinel - ERROR - [_read_dataframe_from_request:483] [req=9a617317] - Failed to parse CSV file: Amount column has no valid numbers
+2026-05-10 10:42:27,261 - paysentinel - ERROR - [analyze:806] [req=9a617317] - [ANALYZE] ERROR - Failed to parse CSV file: Amount column has no valid numbers, ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 479, in _read_dataframe_from_request
+    raise ValueError(err)
+ValueError: Amount column has no valid numbers
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 788, in analyze
+    df, source = _read_dataframe_from_request()
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Pay_Sentinel\src\app.py", line 484, in _read_dataframe_from_request
+    raise ValueError(f"Failed to parse CSV file: {str(e)}")
+ValueError: Failed to parse CSV file: Amount column has no valid numbers
+2026-05-10 10:42:27,265 - paysentinel - INFO - [analyze:786] [req=ada6396e] - [ANALYZE] START - merchant=Schema Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:27,271 - paysentinel - DEBUG - [analyze:789] [req=ada6396e] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:27,271 - paysentinel - INFO - [_run_analysis:575] [req=ada6396e] - Training new detector for Schema Test, contamination=0.05
+2026-05-10 10:42:27,271 - paysentinel - DEBUG - [_save_detector_cache:361] [req=ada6396e] - Skipping detector cache save during tests: Schema Test, contamination=0.05
+2026-05-10 10:42:27,289 - paysentinel - INFO - [analyze:803] [req=ada6396e] - [ANALYZE] SUCCESS - merchant=Schema Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:27,295 - paysentinel - INFO - [analyze:786] [req=54f4de50] - [ANALYZE] START - merchant=FP Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:27,300 - paysentinel - DEBUG - [analyze:789] [req=54f4de50] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:27,300 - paysentinel - INFO - [_run_analysis:575] [req=54f4de50] - Training new detector for FP Test, contamination=0.05
+2026-05-10 10:42:27,301 - paysentinel - DEBUG - [_save_detector_cache:361] [req=54f4de50] - Skipping detector cache save during tests: FP Test, contamination=0.05
+2026-05-10 10:42:27,314 - paysentinel - INFO - [analyze:803] [req=54f4de50] - [ANALYZE] SUCCESS - merchant=FP Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:27,318 - paysentinel - INFO - [analyze:786] [req=d95ed881] - [ANALYZE] START - merchant=Heatmap Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:42:27,323 - paysentinel - DEBUG - [analyze:789] [req=d95ed881] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:42:27,323 - paysentinel - INFO - [_run_analysis:575] [req=d95ed881] - Training new detector for Heatmap Test, contamination=0.05
+2026-05-10 10:42:27,323 - paysentinel - DEBUG - [_save_detector_cache:361] [req=d95ed881] - Skipping detector cache save during tests: Heatmap Test, contamination=0.05
+2026-05-10 10:42:27,340 - paysentinel - INFO - [analyze:803] [req=d95ed881] - [ANALYZE] SUCCESS - merchant=Heatmap Test, rows=1, ip=127.0.0.1
+2026-05-10 10:42:27,371 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:27,399 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:27,426 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:27,453 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:27,483 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:27,520 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:27,754 - paysentinel.model - INFO - [display:129] [req=d95ed881] - ==================================================
+2026-05-10 10:42:27,755 - paysentinel.model - INFO - [display:130] [req=d95ed881] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:27,755 - paysentinel.model - INFO - [display:131] [req=d95ed881] -   Model ID:       2064925a9d30
+2026-05-10 10:42:27,755 - paysentinel.model - INFO - [display:132] [req=d95ed881] -   Trained:        2026-05-10T05:12:27.751126+00:00
+2026-05-10 10:42:27,755 - paysentinel.model - INFO - [display:133] [req=d95ed881] -   Training rows:  610
+2026-05-10 10:42:27,756 - paysentinel.model - INFO - [display:134] [req=d95ed881] -   Features:       11
+2026-05-10 10:42:27,756 - paysentinel.model - INFO - [display:135] [req=d95ed881] -   Contamination:  5.0%
+2026-05-10 10:42:27,756 - paysentinel.model - INFO - [display:136] [req=d95ed881] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:27,756 - paysentinel.model - INFO - [display:137] [req=d95ed881] - ==================================================
+2026-05-10 10:42:27,926 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:28,152 - paysentinel.model - INFO - [display:129] [req=d95ed881] - ==================================================
+2026-05-10 10:42:28,152 - paysentinel.model - INFO - [display:130] [req=d95ed881] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:28,152 - paysentinel.model - INFO - [display:131] [req=d95ed881] -   Model ID:       2064925a9d30
+2026-05-10 10:42:28,152 - paysentinel.model - INFO - [display:132] [req=d95ed881] -   Trained:        2026-05-10T05:12:28.150846+00:00
+2026-05-10 10:42:28,152 - paysentinel.model - INFO - [display:133] [req=d95ed881] -   Training rows:  610
+2026-05-10 10:42:28,152 - paysentinel.model - INFO - [display:134] [req=d95ed881] -   Features:       11
+2026-05-10 10:42:28,153 - paysentinel.model - INFO - [display:135] [req=d95ed881] -   Contamination:  5.0%
+2026-05-10 10:42:28,153 - paysentinel.model - INFO - [display:136] [req=d95ed881] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:28,153 - paysentinel.model - INFO - [display:137] [req=d95ed881] - ==================================================
+2026-05-10 10:42:28,248 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:28,479 - paysentinel.model - INFO - [display:129] [req=d95ed881] - ==================================================
+2026-05-10 10:42:28,479 - paysentinel.model - INFO - [display:130] [req=d95ed881] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:28,479 - paysentinel.model - INFO - [display:131] [req=d95ed881] -   Model ID:       2064925a9d30
+2026-05-10 10:42:28,479 - paysentinel.model - INFO - [display:132] [req=d95ed881] -   Trained:        2026-05-10T05:12:28.476704+00:00
+2026-05-10 10:42:28,479 - paysentinel.model - INFO - [display:133] [req=d95ed881] -   Training rows:  610
+2026-05-10 10:42:28,480 - paysentinel.model - INFO - [display:134] [req=d95ed881] -   Features:       11
+2026-05-10 10:42:28,480 - paysentinel.model - INFO - [display:135] [req=d95ed881] -   Contamination:  5.0%
+2026-05-10 10:42:28,480 - paysentinel.model - INFO - [display:136] [req=d95ed881] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:28,480 - paysentinel.model - INFO - [display:137] [req=d95ed881] - ==================================================
+2026-05-10 10:42:28,582 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:28,847 - paysentinel.model - INFO - [display:129] [req=d95ed881] - ==================================================
+2026-05-10 10:42:28,847 - paysentinel.model - INFO - [display:130] [req=d95ed881] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:28,847 - paysentinel.model - INFO - [display:131] [req=d95ed881] -   Model ID:       2064925a9d30
+2026-05-10 10:42:28,847 - paysentinel.model - INFO - [display:132] [req=d95ed881] -   Trained:        2026-05-10T05:12:28.843641+00:00
+2026-05-10 10:42:28,848 - paysentinel.model - INFO - [display:133] [req=d95ed881] -   Training rows:  610
+2026-05-10 10:42:28,848 - paysentinel.model - INFO - [display:134] [req=d95ed881] -   Features:       11
+2026-05-10 10:42:28,848 - paysentinel.model - INFO - [display:135] [req=d95ed881] -   Contamination:  5.0%
+2026-05-10 10:42:28,848 - paysentinel.model - INFO - [display:136] [req=d95ed881] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:28,848 - paysentinel.model - INFO - [display:137] [req=d95ed881] - ==================================================
+2026-05-10 10:42:29,021 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:29,241 - paysentinel.model - INFO - [display:129] [req=d95ed881] - ==================================================
+2026-05-10 10:42:29,242 - paysentinel.model - INFO - [display:130] [req=d95ed881] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:29,242 - paysentinel.model - INFO - [display:131] [req=d95ed881] -   Model ID:       2064925a9d30
+2026-05-10 10:42:29,242 - paysentinel.model - INFO - [display:132] [req=d95ed881] -   Trained:        2026-05-10T05:12:29.239339+00:00
+2026-05-10 10:42:29,242 - paysentinel.model - INFO - [display:133] [req=d95ed881] -   Training rows:  610
+2026-05-10 10:42:29,242 - paysentinel.model - INFO - [display:134] [req=d95ed881] -   Features:       11
+2026-05-10 10:42:29,242 - paysentinel.model - INFO - [display:135] [req=d95ed881] -   Contamination:  5.0%
+2026-05-10 10:42:29,242 - paysentinel.model - INFO - [display:136] [req=d95ed881] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:29,242 - paysentinel.model - INFO - [display:137] [req=d95ed881] - ==================================================
+2026-05-10 10:42:29,370 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:29,590 - paysentinel.model - INFO - [display:129] [req=d95ed881] - ==================================================
+2026-05-10 10:42:29,591 - paysentinel.model - INFO - [display:130] [req=d95ed881] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:29,591 - paysentinel.model - INFO - [display:131] [req=d95ed881] -   Model ID:       2064925a9d30
+2026-05-10 10:42:29,592 - paysentinel.model - INFO - [display:132] [req=d95ed881] -   Trained:        2026-05-10T05:12:29.588247+00:00
+2026-05-10 10:42:29,592 - paysentinel.model - INFO - [display:133] [req=d95ed881] -   Training rows:  610
+2026-05-10 10:42:29,592 - paysentinel.model - INFO - [display:134] [req=d95ed881] -   Features:       11
+2026-05-10 10:42:29,592 - paysentinel.model - INFO - [display:135] [req=d95ed881] -   Contamination:  5.0%
+2026-05-10 10:42:29,592 - paysentinel.model - INFO - [display:136] [req=d95ed881] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:29,592 - paysentinel.model - INFO - [display:137] [req=d95ed881] - ==================================================
+2026-05-10 10:42:29,757 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:30,012 - paysentinel.model - INFO - [display:129] [req=d95ed881] - ==================================================
+2026-05-10 10:42:30,012 - paysentinel.model - INFO - [display:130] [req=d95ed881] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:30,012 - paysentinel.model - INFO - [display:131] [req=d95ed881] -   Model ID:       2064925a9d30
+2026-05-10 10:42:30,012 - paysentinel.model - INFO - [display:132] [req=d95ed881] -   Trained:        2026-05-10T05:12:30.008211+00:00
+2026-05-10 10:42:30,012 - paysentinel.model - INFO - [display:133] [req=d95ed881] -   Training rows:  610
+2026-05-10 10:42:30,013 - paysentinel.model - INFO - [display:134] [req=d95ed881] -   Features:       11
+2026-05-10 10:42:30,013 - paysentinel.model - INFO - [display:135] [req=d95ed881] -   Contamination:  5.0%
+2026-05-10 10:42:30,013 - paysentinel.model - INFO - [display:136] [req=d95ed881] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:30,013 - paysentinel.model - INFO - [display:137] [req=d95ed881] - ==================================================
+2026-05-10 10:42:30,173 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:30,336 - paysentinel.model - INFO - [display:129] [req=d95ed881] - ==================================================
+2026-05-10 10:42:30,336 - paysentinel.model - INFO - [display:130] [req=d95ed881] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:30,336 - paysentinel.model - INFO - [display:131] [req=d95ed881] -   Model ID:       2064925a9d30
+2026-05-10 10:42:30,336 - paysentinel.model - INFO - [display:132] [req=d95ed881] -   Trained:        2026-05-10T05:12:30.334227+00:00
+2026-05-10 10:42:30,336 - paysentinel.model - INFO - [display:133] [req=d95ed881] -   Training rows:  610
+2026-05-10 10:42:30,336 - paysentinel.model - INFO - [display:134] [req=d95ed881] -   Features:       11
+2026-05-10 10:42:30,337 - paysentinel.model - INFO - [display:135] [req=d95ed881] -   Contamination:  5.0%
+2026-05-10 10:42:30,337 - paysentinel.model - INFO - [display:136] [req=d95ed881] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:30,337 - paysentinel.model - INFO - [display:137] [req=d95ed881] - ==================================================
+2026-05-10 10:42:30,456 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:30,685 - paysentinel.model - INFO - [display:129] [req=d95ed881] - ==================================================
+2026-05-10 10:42:30,686 - paysentinel.model - INFO - [display:130] [req=d95ed881] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:30,686 - paysentinel.model - INFO - [display:131] [req=d95ed881] -   Model ID:       2064925a9d30
+2026-05-10 10:42:30,686 - paysentinel.model - INFO - [display:132] [req=d95ed881] -   Trained:        2026-05-10T05:12:30.684117+00:00
+2026-05-10 10:42:30,686 - paysentinel.model - INFO - [display:133] [req=d95ed881] -   Training rows:  610
+2026-05-10 10:42:30,686 - paysentinel.model - INFO - [display:134] [req=d95ed881] -   Features:       11
+2026-05-10 10:42:30,686 - paysentinel.model - INFO - [display:135] [req=d95ed881] -   Contamination:  5.0%
+2026-05-10 10:42:30,686 - paysentinel.model - INFO - [display:136] [req=d95ed881] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:30,686 - paysentinel.model - INFO - [display:137] [req=d95ed881] - ==================================================
+2026-05-10 10:42:30,695 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:30,895 - paysentinel.model - INFO - [display:129] [req=d95ed881] - ==================================================
+2026-05-10 10:42:30,896 - paysentinel.model - INFO - [display:130] [req=d95ed881] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:30,896 - paysentinel.model - INFO - [display:131] [req=d95ed881] -   Model ID:       2064925a9d30
+2026-05-10 10:42:30,896 - paysentinel.model - INFO - [display:132] [req=d95ed881] -   Trained:        2026-05-10T05:12:30.891894+00:00
+2026-05-10 10:42:30,896 - paysentinel.model - INFO - [display:133] [req=d95ed881] -   Training rows:  610
+2026-05-10 10:42:30,896 - paysentinel.model - INFO - [display:134] [req=d95ed881] -   Features:       11
+2026-05-10 10:42:30,896 - paysentinel.model - INFO - [display:135] [req=d95ed881] -   Contamination:  5.0%
+2026-05-10 10:42:30,896 - paysentinel.model - INFO - [display:136] [req=d95ed881] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:30,896 - paysentinel.model - INFO - [display:137] [req=d95ed881] - ==================================================
+2026-05-10 10:42:30,914 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:31,229 - paysentinel.model - INFO - [display:129] [req=d95ed881] - ==================================================
+2026-05-10 10:42:31,229 - paysentinel.model - INFO - [display:130] [req=d95ed881] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:31,230 - paysentinel.model - INFO - [display:131] [req=d95ed881] -   Model ID:       2064925a9d30
+2026-05-10 10:42:31,230 - paysentinel.model - INFO - [display:132] [req=d95ed881] -   Trained:        2026-05-10T05:12:31.226435+00:00
+2026-05-10 10:42:31,230 - paysentinel.model - INFO - [display:133] [req=d95ed881] -   Training rows:  610
+2026-05-10 10:42:31,230 - paysentinel.model - INFO - [display:134] [req=d95ed881] -   Features:       11
+2026-05-10 10:42:31,230 - paysentinel.model - INFO - [display:135] [req=d95ed881] -   Contamination:  5.0%
+2026-05-10 10:42:31,230 - paysentinel.model - INFO - [display:136] [req=d95ed881] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:31,230 - paysentinel.model - INFO - [display:137] [req=d95ed881] - ==================================================
+2026-05-10 10:42:31,247 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:31,448 - paysentinel.model - INFO - [display:129] [req=d95ed881] - ==================================================
+2026-05-10 10:42:31,448 - paysentinel.model - INFO - [display:130] [req=d95ed881] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:31,448 - paysentinel.model - INFO - [display:131] [req=d95ed881] -   Model ID:       2064925a9d30
+2026-05-10 10:42:31,448 - paysentinel.model - INFO - [display:132] [req=d95ed881] -   Trained:        2026-05-10T05:12:31.445352+00:00
+2026-05-10 10:42:31,449 - paysentinel.model - INFO - [display:133] [req=d95ed881] -   Training rows:  610
+2026-05-10 10:42:31,449 - paysentinel.model - INFO - [display:134] [req=d95ed881] -   Features:       11
+2026-05-10 10:42:31,449 - paysentinel.model - INFO - [display:135] [req=d95ed881] -   Contamination:  5.0%
+2026-05-10 10:42:31,449 - paysentinel.model - INFO - [display:136] [req=d95ed881] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:31,449 - paysentinel.model - INFO - [display:137] [req=d95ed881] - ==================================================
+2026-05-10 10:42:31,463 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:31,736 - paysentinel.model - INFO - [display:129] [req=d95ed881] - ==================================================
+2026-05-10 10:42:31,737 - paysentinel.model - INFO - [display:130] [req=d95ed881] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:31,737 - paysentinel.model - INFO - [display:131] [req=d95ed881] -   Model ID:       2064925a9d30
+2026-05-10 10:42:31,737 - paysentinel.model - INFO - [display:132] [req=d95ed881] -   Trained:        2026-05-10T05:12:31.733812+00:00
+2026-05-10 10:42:31,737 - paysentinel.model - INFO - [display:133] [req=d95ed881] -   Training rows:  610
+2026-05-10 10:42:31,737 - paysentinel.model - INFO - [display:134] [req=d95ed881] -   Features:       11
+2026-05-10 10:42:31,737 - paysentinel.model - INFO - [display:135] [req=d95ed881] -   Contamination:  5.0%
+2026-05-10 10:42:31,737 - paysentinel.model - INFO - [display:136] [req=d95ed881] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:31,737 - paysentinel.model - INFO - [display:137] [req=d95ed881] - ==================================================
+2026-05-10 10:42:31,778 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:32,036 - paysentinel.model - INFO - [display:129] [req=d95ed881] - ==================================================
+2026-05-10 10:42:32,037 - paysentinel.model - INFO - [display:130] [req=d95ed881] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:32,037 - paysentinel.model - INFO - [display:131] [req=d95ed881] -   Model ID:       2064925a9d30
+2026-05-10 10:42:32,037 - paysentinel.model - INFO - [display:132] [req=d95ed881] -   Trained:        2026-05-10T05:12:32.034907+00:00
+2026-05-10 10:42:32,037 - paysentinel.model - INFO - [display:133] [req=d95ed881] -   Training rows:  610
+2026-05-10 10:42:32,037 - paysentinel.model - INFO - [display:134] [req=d95ed881] -   Features:       11
+2026-05-10 10:42:32,037 - paysentinel.model - INFO - [display:135] [req=d95ed881] -   Contamination:  5.0%
+2026-05-10 10:42:32,037 - paysentinel.model - INFO - [display:136] [req=d95ed881] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:32,037 - paysentinel.model - INFO - [display:137] [req=d95ed881] - ==================================================
+2026-05-10 10:42:32,101 - paysentinel.model - INFO - [save:320] [req=d95ed881] - [MODEL] Saved to C:\Users\YASHAS~1\AppData\Local\Temp\tmpdpbpudoa\test_model.pkl
+2026-05-10 10:42:32,163 - paysentinel.model - INFO - [load:343] [req=d95ed881] - [MODEL] Loaded from C:\Users\YASHAS~1\AppData\Local\Temp\tmpdpbpudoa\test_model.pkl
+2026-05-10 10:42:32,470 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:32,757 - paysentinel.model - INFO - [display:129] [req=d95ed881] - ==================================================
+2026-05-10 10:42:32,758 - paysentinel.model - INFO - [display:130] [req=d95ed881] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:32,758 - paysentinel.model - INFO - [display:131] [req=d95ed881] -   Model ID:       222ee9b7c5aa
+2026-05-10 10:42:32,758 - paysentinel.model - INFO - [display:132] [req=d95ed881] -   Trained:        2026-05-10T05:12:32.754190+00:00
+2026-05-10 10:42:32,758 - paysentinel.model - INFO - [display:133] [req=d95ed881] -   Training rows:  610
+2026-05-10 10:42:32,758 - paysentinel.model - INFO - [display:134] [req=d95ed881] -   Features:       11
+2026-05-10 10:42:32,758 - paysentinel.model - INFO - [display:135] [req=d95ed881] -   Contamination:  1.0%
+2026-05-10 10:42:32,758 - paysentinel.model - INFO - [display:136] [req=d95ed881] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:32,759 - paysentinel.model - INFO - [display:137] [req=d95ed881] - ==================================================
+2026-05-10 10:42:32,969 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:33,221 - paysentinel.model - INFO - [display:129] [req=d95ed881] - ==================================================
+2026-05-10 10:42:33,221 - paysentinel.model - INFO - [display:130] [req=d95ed881] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:33,221 - paysentinel.model - INFO - [display:131] [req=d95ed881] -   Model ID:       2064925a9d30
+2026-05-10 10:42:33,222 - paysentinel.model - INFO - [display:132] [req=d95ed881] -   Trained:        2026-05-10T05:12:33.218265+00:00
+2026-05-10 10:42:33,222 - paysentinel.model - INFO - [display:133] [req=d95ed881] -   Training rows:  610
+2026-05-10 10:42:33,222 - paysentinel.model - INFO - [display:134] [req=d95ed881] -   Features:       11
+2026-05-10 10:42:33,222 - paysentinel.model - INFO - [display:135] [req=d95ed881] -   Contamination:  5.0%
+2026-05-10 10:42:33,222 - paysentinel.model - INFO - [display:136] [req=d95ed881] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:33,222 - paysentinel.model - INFO - [display:137] [req=d95ed881] - ==================================================
+2026-05-10 10:42:33,375 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:33,626 - paysentinel.model - INFO - [display:129] [req=d95ed881] - ==================================================
+2026-05-10 10:42:33,627 - paysentinel.model - INFO - [display:130] [req=d95ed881] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:33,627 - paysentinel.model - INFO - [display:131] [req=d95ed881] -   Model ID:       27c7b1464784
+2026-05-10 10:42:33,627 - paysentinel.model - INFO - [display:132] [req=d95ed881] -   Trained:        2026-05-10T05:12:33.622176+00:00
+2026-05-10 10:42:33,627 - paysentinel.model - INFO - [display:133] [req=d95ed881] -   Training rows:  610
+2026-05-10 10:42:33,627 - paysentinel.model - INFO - [display:134] [req=d95ed881] -   Features:       11
+2026-05-10 10:42:33,627 - paysentinel.model - INFO - [display:135] [req=d95ed881] -   Contamination:  10.0%
+2026-05-10 10:42:33,627 - paysentinel.model - INFO - [display:136] [req=d95ed881] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:33,628 - paysentinel.model - INFO - [display:137] [req=d95ed881] - ==================================================
+2026-05-10 10:42:33,778 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:34,016 - paysentinel.model - INFO - [display:129] [req=d95ed881] - ==================================================
+2026-05-10 10:42:34,016 - paysentinel.model - INFO - [display:130] [req=d95ed881] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:34,017 - paysentinel.model - INFO - [display:131] [req=d95ed881] -   Model ID:       b370a5570c7e
+2026-05-10 10:42:34,017 - paysentinel.model - INFO - [display:132] [req=d95ed881] -   Trained:        2026-05-10T05:12:34.013224+00:00
+2026-05-10 10:42:34,017 - paysentinel.model - INFO - [display:133] [req=d95ed881] -   Training rows:  610
+2026-05-10 10:42:34,017 - paysentinel.model - INFO - [display:134] [req=d95ed881] -   Features:       11
+2026-05-10 10:42:34,017 - paysentinel.model - INFO - [display:135] [req=d95ed881] -   Contamination:  15.0%
+2026-05-10 10:42:34,017 - paysentinel.model - INFO - [display:136] [req=d95ed881] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:34,017 - paysentinel.model - INFO - [display:137] [req=d95ed881] - ==================================================
+2026-05-10 10:42:34,160 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=d95ed881] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:42:34,427 - paysentinel.model - INFO - [display:129] [req=d95ed881] - ==================================================
+2026-05-10 10:42:34,427 - paysentinel.model - INFO - [display:130] [req=d95ed881] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:42:34,427 - paysentinel.model - INFO - [display:131] [req=d95ed881] -   Model ID:       b3aa34199c49
+2026-05-10 10:42:34,428 - paysentinel.model - INFO - [display:132] [req=d95ed881] -   Trained:        2026-05-10T05:12:34.425722+00:00
+2026-05-10 10:42:34,428 - paysentinel.model - INFO - [display:133] [req=d95ed881] -   Training rows:  610
+2026-05-10 10:42:34,428 - paysentinel.model - INFO - [display:134] [req=d95ed881] -   Features:       11
+2026-05-10 10:42:34,428 - paysentinel.model - INFO - [display:135] [req=d95ed881] -   Contamination:  25.0%
+2026-05-10 10:42:34,428 - paysentinel.model - INFO - [display:136] [req=d95ed881] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:42:34,428 - paysentinel.model - INFO - [display:137] [req=d95ed881] - ==================================================
+2026-05-10 10:48:27,646 - paysentinel - INFO - [sample_data:732] [req=b2bb75d2] - [SAMPLE-DATA] merchant=Test Shop, ip=127.0.0.1
+2026-05-10 10:48:27,680 - paysentinel - DEBUG - [sample_data:736] [req=b2bb75d2] - [SAMPLE-DATA] Generated 1 sample transactions
+2026-05-10 10:48:27,687 - paysentinel - INFO - [sample_data:732] [req=812866ab] - [SAMPLE-DATA] merchant=My UPI Store, ip=127.0.0.1
+2026-05-10 10:48:27,692 - paysentinel - DEBUG - [sample_data:736] [req=812866ab] - [SAMPLE-DATA] Generated 1 sample transactions
+2026-05-10 10:48:27,713 - paysentinel - INFO - [analyze:785] [req=691a8068] - [ANALYZE] START - merchant=Shop X, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:27,720 - paysentinel - DEBUG - [analyze:788] [req=691a8068] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:48:27,721 - paysentinel - INFO - [_run_analysis:574] [req=691a8068] - Training new detector for Shop X, contamination=0.05
+2026-05-10 10:48:27,721 - paysentinel - DEBUG - [_save_detector_cache:360] [req=691a8068] - Skipping detector cache save during tests: Shop X, contamination=0.05
+2026-05-10 10:48:27,774 - paysentinel - INFO - [analyze:802] [req=691a8068] - [ANALYZE] SUCCESS - merchant=Shop X, rows=1, ip=127.0.0.1
+2026-05-10 10:48:27,778 - paysentinel - INFO - [analyze:785] [req=a2fdee13] - [ANALYZE] START - merchant=Premium Store, sensitivity=8%, language=Kannada, ip=127.0.0.1
+2026-05-10 10:48:27,782 - paysentinel - DEBUG - [analyze:788] [req=a2fdee13] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:48:27,783 - paysentinel - INFO - [_run_analysis:574] [req=a2fdee13] - Training new detector for Premium Store, contamination=0.08
+2026-05-10 10:48:27,783 - paysentinel - DEBUG - [_save_detector_cache:360] [req=a2fdee13] - Skipping detector cache save during tests: Premium Store, contamination=0.08
+2026-05-10 10:48:27,799 - paysentinel - INFO - [analyze:802] [req=a2fdee13] - [ANALYZE] SUCCESS - merchant=Premium Store, rows=1, ip=127.0.0.1
+2026-05-10 10:48:27,802 - paysentinel - INFO - [analyze:785] [req=25db9e87] - [ANALYZE] START - merchant=Shop X, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:27,803 - paysentinel - DEBUG - [analyze:788] [req=25db9e87] - [ANALYZE] Data loaded - source=sample, rows=0
+2026-05-10 10:48:27,803 - paysentinel - ERROR - [analyze:805] [req=25db9e87] - [ANALYZE] ERROR - No transaction rows were provided. Upload a CSV or load sample data first., ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 790, in analyze
+    payload, detector, results = _run_analysis(df, merchant_name, sensitivity, language)
+                                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Pay_Sentinel\src\app.py", line 565, in _run_analysis
+    raise ValueError("No transaction rows were provided. Upload a CSV or load sample data first.")
+ValueError: No transaction rows were provided. Upload a CSV or load sample data first.
+2026-05-10 10:48:27,893 - paysentinel - INFO - [analyze:785] [req=fa86982f] - [ANALYZE] START - merchant=File Upload Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:27,905 - paysentinel - INFO - [_read_dataframe_from_request:479] [req=fa86982f] - Uploaded file: test.csv, rows: 1
+2026-05-10 10:48:27,912 - paysentinel - DEBUG - [analyze:788] [req=fa86982f] - [ANALYZE] Data loaded - source=test.csv, rows=1
+2026-05-10 10:48:27,912 - paysentinel - INFO - [_run_analysis:574] [req=fa86982f] - Training new detector for File Upload Test, contamination=0.05
+2026-05-10 10:48:27,913 - paysentinel - DEBUG - [_save_detector_cache:360] [req=fa86982f] - Skipping detector cache save during tests: File Upload Test, contamination=0.05
+2026-05-10 10:48:27,944 - paysentinel - INFO - [analyze:802] [req=fa86982f] - [ANALYZE] SUCCESS - merchant=File Upload Test, rows=1, ip=127.0.0.1
+2026-05-10 10:48:28,038 - paysentinel - ERROR - [analyze:805] [req=e2674bfd] - [ANALYZE] ERROR - 413 Request Entity Too Large: The data value transmitted exceeds the capacity limit., ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 781, in analyze
+    merchant_name = sanitize_merchant_name(_request_value("merchant_name", "My UPI Store"))
+                                           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Pay_Sentinel\src\app.py", line 449, in _request_value
+    payload = _request_payload()
+  File "C:\Pay_Sentinel\src\app.py", line 445, in _request_payload
+    return request.form.to_dict(flat=True)
+           ^^^^^^^^^^^^
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\utils.py", line 100, in __get__
+    value = self.fget(obj)  # type: ignore
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\wrappers\request.py", line 445, in form
+    self._load_form_data()
+    ~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\flask\wrappers.py", line 114, in _load_form_data
+    super()._load_form_data()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\wrappers\request.py", line 272, in _load_form_data
+    self._get_stream_for_parsing(),
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\wrappers\request.py", line 299, in _get_stream_for_parsing
+    return self.stream
+           ^^^^^^^^^^^
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\utils.py", line 100, in __get__
+    value = self.fget(obj)  # type: ignore
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\wrappers\request.py", line 351, in stream
+    return get_input_stream(
+        self.environ, max_content_length=self.max_content_length
+    )
+  File "C:\Users\YASHASHWINI\AppData\Local\Python\pythoncore-3.14-64\Lib\site-packages\werkzeug\wsgi.py", line 173, in get_input_stream
+    raise RequestEntityTooLarge()
+werkzeug.exceptions.RequestEntityTooLarge: 413 Request Entity Too Large: The data value transmitted exceeds the capacity limit.
+2026-05-10 10:48:28,059 - paysentinel - INFO - [analyze:785] [req=89fd70e2] - [ANALYZE] START - merchant=Invalid File Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:28,061 - paysentinel.security - INFO - [log_sec:127] [req=89fd70e2] - [WARNING] BAD_FILE_UPLOAD ip=12ca17b49af2 path=/api/analyze file=test.bin reason=Invalid type
+2026-05-10 10:48:28,062 - paysentinel - ERROR - [analyze:805] [req=89fd70e2] - [ANALYZE] ERROR - File validation failed: Invalid file type. Only CSV files are accepted., ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 787, in analyze
+    df, source = _read_dataframe_from_request()
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Pay_Sentinel\src\app.py", line 472, in _read_dataframe_from_request
+    raise ValueError(f"File validation failed: {error_msg}")
+ValueError: File validation failed: Invalid file type. Only CSV files are accepted.
+2026-05-10 10:48:28,070 - paysentinel - INFO - [analyze:785] [req=ef884c1a] - [ANALYZE] START - merchant=My UPI Store, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:28,072 - paysentinel - DEBUG - [analyze:788] [req=ef884c1a] - [ANALYZE] Data loaded - source=sample, rows=0
+2026-05-10 10:48:28,072 - paysentinel - ERROR - [analyze:805] [req=ef884c1a] - [ANALYZE] ERROR - No transaction rows were provided. Upload a CSV or load sample data first., ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 790, in analyze
+    payload, detector, results = _run_analysis(df, merchant_name, sensitivity, language)
+                                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Pay_Sentinel\src\app.py", line 565, in _run_analysis
+    raise ValueError("No transaction rows were provided. Upload a CSV or load sample data first.")
+ValueError: No transaction rows were provided. Upload a CSV or load sample data first.
+2026-05-10 10:48:28,078 - paysentinel - INFO - [analyze:785] [req=5749c4de] - [ANALYZE] START - merchant=Field Test Shop, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:28,102 - paysentinel - DEBUG - [analyze:788] [req=5749c4de] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:48:28,102 - paysentinel - INFO - [_run_analysis:574] [req=5749c4de] - Training new detector for Field Test Shop, contamination=0.05
+2026-05-10 10:48:28,103 - paysentinel - DEBUG - [_save_detector_cache:360] [req=5749c4de] - Skipping detector cache save during tests: Field Test Shop, contamination=0.05
+2026-05-10 10:48:28,165 - paysentinel - INFO - [analyze:802] [req=5749c4de] - [ANALYZE] SUCCESS - merchant=Field Test Shop, rows=1, ip=127.0.0.1
+2026-05-10 10:48:28,174 - paysentinel - INFO - [report:839] [req=9a91997d] - [REPORT] START - merchant=Report Test Shop, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:28,194 - paysentinel - DEBUG - [report:842] [req=9a91997d] - [REPORT] Data loaded - rows=1
+2026-05-10 10:48:28,195 - paysentinel - INFO - [_run_analysis:574] [req=9a91997d] - Training new detector for Report Test Shop, contamination=0.05
+2026-05-10 10:48:28,195 - paysentinel - DEBUG - [_save_detector_cache:360] [req=9a91997d] - Skipping detector cache save during tests: Report Test Shop, contamination=0.05
+2026-05-10 10:48:28,241 - paysentinel - INFO - [report:848] [req=9a91997d] - [REPORT] SUCCESS - merchant=Report Test Shop, rows=1, pdf_size=3 bytes, ip=127.0.0.1
+2026-05-10 10:48:28,249 - paysentinel - INFO - [report:839] [req=c023251c] - [REPORT] START - merchant=Test Merchant Store, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:28,264 - paysentinel - DEBUG - [report:842] [req=c023251c] - [REPORT] Data loaded - rows=1
+2026-05-10 10:48:28,264 - paysentinel - INFO - [_run_analysis:574] [req=c023251c] - Training new detector for Test Merchant Store, contamination=0.05
+2026-05-10 10:48:28,265 - paysentinel - DEBUG - [_save_detector_cache:360] [req=c023251c] - Skipping detector cache save during tests: Test Merchant Store, contamination=0.05
+2026-05-10 10:48:28,306 - paysentinel - INFO - [report:848] [req=c023251c] - [REPORT] SUCCESS - merchant=Test Merchant Store, rows=1, pdf_size=3 bytes, ip=127.0.0.1
+2026-05-10 10:48:28,314 - paysentinel - INFO - [report:839] [req=dd72c72e] - [REPORT] START - merchant=Empty Report, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:28,317 - paysentinel - DEBUG - [report:842] [req=dd72c72e] - [REPORT] Data loaded - rows=0
+2026-05-10 10:48:28,318 - paysentinel - ERROR - [report:857] [req=dd72c72e] - [REPORT] ERROR - No transaction rows were provided. Upload a CSV or load sample data first., ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 844, in report
+    payload, detector, results = _run_analysis(df, merchant_name, sensitivity, language)
+                                 ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Pay_Sentinel\src\app.py", line 565, in _run_analysis
+    raise ValueError("No transaction rows were provided. Upload a CSV or load sample data first.")
+ValueError: No transaction rows were provided. Upload a CSV or load sample data first.
+2026-05-10 10:48:28,327 - paysentinel - INFO - [report:839] [req=54bd2c85] - [REPORT] START - merchant=Report Merchant, sensitivity=10%, language=Hindi, ip=127.0.0.1
+2026-05-10 10:48:28,340 - paysentinel - DEBUG - [report:842] [req=54bd2c85] - [REPORT] Data loaded - rows=1
+2026-05-10 10:48:28,349 - paysentinel - INFO - [_run_analysis:574] [req=54bd2c85] - Training new detector for Report Merchant, contamination=0.1
+2026-05-10 10:48:28,349 - paysentinel - DEBUG - [_save_detector_cache:360] [req=54bd2c85] - Skipping detector cache save during tests: Report Merchant, contamination=0.1
+2026-05-10 10:48:28,390 - paysentinel - INFO - [report:848] [req=54bd2c85] - [REPORT] SUCCESS - merchant=Report Merchant, rows=1, pdf_size=3 bytes, ip=127.0.0.1
+2026-05-10 10:48:28,414 - paysentinel - INFO - [analyze:785] [req=38499996] - [ANALYZE] START - merchant=Bad CSV Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:28,419 - paysentinel.security - INFO - [log_sec:127] [req=38499996] - [WARNING] DEEP_VAL_FAILED ip=12ca17b49af2 path=/api/analyze reason=CSV file is empty
+2026-05-10 10:48:28,419 - paysentinel - ERROR - [_read_dataframe_from_request:482] [req=38499996] - Failed to parse CSV file: CSV file is empty
+2026-05-10 10:48:28,420 - paysentinel - ERROR - [analyze:805] [req=38499996] - [ANALYZE] ERROR - Failed to parse CSV file: CSV file is empty, ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 478, in _read_dataframe_from_request
+    raise ValueError(err)
+ValueError: CSV file is empty
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 787, in analyze
+    df, source = _read_dataframe_from_request()
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Pay_Sentinel\src\app.py", line 483, in _read_dataframe_from_request
+    raise ValueError(f"Failed to parse CSV file: {str(e)}")
+ValueError: Failed to parse CSV file: CSV file is empty
+2026-05-10 10:48:28,430 - paysentinel - INFO - [analyze:785] [req=f1230bce] - [ANALYZE] START - merchant=Missing Amount Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:28,435 - paysentinel.security - INFO - [log_sec:127] [req=f1230bce] - [WARNING] DEEP_VAL_FAILED ip=12ca17b49af2 path=/api/analyze reason=CSV must include an 'amount' column
+2026-05-10 10:48:28,436 - paysentinel - ERROR - [_read_dataframe_from_request:482] [req=f1230bce] - Failed to parse CSV file: CSV must include an 'amount' column
+2026-05-10 10:48:28,436 - paysentinel - ERROR - [analyze:805] [req=f1230bce] - [ANALYZE] ERROR - Failed to parse CSV file: CSV must include an 'amount' column, ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 478, in _read_dataframe_from_request
+    raise ValueError(err)
+ValueError: CSV must include an 'amount' column
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 787, in analyze
+    df, source = _read_dataframe_from_request()
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Pay_Sentinel\src\app.py", line 483, in _read_dataframe_from_request
+    raise ValueError(f"Failed to parse CSV file: {str(e)}")
+ValueError: Failed to parse CSV file: CSV must include an 'amount' column
+2026-05-10 10:48:28,452 - paysentinel - INFO - [sample_data:732] [req=af80e259] - [SAMPLE-DATA] merchant=My UPI Store, ip=127.0.0.1
+2026-05-10 10:48:28,463 - paysentinel - DEBUG - [sample_data:736] [req=af80e259] - [SAMPLE-DATA] Generated 1 sample transactions
+2026-05-10 10:48:28,472 - paysentinel - INFO - [analyze:785] [req=f7a92592] - [ANALYZE] START - merchant=Sensitivity Test, sensitivity=15%, language=English, ip=127.0.0.1
+2026-05-10 10:48:28,482 - paysentinel - DEBUG - [analyze:788] [req=f7a92592] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:48:28,484 - paysentinel - INFO - [_run_analysis:574] [req=f7a92592] - Training new detector for Sensitivity Test, contamination=0.15
+2026-05-10 10:48:28,484 - paysentinel - DEBUG - [_save_detector_cache:360] [req=f7a92592] - Skipping detector cache save during tests: Sensitivity Test, contamination=0.15
+2026-05-10 10:48:28,528 - paysentinel - INFO - [analyze:802] [req=f7a92592] - [ANALYZE] SUCCESS - merchant=Sensitivity Test, rows=1, ip=127.0.0.1
+2026-05-10 10:48:28,536 - paysentinel - INFO - [analyze:785] [req=5fb9717f] - [ANALYZE] START - merchant=Sensitivity Test, sensitivity=10, language=English, ip=127.0.0.1
+2026-05-10 10:48:28,547 - paysentinel - DEBUG - [analyze:788] [req=5fb9717f] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:48:28,548 - paysentinel - INFO - [_run_analysis:574] [req=5fb9717f] - Training new detector for Sensitivity Test, contamination=0.1
+2026-05-10 10:48:28,548 - paysentinel - DEBUG - [_save_detector_cache:360] [req=5fb9717f] - Skipping detector cache save during tests: Sensitivity Test, contamination=0.1
+2026-05-10 10:48:28,599 - paysentinel - INFO - [analyze:802] [req=5fb9717f] - [ANALYZE] SUCCESS - merchant=Sensitivity Test, rows=1, ip=127.0.0.1
+2026-05-10 10:48:28,619 - paysentinel - INFO - [explain_fraud:997] [req=73e9c163] - [EXPLAIN] source=rule-based, lang=English, score=85.0
+2026-05-10 10:48:28,624 - paysentinel - INFO - [explain_fraud:997] [req=593cf20f] - [EXPLAIN] source=rule-based, lang=Kannada, score=70.0
+2026-05-10 10:48:28,628 - paysentinel - INFO - [explain_fraud:997] [req=1cdf0c52] - [EXPLAIN] source=rule-based, lang=English, score=20.0
+2026-05-10 10:48:28,637 - paysentinel - INFO - [analyze:785] [req=6dfd2d08] - [ANALYZE] START - merchant=alertxssMerchant, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:28,648 - paysentinel - DEBUG - [analyze:788] [req=6dfd2d08] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:48:28,648 - paysentinel - INFO - [_run_analysis:574] [req=6dfd2d08] - Training new detector for alertxssMerchant, contamination=0.05
+2026-05-10 10:48:28,648 - paysentinel - DEBUG - [_save_detector_cache:360] [req=6dfd2d08] - Skipping detector cache save during tests: alertxssMerchant, contamination=0.05
+2026-05-10 10:48:28,695 - paysentinel - INFO - [analyze:802] [req=6dfd2d08] - [ANALYZE] SUCCESS - merchant=alertxssMerchant, rows=1, ip=127.0.0.1
+2026-05-10 10:48:28,704 - paysentinel - INFO - [analyze:785] [req=294274c8] - [ANALYZE] START - merchant=' DROP TABLE transactions --, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:28,718 - paysentinel - DEBUG - [analyze:788] [req=294274c8] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:48:28,719 - paysentinel - INFO - [_run_analysis:574] [req=294274c8] - Training new detector for ' DROP TABLE transactions --, contamination=0.05
+2026-05-10 10:48:28,719 - paysentinel - DEBUG - [_save_detector_cache:360] [req=294274c8] - Skipping detector cache save during tests: ' DROP TABLE transactions --, contamination=0.05
+2026-05-10 10:48:28,771 - paysentinel - INFO - [analyze:802] [req=294274c8] - [ANALYZE] SUCCESS - merchant=' DROP TABLE transactions --, rows=1, ip=127.0.0.1
+2026-05-10 10:48:28,780 - paysentinel - INFO - [analyze:785] [req=c6e1c571] - [ANALYZE] START - merchant=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:28,796 - paysentinel - DEBUG - [analyze:788] [req=c6e1c571] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:48:28,797 - paysentinel - INFO - [_run_analysis:574] [req=c6e1c571] - Training new detector for AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, contamination=0.05
+2026-05-10 10:48:28,797 - paysentinel - DEBUG - [_save_detector_cache:360] [req=c6e1c571] - Skipping detector cache save during tests: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, contamination=0.05
+2026-05-10 10:48:28,840 - paysentinel - INFO - [analyze:802] [req=c6e1c571] - [ANALYZE] SUCCESS - merchant=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA, rows=1, ip=127.0.0.1
+2026-05-10 10:48:28,850 - paysentinel - INFO - [analyze:785] [req=4456aa3b] - [ANALYZE] START - merchant=My UPI Store, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:28,858 - paysentinel - DEBUG - [analyze:788] [req=4456aa3b] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:48:28,859 - paysentinel - INFO - [_get_cached_detector:340] [req=4456aa3b] - Cache expired for My UPI Store, contamination=0.05
+2026-05-10 10:48:28,859 - paysentinel - INFO - [_run_analysis:574] [req=4456aa3b] - Training new detector for My UPI Store, contamination=0.05
+2026-05-10 10:48:28,860 - paysentinel - DEBUG - [_save_detector_cache:360] [req=4456aa3b] - Skipping detector cache save during tests: My UPI Store, contamination=0.05
+2026-05-10 10:48:28,899 - paysentinel - INFO - [analyze:802] [req=4456aa3b] - [ANALYZE] SUCCESS - merchant=My UPI Store, rows=1, ip=127.0.0.1
+2026-05-10 10:48:28,905 - paysentinel - INFO - [analyze:785] [req=9348fff5] - [ANALYZE] START - merchant=Test, sensitivity=abc, language=English, ip=127.0.0.1
+2026-05-10 10:48:28,914 - paysentinel - DEBUG - [analyze:788] [req=9348fff5] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:48:28,914 - paysentinel - INFO - [_run_analysis:574] [req=9348fff5] - Training new detector for Test, contamination=0.05
+2026-05-10 10:48:28,915 - paysentinel - DEBUG - [_save_detector_cache:360] [req=9348fff5] - Skipping detector cache save during tests: Test, contamination=0.05
+2026-05-10 10:48:28,960 - paysentinel - INFO - [analyze:802] [req=9348fff5] - [ANALYZE] SUCCESS - merchant=Test, rows=1, ip=127.0.0.1
+2026-05-10 10:48:28,964 - paysentinel - INFO - [analyze:785] [req=45031e3d] - [ANALYZE] START - merchant=Test, sensitivity=-5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:28,976 - paysentinel - DEBUG - [analyze:788] [req=45031e3d] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:48:28,976 - paysentinel - INFO - [_run_analysis:574] [req=45031e3d] - Training new detector for Test, contamination=0.01
+2026-05-10 10:48:28,977 - paysentinel - DEBUG - [_save_detector_cache:360] [req=45031e3d] - Skipping detector cache save during tests: Test, contamination=0.01
+2026-05-10 10:48:29,023 - paysentinel - INFO - [analyze:802] [req=45031e3d] - [ANALYZE] SUCCESS - merchant=Test, rows=1, ip=127.0.0.1
+2026-05-10 10:48:29,025 - paysentinel - INFO - [analyze:785] [req=87196efe] - [ANALYZE] START - merchant=Test, sensitivity=200%, language=English, ip=127.0.0.1
+2026-05-10 10:48:29,039 - paysentinel - DEBUG - [analyze:788] [req=87196efe] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:48:29,039 - paysentinel - INFO - [_run_analysis:574] [req=87196efe] - Training new detector for Test, contamination=0.25
+2026-05-10 10:48:29,039 - paysentinel - DEBUG - [_save_detector_cache:360] [req=87196efe] - Skipping detector cache save during tests: Test, contamination=0.25
+2026-05-10 10:48:29,085 - paysentinel - INFO - [analyze:802] [req=87196efe] - [ANALYZE] SUCCESS - merchant=Test, rows=1, ip=127.0.0.1
+2026-05-10 10:48:29,089 - paysentinel - INFO - [analyze:785] [req=cbd22c3e] - [ANALYZE] START - merchant=Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:29,103 - paysentinel - DEBUG - [analyze:788] [req=cbd22c3e] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:48:29,104 - paysentinel - INFO - [_run_analysis:574] [req=cbd22c3e] - Training new detector for Test, contamination=0.05
+2026-05-10 10:48:29,104 - paysentinel - DEBUG - [_save_detector_cache:360] [req=cbd22c3e] - Skipping detector cache save during tests: Test, contamination=0.05
+2026-05-10 10:48:29,157 - paysentinel - INFO - [analyze:802] [req=cbd22c3e] - [ANALYZE] SUCCESS - merchant=Test, rows=1, ip=127.0.0.1
+2026-05-10 10:48:29,160 - paysentinel - INFO - [analyze:785] [req=75866953] - [ANALYZE] START - merchant=Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:29,178 - paysentinel - DEBUG - [analyze:788] [req=75866953] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:48:29,179 - paysentinel - INFO - [_run_analysis:574] [req=75866953] - Training new detector for Test, contamination=0.05
+2026-05-10 10:48:29,179 - paysentinel - DEBUG - [_save_detector_cache:360] [req=75866953] - Skipping detector cache save during tests: Test, contamination=0.05
+2026-05-10 10:48:29,215 - paysentinel - INFO - [analyze:802] [req=75866953] - [ANALYZE] SUCCESS - merchant=Test, rows=1, ip=127.0.0.1
+2026-05-10 10:48:29,219 - paysentinel - INFO - [analyze:785] [req=962a89c1] - [ANALYZE] START - merchant=Test, sensitivity=0, language=English, ip=127.0.0.1
+2026-05-10 10:48:29,230 - paysentinel - DEBUG - [analyze:788] [req=962a89c1] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:48:29,230 - paysentinel - INFO - [_run_analysis:574] [req=962a89c1] - Training new detector for Test, contamination=0.01
+2026-05-10 10:48:29,231 - paysentinel - DEBUG - [_save_detector_cache:360] [req=962a89c1] - Skipping detector cache save during tests: Test, contamination=0.01
+2026-05-10 10:48:29,268 - paysentinel - INFO - [analyze:802] [req=962a89c1] - [ANALYZE] SUCCESS - merchant=Test, rows=1, ip=127.0.0.1
+2026-05-10 10:48:29,304 - paysentinel - INFO - [analyze:785] [req=454e9e31] - [ANALYZE] START - merchant=Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:29,308 - paysentinel.security - INFO - [log_sec:127] [req=454e9e31] - [WARNING] DEEP_VAL_FAILED ip=12ca17b49af2 path=/api/analyze reason=Amount column contains negative values
+2026-05-10 10:48:29,309 - paysentinel - ERROR - [_read_dataframe_from_request:482] [req=454e9e31] - Failed to parse CSV file: Amount column contains negative values
+2026-05-10 10:48:29,309 - paysentinel - ERROR - [analyze:805] [req=454e9e31] - [ANALYZE] ERROR - Failed to parse CSV file: Amount column contains negative values, ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 478, in _read_dataframe_from_request
+    raise ValueError(err)
+ValueError: Amount column contains negative values
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 787, in analyze
+    df, source = _read_dataframe_from_request()
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Pay_Sentinel\src\app.py", line 483, in _read_dataframe_from_request
+    raise ValueError(f"Failed to parse CSV file: {str(e)}")
+ValueError: Failed to parse CSV file: Amount column contains negative values
+2026-05-10 10:48:29,321 - paysentinel - INFO - [analyze:785] [req=35654833] - [ANALYZE] START - merchant=Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:29,374 - paysentinel - INFO - [analyze:785] [req=b1a0d2e6] - [ANALYZE] START - merchant=Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:29,380 - paysentinel.security - INFO - [log_sec:127] [req=b1a0d2e6] - [WARNING] DEEP_VAL_FAILED ip=12ca17b49af2 path=/api/analyze reason=Amount column has no valid numbers
+2026-05-10 10:48:29,381 - paysentinel - ERROR - [_read_dataframe_from_request:482] [req=b1a0d2e6] - Failed to parse CSV file: Amount column has no valid numbers
+2026-05-10 10:48:29,381 - paysentinel - ERROR - [analyze:805] [req=b1a0d2e6] - [ANALYZE] ERROR - Failed to parse CSV file: Amount column has no valid numbers, ip=127.0.0.1
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 478, in _read_dataframe_from_request
+    raise ValueError(err)
+ValueError: Amount column has no valid numbers
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Pay_Sentinel\src\app.py", line 787, in analyze
+    df, source = _read_dataframe_from_request()
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Pay_Sentinel\src\app.py", line 483, in _read_dataframe_from_request
+    raise ValueError(f"Failed to parse CSV file: {str(e)}")
+ValueError: Failed to parse CSV file: Amount column has no valid numbers
+2026-05-10 10:48:29,389 - paysentinel - INFO - [analyze:785] [req=487fedb2] - [ANALYZE] START - merchant=Schema Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:29,402 - paysentinel - DEBUG - [analyze:788] [req=487fedb2] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:48:29,403 - paysentinel - INFO - [_run_analysis:574] [req=487fedb2] - Training new detector for Schema Test, contamination=0.05
+2026-05-10 10:48:29,403 - paysentinel - DEBUG - [_save_detector_cache:360] [req=487fedb2] - Skipping detector cache save during tests: Schema Test, contamination=0.05
+2026-05-10 10:48:29,443 - paysentinel - INFO - [analyze:802] [req=487fedb2] - [ANALYZE] SUCCESS - merchant=Schema Test, rows=1, ip=127.0.0.1
+2026-05-10 10:48:29,451 - paysentinel - INFO - [analyze:785] [req=d8139e37] - [ANALYZE] START - merchant=FP Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:29,464 - paysentinel - DEBUG - [analyze:788] [req=d8139e37] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:48:29,465 - paysentinel - INFO - [_run_analysis:574] [req=d8139e37] - Training new detector for FP Test, contamination=0.05
+2026-05-10 10:48:29,465 - paysentinel - DEBUG - [_save_detector_cache:360] [req=d8139e37] - Skipping detector cache save during tests: FP Test, contamination=0.05
+2026-05-10 10:48:29,507 - paysentinel - INFO - [analyze:802] [req=d8139e37] - [ANALYZE] SUCCESS - merchant=FP Test, rows=1, ip=127.0.0.1
+2026-05-10 10:48:29,516 - paysentinel - INFO - [analyze:785] [req=9003d419] - [ANALYZE] START - merchant=Heatmap Test, sensitivity=5%, language=English, ip=127.0.0.1
+2026-05-10 10:48:29,533 - paysentinel - DEBUG - [analyze:788] [req=9003d419] - [ANALYZE] Data loaded - source=sample, rows=1
+2026-05-10 10:48:29,535 - paysentinel - INFO - [_run_analysis:574] [req=9003d419] - Training new detector for Heatmap Test, contamination=0.05
+2026-05-10 10:48:29,536 - paysentinel - DEBUG - [_save_detector_cache:360] [req=9003d419] - Skipping detector cache save during tests: Heatmap Test, contamination=0.05
+2026-05-10 10:48:29,581 - paysentinel - INFO - [analyze:802] [req=9003d419] - [ANALYZE] SUCCESS - merchant=Heatmap Test, rows=1, ip=127.0.0.1
+2026-05-10 10:48:29,671 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:29,741 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:29,806 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:29,874 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:29,924 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:29,959 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:30,285 - paysentinel.model - INFO - [display:129] [req=9003d419] - ==================================================
+2026-05-10 10:48:30,285 - paysentinel.model - INFO - [display:130] [req=9003d419] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:48:30,286 - paysentinel.model - INFO - [display:131] [req=9003d419] -   Model ID:       2064925a9d30
+2026-05-10 10:48:30,286 - paysentinel.model - INFO - [display:132] [req=9003d419] -   Trained:        2026-05-10T05:18:30.276488+00:00
+2026-05-10 10:48:30,286 - paysentinel.model - INFO - [display:133] [req=9003d419] -   Training rows:  610
+2026-05-10 10:48:30,286 - paysentinel.model - INFO - [display:134] [req=9003d419] -   Features:       11
+2026-05-10 10:48:30,286 - paysentinel.model - INFO - [display:135] [req=9003d419] -   Contamination:  5.0%
+2026-05-10 10:48:30,286 - paysentinel.model - INFO - [display:136] [req=9003d419] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:48:30,286 - paysentinel.model - INFO - [display:137] [req=9003d419] - ==================================================
+2026-05-10 10:48:30,470 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:30,732 - paysentinel.model - INFO - [display:129] [req=9003d419] - ==================================================
+2026-05-10 10:48:30,732 - paysentinel.model - INFO - [display:130] [req=9003d419] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:48:30,733 - paysentinel.model - INFO - [display:131] [req=9003d419] -   Model ID:       2064925a9d30
+2026-05-10 10:48:30,733 - paysentinel.model - INFO - [display:132] [req=9003d419] -   Trained:        2026-05-10T05:18:30.730487+00:00
+2026-05-10 10:48:30,733 - paysentinel.model - INFO - [display:133] [req=9003d419] -   Training rows:  610
+2026-05-10 10:48:30,733 - paysentinel.model - INFO - [display:134] [req=9003d419] -   Features:       11
+2026-05-10 10:48:30,733 - paysentinel.model - INFO - [display:135] [req=9003d419] -   Contamination:  5.0%
+2026-05-10 10:48:30,733 - paysentinel.model - INFO - [display:136] [req=9003d419] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:48:30,733 - paysentinel.model - INFO - [display:137] [req=9003d419] - ==================================================
+2026-05-10 10:48:30,876 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:31,130 - paysentinel.model - INFO - [display:129] [req=9003d419] - ==================================================
+2026-05-10 10:48:31,131 - paysentinel.model - INFO - [display:130] [req=9003d419] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:48:31,131 - paysentinel.model - INFO - [display:131] [req=9003d419] -   Model ID:       2064925a9d30
+2026-05-10 10:48:31,131 - paysentinel.model - INFO - [display:132] [req=9003d419] -   Trained:        2026-05-10T05:18:31.128852+00:00
+2026-05-10 10:48:31,131 - paysentinel.model - INFO - [display:133] [req=9003d419] -   Training rows:  610
+2026-05-10 10:48:31,131 - paysentinel.model - INFO - [display:134] [req=9003d419] -   Features:       11
+2026-05-10 10:48:31,131 - paysentinel.model - INFO - [display:135] [req=9003d419] -   Contamination:  5.0%
+2026-05-10 10:48:31,131 - paysentinel.model - INFO - [display:136] [req=9003d419] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:48:31,131 - paysentinel.model - INFO - [display:137] [req=9003d419] - ==================================================
+2026-05-10 10:48:31,309 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:31,612 - paysentinel.model - INFO - [display:129] [req=9003d419] - ==================================================
+2026-05-10 10:48:31,613 - paysentinel.model - INFO - [display:130] [req=9003d419] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:48:31,613 - paysentinel.model - INFO - [display:131] [req=9003d419] -   Model ID:       2064925a9d30
+2026-05-10 10:48:31,613 - paysentinel.model - INFO - [display:132] [req=9003d419] -   Trained:        2026-05-10T05:18:31.609659+00:00
+2026-05-10 10:48:31,613 - paysentinel.model - INFO - [display:133] [req=9003d419] -   Training rows:  610
+2026-05-10 10:48:31,613 - paysentinel.model - INFO - [display:134] [req=9003d419] -   Features:       11
+2026-05-10 10:48:31,613 - paysentinel.model - INFO - [display:135] [req=9003d419] -   Contamination:  5.0%
+2026-05-10 10:48:31,613 - paysentinel.model - INFO - [display:136] [req=9003d419] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:48:31,613 - paysentinel.model - INFO - [display:137] [req=9003d419] - ==================================================
+2026-05-10 10:48:31,780 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:32,015 - paysentinel.model - INFO - [display:129] [req=9003d419] - ==================================================
+2026-05-10 10:48:32,015 - paysentinel.model - INFO - [display:130] [req=9003d419] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:48:32,015 - paysentinel.model - INFO - [display:131] [req=9003d419] -   Model ID:       2064925a9d30
+2026-05-10 10:48:32,015 - paysentinel.model - INFO - [display:132] [req=9003d419] -   Trained:        2026-05-10T05:18:32.011754+00:00
+2026-05-10 10:48:32,015 - paysentinel.model - INFO - [display:133] [req=9003d419] -   Training rows:  610
+2026-05-10 10:48:32,015 - paysentinel.model - INFO - [display:134] [req=9003d419] -   Features:       11
+2026-05-10 10:48:32,015 - paysentinel.model - INFO - [display:135] [req=9003d419] -   Contamination:  5.0%
+2026-05-10 10:48:32,015 - paysentinel.model - INFO - [display:136] [req=9003d419] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:48:32,015 - paysentinel.model - INFO - [display:137] [req=9003d419] - ==================================================
+2026-05-10 10:48:32,161 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:32,432 - paysentinel.model - INFO - [display:129] [req=9003d419] - ==================================================
+2026-05-10 10:48:32,432 - paysentinel.model - INFO - [display:130] [req=9003d419] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:48:32,432 - paysentinel.model - INFO - [display:131] [req=9003d419] -   Model ID:       2064925a9d30
+2026-05-10 10:48:32,432 - paysentinel.model - INFO - [display:132] [req=9003d419] -   Trained:        2026-05-10T05:18:32.429102+00:00
+2026-05-10 10:48:32,433 - paysentinel.model - INFO - [display:133] [req=9003d419] -   Training rows:  610
+2026-05-10 10:48:32,434 - paysentinel.model - INFO - [display:134] [req=9003d419] -   Features:       11
+2026-05-10 10:48:32,434 - paysentinel.model - INFO - [display:135] [req=9003d419] -   Contamination:  5.0%
+2026-05-10 10:48:32,434 - paysentinel.model - INFO - [display:136] [req=9003d419] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:48:32,435 - paysentinel.model - INFO - [display:137] [req=9003d419] - ==================================================
+2026-05-10 10:48:32,595 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:32,928 - paysentinel.model - INFO - [display:129] [req=9003d419] - ==================================================
+2026-05-10 10:48:32,928 - paysentinel.model - INFO - [display:130] [req=9003d419] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:48:32,928 - paysentinel.model - INFO - [display:131] [req=9003d419] -   Model ID:       2064925a9d30
+2026-05-10 10:48:32,928 - paysentinel.model - INFO - [display:132] [req=9003d419] -   Trained:        2026-05-10T05:18:32.924453+00:00
+2026-05-10 10:48:32,929 - paysentinel.model - INFO - [display:133] [req=9003d419] -   Training rows:  610
+2026-05-10 10:48:32,929 - paysentinel.model - INFO - [display:134] [req=9003d419] -   Features:       11
+2026-05-10 10:48:32,929 - paysentinel.model - INFO - [display:135] [req=9003d419] -   Contamination:  5.0%
+2026-05-10 10:48:32,929 - paysentinel.model - INFO - [display:136] [req=9003d419] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:48:32,929 - paysentinel.model - INFO - [display:137] [req=9003d419] - ==================================================
+2026-05-10 10:48:33,156 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:33,538 - paysentinel.model - INFO - [display:129] [req=9003d419] - ==================================================
+2026-05-10 10:48:33,538 - paysentinel.model - INFO - [display:130] [req=9003d419] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:48:33,538 - paysentinel.model - INFO - [display:131] [req=9003d419] -   Model ID:       2064925a9d30
+2026-05-10 10:48:33,538 - paysentinel.model - INFO - [display:132] [req=9003d419] -   Trained:        2026-05-10T05:18:33.532589+00:00
+2026-05-10 10:48:33,538 - paysentinel.model - INFO - [display:133] [req=9003d419] -   Training rows:  610
+2026-05-10 10:48:33,539 - paysentinel.model - INFO - [display:134] [req=9003d419] -   Features:       11
+2026-05-10 10:48:33,539 - paysentinel.model - INFO - [display:135] [req=9003d419] -   Contamination:  5.0%
+2026-05-10 10:48:33,540 - paysentinel.model - INFO - [display:136] [req=9003d419] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:48:33,540 - paysentinel.model - INFO - [display:137] [req=9003d419] - ==================================================
+2026-05-10 10:48:33,679 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:33,911 - paysentinel.model - INFO - [display:129] [req=9003d419] - ==================================================
+2026-05-10 10:48:33,912 - paysentinel.model - INFO - [display:130] [req=9003d419] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:48:33,912 - paysentinel.model - INFO - [display:131] [req=9003d419] -   Model ID:       2064925a9d30
+2026-05-10 10:48:33,912 - paysentinel.model - INFO - [display:132] [req=9003d419] -   Trained:        2026-05-10T05:18:33.907874+00:00
+2026-05-10 10:48:33,912 - paysentinel.model - INFO - [display:133] [req=9003d419] -   Training rows:  610
+2026-05-10 10:48:33,912 - paysentinel.model - INFO - [display:134] [req=9003d419] -   Features:       11
+2026-05-10 10:48:33,912 - paysentinel.model - INFO - [display:135] [req=9003d419] -   Contamination:  5.0%
+2026-05-10 10:48:33,912 - paysentinel.model - INFO - [display:136] [req=9003d419] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:48:33,912 - paysentinel.model - INFO - [display:137] [req=9003d419] - ==================================================
+2026-05-10 10:48:33,930 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:34,242 - paysentinel.model - INFO - [display:129] [req=9003d419] - ==================================================
+2026-05-10 10:48:34,242 - paysentinel.model - INFO - [display:130] [req=9003d419] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:48:34,242 - paysentinel.model - INFO - [display:131] [req=9003d419] -   Model ID:       2064925a9d30
+2026-05-10 10:48:34,242 - paysentinel.model - INFO - [display:132] [req=9003d419] -   Trained:        2026-05-10T05:18:34.237356+00:00
+2026-05-10 10:48:34,242 - paysentinel.model - INFO - [display:133] [req=9003d419] -   Training rows:  610
+2026-05-10 10:48:34,242 - paysentinel.model - INFO - [display:134] [req=9003d419] -   Features:       11
+2026-05-10 10:48:34,242 - paysentinel.model - INFO - [display:135] [req=9003d419] -   Contamination:  5.0%
+2026-05-10 10:48:34,242 - paysentinel.model - INFO - [display:136] [req=9003d419] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:48:34,242 - paysentinel.model - INFO - [display:137] [req=9003d419] - ==================================================
+2026-05-10 10:48:34,253 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:34,530 - paysentinel.model - INFO - [display:129] [req=9003d419] - ==================================================
+2026-05-10 10:48:34,530 - paysentinel.model - INFO - [display:130] [req=9003d419] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:48:34,531 - paysentinel.model - INFO - [display:131] [req=9003d419] -   Model ID:       2064925a9d30
+2026-05-10 10:48:34,531 - paysentinel.model - INFO - [display:132] [req=9003d419] -   Trained:        2026-05-10T05:18:34.527903+00:00
+2026-05-10 10:48:34,531 - paysentinel.model - INFO - [display:133] [req=9003d419] -   Training rows:  610
+2026-05-10 10:48:34,531 - paysentinel.model - INFO - [display:134] [req=9003d419] -   Features:       11
+2026-05-10 10:48:34,531 - paysentinel.model - INFO - [display:135] [req=9003d419] -   Contamination:  5.0%
+2026-05-10 10:48:34,531 - paysentinel.model - INFO - [display:136] [req=9003d419] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:48:34,531 - paysentinel.model - INFO - [display:137] [req=9003d419] - ==================================================
+2026-05-10 10:48:34,551 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:34,823 - paysentinel.model - INFO - [display:129] [req=9003d419] - ==================================================
+2026-05-10 10:48:34,823 - paysentinel.model - INFO - [display:130] [req=9003d419] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:48:34,823 - paysentinel.model - INFO - [display:131] [req=9003d419] -   Model ID:       2064925a9d30
+2026-05-10 10:48:34,823 - paysentinel.model - INFO - [display:132] [req=9003d419] -   Trained:        2026-05-10T05:18:34.821484+00:00
+2026-05-10 10:48:34,823 - paysentinel.model - INFO - [display:133] [req=9003d419] -   Training rows:  610
+2026-05-10 10:48:34,824 - paysentinel.model - INFO - [display:134] [req=9003d419] -   Features:       11
+2026-05-10 10:48:34,824 - paysentinel.model - INFO - [display:135] [req=9003d419] -   Contamination:  5.0%
+2026-05-10 10:48:34,824 - paysentinel.model - INFO - [display:136] [req=9003d419] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:48:34,824 - paysentinel.model - INFO - [display:137] [req=9003d419] - ==================================================
+2026-05-10 10:48:34,836 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:35,156 - paysentinel.model - INFO - [display:129] [req=9003d419] - ==================================================
+2026-05-10 10:48:35,157 - paysentinel.model - INFO - [display:130] [req=9003d419] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:48:35,157 - paysentinel.model - INFO - [display:131] [req=9003d419] -   Model ID:       2064925a9d30
+2026-05-10 10:48:35,157 - paysentinel.model - INFO - [display:132] [req=9003d419] -   Trained:        2026-05-10T05:18:35.151204+00:00
+2026-05-10 10:48:35,157 - paysentinel.model - INFO - [display:133] [req=9003d419] -   Training rows:  610
+2026-05-10 10:48:35,157 - paysentinel.model - INFO - [display:134] [req=9003d419] -   Features:       11
+2026-05-10 10:48:35,158 - paysentinel.model - INFO - [display:135] [req=9003d419] -   Contamination:  5.0%
+2026-05-10 10:48:35,158 - paysentinel.model - INFO - [display:136] [req=9003d419] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:48:35,158 - paysentinel.model - INFO - [display:137] [req=9003d419] - ==================================================
+2026-05-10 10:48:35,211 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:35,455 - paysentinel.model - INFO - [display:129] [req=9003d419] - ==================================================
+2026-05-10 10:48:35,455 - paysentinel.model - INFO - [display:130] [req=9003d419] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:48:35,456 - paysentinel.model - INFO - [display:131] [req=9003d419] -   Model ID:       2064925a9d30
+2026-05-10 10:48:35,456 - paysentinel.model - INFO - [display:132] [req=9003d419] -   Trained:        2026-05-10T05:18:35.453330+00:00
+2026-05-10 10:48:35,456 - paysentinel.model - INFO - [display:133] [req=9003d419] -   Training rows:  610
+2026-05-10 10:48:35,456 - paysentinel.model - INFO - [display:134] [req=9003d419] -   Features:       11
+2026-05-10 10:48:35,456 - paysentinel.model - INFO - [display:135] [req=9003d419] -   Contamination:  5.0%
+2026-05-10 10:48:35,456 - paysentinel.model - INFO - [display:136] [req=9003d419] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:48:35,456 - paysentinel.model - INFO - [display:137] [req=9003d419] - ==================================================
+2026-05-10 10:48:35,529 - paysentinel.model - INFO - [save:320] [req=9003d419] - [MODEL] Saved to C:\Users\YASHAS~1\AppData\Local\Temp\tmprpsxd3xx\test_model.pkl
+2026-05-10 10:48:35,657 - paysentinel.model - INFO - [load:343] [req=9003d419] - [MODEL] Loaded from C:\Users\YASHAS~1\AppData\Local\Temp\tmprpsxd3xx\test_model.pkl
+2026-05-10 10:48:35,981 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:36,217 - paysentinel.model - INFO - [display:129] [req=9003d419] - ==================================================
+2026-05-10 10:48:36,217 - paysentinel.model - INFO - [display:130] [req=9003d419] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:48:36,217 - paysentinel.model - INFO - [display:131] [req=9003d419] -   Model ID:       222ee9b7c5aa
+2026-05-10 10:48:36,217 - paysentinel.model - INFO - [display:132] [req=9003d419] -   Trained:        2026-05-10T05:18:36.213128+00:00
+2026-05-10 10:48:36,217 - paysentinel.model - INFO - [display:133] [req=9003d419] -   Training rows:  610
+2026-05-10 10:48:36,217 - paysentinel.model - INFO - [display:134] [req=9003d419] -   Features:       11
+2026-05-10 10:48:36,217 - paysentinel.model - INFO - [display:135] [req=9003d419] -   Contamination:  1.0%
+2026-05-10 10:48:36,217 - paysentinel.model - INFO - [display:136] [req=9003d419] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:48:36,218 - paysentinel.model - INFO - [display:137] [req=9003d419] - ==================================================
+2026-05-10 10:48:36,339 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:36,588 - paysentinel.model - INFO - [display:129] [req=9003d419] - ==================================================
+2026-05-10 10:48:36,588 - paysentinel.model - INFO - [display:130] [req=9003d419] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:48:36,588 - paysentinel.model - INFO - [display:131] [req=9003d419] -   Model ID:       2064925a9d30
+2026-05-10 10:48:36,588 - paysentinel.model - INFO - [display:132] [req=9003d419] -   Trained:        2026-05-10T05:18:36.583013+00:00
+2026-05-10 10:48:36,588 - paysentinel.model - INFO - [display:133] [req=9003d419] -   Training rows:  610
+2026-05-10 10:48:36,588 - paysentinel.model - INFO - [display:134] [req=9003d419] -   Features:       11
+2026-05-10 10:48:36,588 - paysentinel.model - INFO - [display:135] [req=9003d419] -   Contamination:  5.0%
+2026-05-10 10:48:36,588 - paysentinel.model - INFO - [display:136] [req=9003d419] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:48:36,588 - paysentinel.model - INFO - [display:137] [req=9003d419] - ==================================================
+2026-05-10 10:48:36,779 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:37,058 - paysentinel.model - INFO - [display:129] [req=9003d419] - ==================================================
+2026-05-10 10:48:37,058 - paysentinel.model - INFO - [display:130] [req=9003d419] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:48:37,058 - paysentinel.model - INFO - [display:131] [req=9003d419] -   Model ID:       27c7b1464784
+2026-05-10 10:48:37,058 - paysentinel.model - INFO - [display:132] [req=9003d419] -   Trained:        2026-05-10T05:18:37.056410+00:00
+2026-05-10 10:48:37,059 - paysentinel.model - INFO - [display:133] [req=9003d419] -   Training rows:  610
+2026-05-10 10:48:37,059 - paysentinel.model - INFO - [display:134] [req=9003d419] -   Features:       11
+2026-05-10 10:48:37,059 - paysentinel.model - INFO - [display:135] [req=9003d419] -   Contamination:  10.0%
+2026-05-10 10:48:37,059 - paysentinel.model - INFO - [display:136] [req=9003d419] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:48:37,059 - paysentinel.model - INFO - [display:137] [req=9003d419] - ==================================================
+2026-05-10 10:48:37,194 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:37,489 - paysentinel.model - INFO - [display:129] [req=9003d419] - ==================================================
+2026-05-10 10:48:37,489 - paysentinel.model - INFO - [display:130] [req=9003d419] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:48:37,489 - paysentinel.model - INFO - [display:131] [req=9003d419] -   Model ID:       b370a5570c7e
+2026-05-10 10:48:37,489 - paysentinel.model - INFO - [display:132] [req=9003d419] -   Trained:        2026-05-10T05:18:37.484365+00:00
+2026-05-10 10:48:37,490 - paysentinel.model - INFO - [display:133] [req=9003d419] -   Training rows:  610
+2026-05-10 10:48:37,490 - paysentinel.model - INFO - [display:134] [req=9003d419] -   Features:       11
+2026-05-10 10:48:37,490 - paysentinel.model - INFO - [display:135] [req=9003d419] -   Contamination:  15.0%
+2026-05-10 10:48:37,490 - paysentinel.model - INFO - [display:136] [req=9003d419] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:48:37,490 - paysentinel.model - INFO - [display:137] [req=9003d419] - ==================================================
+2026-05-10 10:48:37,688 - paysentinel.data - INFO - [generate_merchant_transactions:335] [req=9003d419] - Generated 610 transactions (30 fraud injected — 20 patterns)
+2026-05-10 10:48:38,021 - paysentinel.model - INFO - [display:129] [req=9003d419] - ==================================================
+2026-05-10 10:48:38,021 - paysentinel.model - INFO - [display:130] [req=9003d419] - MODEL CARD — PaySentinel v2.0.0
+2026-05-10 10:48:38,021 - paysentinel.model - INFO - [display:131] [req=9003d419] -   Model ID:       b3aa34199c49
+2026-05-10 10:48:38,022 - paysentinel.model - INFO - [display:132] [req=9003d419] -   Trained:        2026-05-10T05:18:38.016225+00:00
+2026-05-10 10:48:38,022 - paysentinel.model - INFO - [display:133] [req=9003d419] -   Training rows:  610
+2026-05-10 10:48:38,022 - paysentinel.model - INFO - [display:134] [req=9003d419] -   Features:       11
+2026-05-10 10:48:38,022 - paysentinel.model - INFO - [display:135] [req=9003d419] -   Contamination:  25.0%
+2026-05-10 10:48:38,022 - paysentinel.model - INFO - [display:136] [req=9003d419] -   Data hash:      ae96ce05aeb5
+2026-05-10 10:48:38,022 - paysentinel.model - INFO - [display:137] [req=9003d419] - ==================================================

@@ -19,7 +19,6 @@ import bleach
 import threading
 import signal
 import sys
-import time
 from prometheus_client import Counter, Histogram, Gauge, generate_latest, CONTENT_TYPE_LATEST
 from flasgger import Swagger, swag_from
 
@@ -77,7 +76,10 @@ def _graceful_shutdown(signum, frame):
 signal.signal(signal.SIGTERM, _graceful_shutdown)
 signal.signal(signal.SIGINT, _graceful_shutdown)
 
-app = Flask(__name__, static_folder="static", static_url_path="/static")
+app = Flask(__name__, 
+            static_folder="frontend/static", 
+            static_url_path="/static",
+            template_folder="frontend/templates")
 app._start_time = time.time()
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 
@@ -633,13 +635,13 @@ def _run_analysis(df: pd.DataFrame, merchant_name: str, sensitivity: str, langua
 
 @app.get("/")
 def index():
-    return send_from_directory(BASE_DIR, "index.html")
+    return send_from_directory(os.path.join(BASE_DIR, "frontend/templates"), "index.html")
 
 
 @app.get("/dashboard")
 @app.get("/dashboard.html")
 def dashboard():
-    return send_from_directory(BASE_DIR, "dashboard.html")
+    return send_from_directory(os.path.join(BASE_DIR, "frontend/templates"), "dashboard.html")
 
 
 @app.get("/api/metrics")
