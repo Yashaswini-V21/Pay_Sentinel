@@ -11,7 +11,7 @@ FROM python:3.11-slim AS production
 LABEL maintainer="PaySentinel" version="2.0.0"
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PORT=5000 \
     WORKERS=2 WORKER_CLASS=gevent LOG_LEVEL=info
-WORKDIR /app/backend/src
+WORKDIR /app/src
 RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 curl tini \
     && rm -rf /var/lib/apt/lists/* \
     && useradd --create-home --uid 1000 paysentinel
