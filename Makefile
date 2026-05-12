@@ -1,5 +1,5 @@
 dev:
-	python app.py
+	cd backend/src && python app.py
 
 prod:
 	docker-compose -f docker-compose.prod.yml up -d
@@ -8,7 +8,10 @@ build:
 	docker build --target production -t paysentinel:latest .
 
 test:
-	pytest test_api.py -v
+	pytest tests/unit -v
+
+test-integration:
+	pytest tests/integration -v
 
 kafka:
 	docker-compose up -d

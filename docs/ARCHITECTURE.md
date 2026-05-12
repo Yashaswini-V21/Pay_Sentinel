@@ -61,14 +61,14 @@
 |--------|----------|-------------|------|
 | GET | `/` | Landing page (WebGL) | Public |
 | GET | `/dashboard` | Merchant command center | Public |
-| GET | `/api/health` | System health + psutil metrics | Public |
+| GET | `/api/health` | System health (detailed diagnostics require key) | Public |
 | GET | `/api/status` | Operational status | Public |
-| GET | `/api/sample-data` | Load 610 synthetic transactions | Public |
-| POST | `/api/analyze` | Run ML ensemble on CSV/JSON | Rate-limited |
-| POST | `/api/report` | Generate forensic PDF | Rate-limited |
-| GET | `/api/stream` | SSE live transaction feed | Rate-limited |
-| POST | `/api/explain` | AI fraud explanation | Rate-limited |
-| POST | `/api/voice` | Generate voice alert HTML | Rate-limited |
+| GET | `/api/sample-data` | Load 610 synthetic transactions | API Key + Rate-limited |
+| POST | `/api/analyze` | Run ML ensemble on CSV/JSON | API Key + Rate-limited |
+| POST | `/api/report` | Generate forensic PDF | API Key + Rate-limited |
+| GET | `/api/stream` | SSE live transaction feed | API Key + Rate-limited |
+| POST | `/api/explain` | AI fraud explanation | API Key + Rate-limited |
+| POST | `/api/voice` | Generate voice alert HTML | API Key + Rate-limited |
 
 ## ML Ensemble Weights
 
@@ -100,3 +100,11 @@ Production: Dockerfile → Gunicorn (gevent) → Nginx reverse proxy
 Streaming:  docker-compose.yml → App + Kafka + Zookeeper
 CI/CD:      GitHub Actions → Lint → Test → ML Validate → Security → Docker Build
 ```
+
+## Enterprise Controls
+
+- Security-by-default runtime: protected endpoints require `X-API-Key`; production fails closed if key is missing.
+- Signed model cache artifacts: detector cache metadata is validated with HMAC signature before load.
+- Deterministic feature engineering: no synthetic random risk features in inference.
+- Operational hardening: rotating audit/application logs with bounded disk growth.
+- Defense in depth: CSP + anti-XSS headers + IP-aware rate limiting + file upload validation.
