@@ -184,12 +184,12 @@ class PaySentinelDetector:
         
         # Create Model Card
         self.model_card = ModelCard(
-            model_id=hashlib.md5(f"{merchant_name}{len(df)}{self.contamination}".encode()).hexdigest()[:12],
+            model_id=hashlib.sha256(f"{merchant_name}{len(df)}{self.contamination}".encode()).hexdigest()[:12],
             trained_at=datetime.now(timezone.utc).isoformat(),
             training_samples=len(df),
             contamination=float(self.contamination),
             feature_count=len(FEATURES),
-            data_hash=hashlib.md5(pd.util.hash_pandas_object(df).values.tobytes()).hexdigest()[:12],
+            data_hash=hashlib.sha256(pd.util.hash_pandas_object(df).values.tobytes()).hexdigest()[:12],
             ensemble_weights={"isolation_forest": 0.35, "one_class_svm": 0.35, "lof": 0.20, "rules": 0.10},
             validation_metrics={"feature_tiers": {"core": 20, "basic": 9, "advanced": 10, "expert": 6}}
         )

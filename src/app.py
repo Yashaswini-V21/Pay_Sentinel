@@ -268,7 +268,7 @@ def _rate_limit(f):
         
         # Check if limit exceeded
         if len(request_tracker[client_ip]) >= REQUEST_LIMIT_COUNT:
-            ip_hash = hashlib.md5(client_ip.encode()).hexdigest()[:8]
+            ip_hash = hashlib.sha256(client_ip.encode()).hexdigest()[:8]
             logger.warning(f"Rate limit exceeded for ip_hash={ip_hash}")
             log_sec('RATE_LIMIT_HIT', request, severity='WARNING')
             return jsonify({"status": "error", "message": "Rate limit exceeded. Max 30 requests per minute."}), 429
@@ -338,7 +338,7 @@ def handle_service_unavailable(error):
 def _get_cache_key(merchant_name: str, contamination: float) -> str:
     """Generate a cache key for model persistence."""
     key_str = f"{merchant_name}_{contamination:.4f}"
-    return hashlib.md5(key_str.encode()).hexdigest()
+    return hashlib.sha256(key_str.encode()).hexdigest()
 
 
 def _cache_signing_key() -> str | None:
@@ -1109,5 +1109,6 @@ def voice_endpoint():
 
 if __name__ == "__main__":
     debug_mode = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
-    app.run(debug=debug_mode, host="0.0.0.0", port=5000)  # nosec B201
+    host = os.environ.get("PAYSENTINEL_HOST", "127.0.0.1")
+    app.run(debug=debug_mode, host=host, port=5000)  # nosec B201
 

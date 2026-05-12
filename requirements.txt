@@ -1,7 +1,7 @@
 # Core Data Science
 pandas==2.2.2
 numpy==1.26.4
-scikit-learn==1.4.2
+scikit-learn==1.5.2
 scipy==1.13.0
 
 # ML & Explainability
@@ -9,24 +9,24 @@ shap==0.45.0
 joblib==1.4.2
 
 # Kafka Streaming
-kafka-python==2.0.2
+kafka-python==2.0.3
 
 # Web & API
-flask==3.0.3
+flask==3.1.3
 bleach==6.1.0
 anthropic==0.28.0
 
 # Audio & Reporting
 gtts==2.5.1
-fpdf2==2.7.9
+fpdf2==2.8.4
 qrcode[pil]==7.4.2
 
 # Utilities
 python-dotenv==1.0.1
-requests==2.32.3
+requests==2.33.0
 pytz==2024.1
 prometheus-client==0.17.0
 flasgger==0.9.7.1
 flask-swagger-ui==4.11.1
 psutil==5.9.8
-gunicorn==22.0.0
+gunicorn==23.0.0
