@@ -25,4 +25,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:5000/api/health || exit 1
 EXPOSE 5000
 ENTRYPOINT ["/usr/bin/tini", "--"]
-CMD ["sh", "-c", "exec gunicorn src.app:app --bind 0.0.0.0:$PORT --workers $WORKERS --worker-class $WORKER_CLASS --max-requests 1000 --max-requests-jitter 100 --log-level $LOG_LEVEL --access-logfile /app/logs/access.log --error-logfile /app/logs/error.log --timeout 120"]
+CMD ["sh", "-c", "exec gunicorn backend.src.app:app --bind 0.0.0.0:$PORT --workers $WORKERS --worker-class $WORKER_CLASS --max-requests 1000 --max-requests-jitter 100 --log-level $LOG_LEVEL --access-logfile /app/logs/access.log --error-logfile /app/logs/error.log --timeout 120"]

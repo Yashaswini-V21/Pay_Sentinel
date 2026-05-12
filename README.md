@@ -42,6 +42,29 @@ India is witnessing the world's most successful digital payment revolution via *
 
 ---
 
+## 🥇 Competitive Analysis
+
+Judges usually ask one question: "Why this over existing fraud tools?" This section answers that directly.
+
+| Capability | Traditional Bank Fraud Stack | Generic SME Fraud SaaS | PaySentinel |
+| :--- | :--- | :--- | :--- |
+| Primary user focus | Large institutions | Online businesses | Indian small merchants (UPI-first) |
+| Language accessibility | Mostly English | Mostly English | Kannada + Hindi + Tamil + Telugu + English |
+| Explainability for non-technical users | Low | Medium | High (plain-language explanation + SHAP reasons) |
+| Voice-based actionability | Rare | Rare | Built-in multilingual voice alerts |
+| Offline fallback for alerts | Rare | Rare | Available (pyttsx3 fallback) |
+| Forensic evidence output | Internal systems only | Limited exports | PDF fraud certificates + QR proof |
+| Real-time simulation + stream pipeline | Internal only | Often add-on | Native Kafka + SSE support |
+| Cost profile for small shops | High | Medium | Open-source and low-cost deployable |
+
+### Strategic Differentiators
+- **Bharat-first design**: Built for the exact UPI merchant segment that is underserved by English-only fraud tools.
+- **Trust + action, not just score**: Detection, explanation, voice warning, and forensic report in one flow.
+- **Deployability**: Works as local Flask app, containerized production stack, and stream-enabled architecture.
+- **Enterprise controls**: API key protection, rate limiting, signed model cache, security headers, and rotating logs.
+
+---
+
 ## 🏗️ System Architecture
 
 PaySentinel is built as a high-performance, forensic-grade application with a clear separation of concerns.

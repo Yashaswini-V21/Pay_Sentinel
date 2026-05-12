@@ -27,7 +27,7 @@ from flasgger import Swagger, swag_from
 import random
 import numpy as np
 import pandas as pd
-from flask import Flask, jsonify, request, send_file, send_from_directory, Response, stream_with_context, g
+from flask import Flask, jsonify, request, send_file, send_from_directory, Response, stream_with_context, g, session
 from werkzeug.exceptions import RequestEntityTooLarge
 
 from generate_data import generate_merchant_transactions
@@ -36,9 +36,11 @@ from pdf_report import make_pdf
 from voice_alerts import alert_html as _voice_alert_html
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT = os.path.dirname(BASE_DIR)
+BACKEND_DIR = os.path.dirname(BASE_DIR)
+PROJECT_ROOT = os.path.dirname(BACKEND_DIR)
 MODEL_CACHE_DIR = Path(PROJECT_ROOT) / "models"
 LOG_DIR = Path(PROJECT_ROOT) / "logs"
+FRONTEND_DIR = Path(PROJECT_ROOT) / "frontend"
 
 # Create directories if they don't exist
 MODEL_CACHE_DIR.mkdir(parents=True, exist_ok=True)
@@ -80,12 +82,25 @@ def _graceful_shutdown(signum, frame):
 signal.signal(signal.SIGTERM, _graceful_shutdown)
 signal.signal(signal.SIGINT, _graceful_shutdown)
 
+# Authentication decorator for dashboard
+def _require_dashboard_auth(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get("dashboard_authenticated"):
+            return jsonify({"error": "Access Denied", "message": "Please enter the secret code first"}), 401
+        return f(*args, **kwargs)
+    return decorated_function
+
 app = Flask(__name__, 
-            static_folder="frontend/static", 
+            static_folder=str(FRONTEND_DIR / "static"), 
             static_url_path="/static",
-            template_folder="frontend/templates")
+            template_folder=str(FRONTEND_DIR / "templates"))
 app._start_time = time.time()
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
+app.config["SECRET_KEY"] = os.environ.get("PAYSENTINEL_SECRET_KEY", "paysentinel-dev-key-2026")
+
+# Dashboard Access Control
+DASHBOARD_SECRET_CODE = os.environ.get("DASHBOARD_SECRET_CODE", "paysentinel2005")
 
 # ── Swagger Configuration ──
 swagger_config = {
@@ -685,13 +700,59 @@ def _run_analysis(df: pd.DataFrame, merchant_name: str, sensitivity: str, langua
 
 @app.get("/")
 def index():
-    return send_from_directory(os.path.join(BASE_DIR, "frontend/templates"), "index.html")
+    return send_from_directory(str(FRONTEND_DIR / "templates"), "index.html")
+
+
+@app.post("/api/verify-code")
+def verify_secret_code():
+    """
+    Verify the secret code for dashboard access.
+    ---
+    tags: [authentication]
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            code:
+              type: string
+              example: "paysentinel2005"
+    responses:
+      200:
+        description: "Code verified successfully"
+      401:
+        description: "Incorrect code"
+    """
+    try:
+        data = request.get_json() or {}
+        provided_code = data.get("code", "").strip()
+        
+        if provided_code == DASHBOARD_SECRET_CODE:
+            session["dashboard_authenticated"] = True
+            logger.info(f"[AUTH] Dashboard access granted from {request.remote_addr}")
+            return jsonify({"success": True, "message": "Welcome! Access granted."}), 200
+        else:
+            logger.warning(f"[AUTH] Failed dashboard access attempt from {request.remote_addr}")
+            return jsonify({"success": False, "message": "❌ Incorrect code. Try again!"}), 401
+    except Exception as e:
+        logger.error(f"[AUTH] Error verifying code: {str(e)}", exc_info=True)
+        return jsonify({"error": "Server error"}), 500
+
+
+@app.post("/api/logout")
+def logout():
+    """Logout and clear dashboard authentication."""
+    session.pop("dashboard_authenticated", None)
+    logger.info(f"[AUTH] Dashboard logout from {request.remote_addr}")
+    return jsonify({"success": True, "message": "Logged out"}), 200
 
 
 @app.get("/favicon.ico")
 def favicon():
     return send_from_directory(
-        os.path.join(BASE_DIR, "frontend/static/images"),
+        str(FRONTEND_DIR / "static" / "images"),
         "hero_shield.png",
         mimetype="image/png",
     )
@@ -699,8 +760,9 @@ def favicon():
 
 @app.get("/dashboard")
 @app.get("/dashboard.html")
+@_require_dashboard_auth
 def dashboard():
-    return send_from_directory(os.path.join(BASE_DIR, "frontend/templates"), "dashboard.html")
+    return send_from_directory(str(FRONTEND_DIR / "templates"), "dashboard.html")
 
 
 @app.get("/api/metrics")

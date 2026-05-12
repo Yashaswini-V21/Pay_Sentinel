@@ -1,0 +1,76 @@
+:root {
+  --c0: #010308;
+  --c1: #040912;
+  --c2: #080f1e;
+  --c3: #0e1828;
+  --teal: #00f5d4;
+  --teal2: #00c4aa;
+  --teal-soft: rgba(0, 245, 212, 0.12);
+  --saffron: #ff7043;
+  --saffron2: #ff4f1a;
+  --gold: #ffc107;
+  --danger: #ff1744;
+  --safe: #00e676;
+  --cyan: #18ffff;
+  --violet: #7c4dff;
+  --glow-t: 0 0 20px rgba(0, 245, 212, 0.5), 0 0 60px rgba(0, 245, 212, 0.15);
+  --glow-s: 0 0 20px rgba(255, 112, 67, 0.5), 0 0 60px rgba(255, 112, 67, 0.15);
+  --glow-d: 0 0 20px rgba(255, 23, 68, 0.5), 0 0 60px rgba(255, 23, 68, 0.15);
+  --ff-display: 'Bebas Neue', sans-serif;
+  --ff-head: 'Exo 2', sans-serif;
+  --ff-body: 'DM Sans', sans-serif;
+  --ff-mono: 'JetBrains Mono', monospace;
+  --ff-ui: 'Chakra Petch', sans-serif;
+}
+
+/* Common Keyframes */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeSlideDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeSlideLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeSlideRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(0,245,212,0.08); }
+  50% { box-shadow: 0 0 40px rgba(0,245,212,0.18), 0 0 80px rgba(0,245,212,0.06); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(0,245,212,0.08); }
+  50% { border-color: rgba(0,245,212,0.25); }
+}
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes ping {
+  0% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 230, 118, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 230, 118, 0); }
+}
+@keyframes orbFloat {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-50px, 40px) scale(1.1); }
+}

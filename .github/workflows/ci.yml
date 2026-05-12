@@ -92,7 +92,6 @@ jobs:
         run: |
           export PYTHONPATH=$PYTHONPATH:$(pwd)/src
           bandit -r src/app.py src/model.py src/generate_data.py -ll -ii
-        continue-on-error: true
       - name: Report security status
         if: always()
         run: |
@@ -100,7 +99,6 @@ jobs:
           echo "Bandit scan finished. Review results above." >> $GITHUB_STEP_SUMMARY
       - name: Check dependencies for known vulnerabilities
         run: safety check --file requirements.txt
-        continue-on-error: true
 
   docker_build:
     name: Docker Build Check
@@ -117,7 +115,6 @@ jobs:
           else
             echo "No Dockerfile found — skipping build"
           fi
-        continue-on-error: true
 
   notify:
     name: Pipeline Summary
