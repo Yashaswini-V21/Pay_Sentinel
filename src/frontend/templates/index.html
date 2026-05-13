@@ -3722,6 +3722,113 @@
       }
     });
   </script>
+
+  <script>
+    (function() {
+      function showDashboardLock() {
+        const modal = document.getElementById('dashboardLockModal');
+        const input = document.getElementById('secretCodeInput');
+        const msg = document.getElementById('lockMessage');
+        if (!modal) return;
+        modal.style.display = 'flex';
+        if (msg) msg.textContent = '';
+        if (input) {
+          input.value = '';
+          input.focus();
+        }
+      }
+
+      async function verifyCode() {
+        const input = document.getElementById('secretCodeInput');
+        const msg = document.getElementById('lockMessage');
+        const btn = document.getElementById('verifyBtn');
+        const code = (input?.value || '').trim();
+
+        if (!code) {
+          if (msg) {
+            msg.textContent = 'Please enter the code';
+            msg.style.color = 'var(--danger)';
+          }
+          return;
+        }
+
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = 'Verifying...';
+        }
+
+        try {
+          const response = await fetch('/api/verify-code', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code })
+          });
+          const data = await response.json();
+
+          if (response.ok && data.success) {
+            if (msg) {
+              msg.textContent = 'Access granted';
+              msg.style.color = 'var(--safe)';
+            }
+            setTimeout(() => {
+              window.location.href = '/dashboard';
+            }, 400);
+            return;
+          }
+
+          if (msg) {
+            msg.textContent = data.message || 'Incorrect code';
+            msg.style.color = 'var(--danger)';
+          }
+          if (input) {
+            input.value = '';
+            input.focus();
+          }
+        } catch (err) {
+          if (msg) {
+            msg.textContent = 'Server error. Try again.';
+            msg.style.color = 'var(--danger)';
+          }
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'UNLOCK';
+          }
+        }
+      }
+
+      document.addEventListener('click', (e) => {
+        const link = e.target.closest('a[href="/dashboard"],a[href="/dashboard.html"]');
+        if (!link) return;
+        e.preventDefault();
+        showDashboardLock();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && document.getElementById('dashboardLockModal')?.style.display === 'flex') {
+          verifyCode();
+        }
+      });
+
+      window.verifyDashboardCode = verifyCode;
+
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('lock') === '1') {
+        showDashboardLock();
+      }
+    })();
+  </script>
+
+  <div id="dashboardLockModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(1,3,8,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);align-items:center;justify-content:center;font-family:var(--ff-body)">
+    <div style="text-align:center;max-width:420px;padding:2rem;border-radius:12px;border:1px solid rgba(0,245,212,.2);background:rgba(1,3,8,.8);box-shadow:0 0 60px rgba(0,245,212,.15),inset 0 0 30px rgba(0,245,212,.05)">
+      <div style="font-size:3rem;margin-bottom:1rem">LOCK</div>
+      <div style="font-family:var(--ff-display);font-size:1.8rem;letter-spacing:.08em;background:linear-gradient(135deg,var(--teal),var(--saffron));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1rem">DASHBOARD LOCKED</div>
+      <div style="font-size:.95rem;color:rgba(217,234,247,.6);margin-bottom:2rem;line-height:1.6">Enter the secret access code to unlock the merchant dashboard</div>
+      <input type="password" id="secretCodeInput" placeholder="Enter secret code..." style="width:100%;padding:.75rem 1rem;margin-bottom:1rem;background:rgba(0,245,212,.05);border:1px solid rgba(0,245,212,.2);border-radius:6px;color:white;font-family:var(--ff-body);font-size:.9rem">
+      <button id="verifyBtn" onclick="verifyDashboardCode()" style="width:100%;padding:.8rem 1.5rem;background:linear-gradient(135deg,var(--teal),var(--teal2));border:none;border-radius:6px;color:var(--c0);font-family:var(--ff-ui);font-size:.75rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;cursor:pointer">UNLOCK</button>
+      <div id="lockMessage" style="margin-top:1rem;font-size:.85rem;min-height:1.2em;color:rgba(217,234,247,.4)"></div>
+    </div>
+  </div>
 </body>
 
 </html>

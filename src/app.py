@@ -27,7 +27,7 @@ from flasgger import Swagger, swag_from
 import random
 import numpy as np
 import pandas as pd
-from flask import Flask, jsonify, request, send_file, send_from_directory, Response, stream_with_context, g
+from flask import Flask, jsonify, request, send_file, send_from_directory, Response, stream_with_context, g, session, redirect, url_for
 from werkzeug.exceptions import RequestEntityTooLarge
 
 from generate_data import generate_merchant_transactions
@@ -86,6 +86,10 @@ app = Flask(__name__,
             template_folder="frontend/templates")
 app._start_time = time.time()
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
+app.config["SECRET_KEY"] = os.environ.get("PAYSENTINEL_SECRET_KEY", "paysentinel-dev-key-2026")
+
+# Dashboard Access Control
+DASHBOARD_SECRET_CODE = os.environ.get("DASHBOARD_SECRET_CODE", "paysentinel2005")
 
 # ── Swagger Configuration ──
 swagger_config = {
@@ -284,6 +288,10 @@ def _require_api_key(f):
     """
     @wraps(f)
     def wrapped(*args, **kwargs):
+        # Allow browser dashboard session once secret code is verified.
+        if session.get("dashboard_authenticated"):
+            return f(*args, **kwargs)
+
         required = os.environ.get("PAYSENTINEL_API_KEY")
         if not required:
             env = os.environ.get("FLASK_ENV", "").lower()
@@ -309,6 +317,19 @@ def _require_api_key(f):
         return f(*args, **kwargs)
 
     return wrapped
+
+
+def _require_dashboard_auth(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get("dashboard_authenticated"):
+            # Browser navigation should return to landing page; API clients get JSON.
+            accept = request.headers.get("Accept", "")
+            if "text/html" in accept:
+                return redirect(url_for("index", lock="1"))
+            return jsonify({"error": "Access Denied", "message": "Please enter the secret code first"}), 401
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 def _json_error(message: str, status_code: int):
@@ -688,6 +709,31 @@ def index():
     return send_from_directory(os.path.join(BASE_DIR, "frontend/templates"), "index.html")
 
 
+@app.post("/api/verify-code")
+def verify_secret_code():
+    try:
+        data = request.get_json() or {}
+        provided_code = str(data.get("code", "")).strip()
+
+        if provided_code == DASHBOARD_SECRET_CODE:
+            session["dashboard_authenticated"] = True
+            logger.info(f"[AUTH] Dashboard access granted from {request.remote_addr}")
+            return jsonify({"success": True, "message": "Welcome! Access granted."}), 200
+
+        logger.warning(f"[AUTH] Failed dashboard access attempt from {request.remote_addr}")
+        return jsonify({"success": False, "message": "Incorrect code. Try again."}), 401
+    except Exception as exc:
+        logger.error(f"[AUTH] Error verifying code: {str(exc)}", exc_info=True)
+        return jsonify({"error": "Server error"}), 500
+
+
+@app.post("/api/logout")
+def logout():
+    session.pop("dashboard_authenticated", None)
+    logger.info(f"[AUTH] Dashboard logout from {request.remote_addr}")
+    return jsonify({"success": True, "message": "Logged out"}), 200
+
+
 @app.get("/favicon.ico")
 def favicon():
     return send_from_directory(
@@ -699,6 +745,7 @@ def favicon():
 
 @app.get("/dashboard")
 @app.get("/dashboard.html")
+@_require_dashboard_auth
 def dashboard():
     return send_from_directory(os.path.join(BASE_DIR, "frontend/templates"), "dashboard.html")
 

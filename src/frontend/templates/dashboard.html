@@ -1487,8 +1487,12 @@
     }
 
     function renderSamplePreview(data) {
-      samplePreview.innerHTML = parseRowsFromTable(data.data, data.columns.slice(0, 6));
-      setStatus(`Loaded ${data.rows} sample transactions for ${data.merchant_name}.`);
+      const rows = Array.isArray(data?.data) ? data.data : [];
+      const cols = Array.isArray(data?.columns)
+        ? data.columns
+        : (rows.length ? Object.keys(rows[0]) : []);
+      samplePreview.innerHTML = parseRowsFromTable(rows, cols.slice(0, 6));
+      setStatus(`Loaded ${Number(data?.rows || rows.length)} sample transactions for ${data?.merchant_name || 'merchant'}.`);
     }
 
     function renderMetrics(summary) {
@@ -2023,6 +2027,9 @@
         const merchantName = el('merchantName').value.trim() || 'My UPI Store';
         const response = await fetch(`/api/sample-data?merchant_name=${encodeURIComponent(merchantName)}`);
         const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || 'Sample load failed');
+        }
         state.sampleRows = data.data;
         state.file = null;
         el('csvFile').value = '';

@@ -388,7 +388,9 @@ class TestPageEndpoints:
         assert b"PaySentinel" in response.data or b"html" in response.data.lower()
 
     def test_dashboard_page_returns_200(self, client):
-        """Dashboard page should be accessible."""
+        """Dashboard page should be accessible after secret code verification."""
+        auth = client.post("/api/verify-code", json={"code": "paysentinel2005"})
+        assert auth.status_code == 200
         response = client.get("/dashboard")
         assert response.status_code == 200
         assert b"html" in response.data.lower() or b"form" in response.data.lower()
@@ -610,6 +612,8 @@ class TestSecurityHeaders:
 
     def test_x_frame_options_deny(self, client):
         """Clickjacking protection should be enabled."""
+        auth = client.post('/api/verify-code', json={'code': 'paysentinel2005'})
+        assert auth.status_code == 200
         r = client.get('/dashboard')
         assert r.headers.get('X-Frame-Options') == 'DENY'
 
