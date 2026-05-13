@@ -30,10 +30,10 @@ import pandas as pd
 from flask import Flask, jsonify, request, send_file, send_from_directory, Response, stream_with_context, g
 from werkzeug.exceptions import RequestEntityTooLarge
 
-from generate_data import generate_merchant_transactions
-from model import PaySentinelDetector
-from pdf_report import make_pdf
-from voice_alerts import alert_html as _voice_alert_html
+from .generate_data import generate_merchant_transactions
+from .model import PaySentinelDetector
+from .pdf_report import make_pdf
+from .voice_alerts import alert_html as _voice_alert_html
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
