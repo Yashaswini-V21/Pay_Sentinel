@@ -10,7 +10,7 @@ RUN pip install --user --no-cache-dir -r requirements.txt gunicorn gevent
 FROM python:3.11-slim AS production
 LABEL maintainer="PaySentinel" version="2.0.0"
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PORT=5000 \
-    WORKERS=2 WORKER_CLASS=gevent LOG_LEVEL=info
+    WORKERS=2 WORKER_CLASS=gevent LOG_LEVEL=info PYTHONPATH=/app/src
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 curl tini \
     && rm -rf /var/lib/apt/lists/* \
@@ -25,4 +25,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:$PORT/api/health || exit 1
 EXPOSE 5000
 ENTRYPOINT ["/usr/bin/tini", "--"]
-CMD ["sh", "-c", "exec gunicorn src.app:app --chdir /app --bind 0.0.0.0:$PORT --workers $WORKERS --worker-class $WORKER_CLASS --max-requests 1000 --max-requests-jitter 100 --log-level $LOG_LEVEL --access-logfile /app/logs/access.log --error-logfile /app/logs/error.log --timeout 120"]
+CMD ["sh", "-c", "exec gunicorn app:app --bind 0.0.0.0:$PORT --workers $WORKERS --worker-class $WORKER_CLASS --max-requests 1000 --max-requests-jitter 100 --log-level $LOG_LEVEL --access-logfile /app/logs/access.log --error-logfile /app/logs/error.log --timeout 120"]
